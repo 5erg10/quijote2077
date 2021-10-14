@@ -5,7 +5,6 @@ function checkRequirementStatusAllowed(user, objectName) {
   let objectNeededOk = true;
   const objectHasRequiredStatus = user.objectsList[objectName] && user.objectsList[objectName].requirementStatus;
   const objectHasRequirementObject = user.objectsList[objectName] && user.objectsList[objectName].requirementObject;
-  console.log('requirements: ', objectHasRequiredStatus, user.objectsList[objectName].requirementStatus, objectHasRequirementObject, user.objectsList[objectName].requirementObject);
   if (objectHasRequiredStatus) {
     if(user.states) {
       let requirementStatusCont = 0;
@@ -16,7 +15,6 @@ function checkRequirementStatusAllowed(user, objectName) {
         };
       });
       statusOk = requirementStatusCont >= user.objectsList[objectName].requirementStatus.length
-      console.log('status needed ok: ', requirementStatusCont, statusOk);
     } else {
       statusOk = false;
     }
@@ -31,12 +29,10 @@ function checkRequirementStatusAllowed(user, objectName) {
          };
       });
       objectNeededOk = requirementObjectsCont >= user.objectsList[objectName].requirementObject;
-      console.log('objects needed ok: ', requirementObjectsCont, objectNeededOk);
     } else {
       objectNeededOk = false;
     }
   }
-  console.log('status result: ', statusOk, objectNeededOk);
   return statusOk && objectNeededOk;
 }
 
@@ -61,7 +57,6 @@ function getObjectByObjectId(user, objectName) {
     throw new Error('Se requiere objeto a consultar');
   }
   
-  console.log(`getObjectByObjectId -> Objetos disponibles: ${user.objects}`);
 
   let objectFound;
   if(user.objects && user.objects.length) {

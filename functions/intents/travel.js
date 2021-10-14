@@ -10,7 +10,6 @@ const { isNight } = require('../utils/time');
 
 function recoverCurrentPlaceStep(request) {
     return agent => {
-      console.log(`recoverCurrentPlaceStep -> ${JSON.stringify(agent.parameters)}`);
       const userAccount = contextDao.getUserId(request);
       return usersDao.getUserById(userAccount).then(user => {
           if(user) {
@@ -37,7 +36,6 @@ function travel(agent, userId, user) {
   } else {
     return placesDao.getPlaceById(selectedPlace, user.room).then(place => {
         if(place) {
-            console.log(`travel -> Selected place: ${JSON.stringify(place)}`)
             const distance = calculateTravelCoeficient(user.room[placeName], place);
             const newPlace = {};
             const currentHungry = user.hungry - distance;
@@ -66,7 +64,6 @@ function travel(agent, userId, user) {
                 let objectInPlaceDescription = '';
                 Object.values(user.objectsList).map( currentObject => {
                   if (currentObject.currentPlace === selectedPlace ) {
-                    console.log(selectedPlace, currentObject.jointToSuccess, currentObject.jointToSuccess ? currentObject.ordinaryDescription : currentObject.originDescription);
                     objectInPlaceDescription += ' ' +  (currentObject.jointToSuccess ? currentObject.ordinaryDescription : currentObject.originDescription);
                   }
                 });
@@ -81,7 +78,6 @@ function travel(agent, userId, user) {
             }
         }
     }).catch(e => {
-      console.log(`Error: ${e}`);
       countIntents.count(userId);
       agent.add(noWhereMessage);
     });
@@ -89,7 +85,6 @@ function travel(agent, userId, user) {
 }
 
 function calculateTravelCoeficient(origin, destiny) {
-    console.log(`calculateTravelCoeficient -> origin: ${JSON.stringify(origin)} - destiny: ${JSON.stringify(destiny)}`);
     return (Math.abs(origin.branch - destiny.branch) * 2) + (Math.abs(origin.step - destiny.step)) * 2;
 }
 

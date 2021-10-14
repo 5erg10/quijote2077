@@ -100,8 +100,6 @@ function toogleElementOpacity(element, open) {
 async function request(input) {
   const response = await fetch(`api/intent?text=${input}&id=${getUID()}`);
   let text = await response.text();
-
-  console.log('responsemio: ', response);
   
   // set bold
   text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');

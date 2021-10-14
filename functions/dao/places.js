@@ -21,7 +21,6 @@ function getPlaceById(placeId, room = {}) {
     throw new Error('Se requiere identificador de lugar');
   }
 
-  console.log('getPlaceById currentPlace : ' + JSON.stringify(currentPlace));
 
   const place = placesList[getNearestPlace(placeId, currentPlace)];
 
@@ -63,27 +62,19 @@ function getNearestPlace(placeId, room = {}) {
   const { branch, step } = room;
 
   if (synonims.includes(placeId)) {
-    console.log('Has synonim: ');
 
     const choices = synonimMap
       .find(arr => arr.includes(placeId))
       .map(name => ({name, ...placesList[name]}));
-
-    console.log('Options ', JSON.stringify(choices.map(item => item.name)));
-
-    console.log(`Try travel from branch: ${branch} step: ${step}`);
     
     let bestOption = choices.reduce((curr, select) => {
       if (curr.branch === branch &&
           Math.abs(curr.step - step) < Math.abs(select.step - step)) {
-          console.log(`Better option ${curr.name} :    ${curr.step - step} < ${select.step - step}`)
         return curr;
       }
       return select;
     }, { branch: 999, step: 999 }) || {};
     
-    console.log('best option -- ' + JSON.stringify(bestOption));
-
     return bestOption && bestOption.name ? bestOption.name : placeId;
   }
 

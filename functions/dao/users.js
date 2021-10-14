@@ -13,7 +13,6 @@ function updateUser(userId, newData) {
 }
 
 function getUserById(userId) {
-  console.log('userDaoId: ', userId);
   if(!userId) {
       throw new Error('Se requiere identificador de usuario');
   }

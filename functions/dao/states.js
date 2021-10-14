@@ -21,8 +21,6 @@ function getStatusByStatusId(user, status) {
     throw new Error('Se requiere estado a consultar');
   }
   
-  console.log(`getStatusByStatusId -> Estados actuales: ${user.states}`);
-
   let statusFound;
   if(user.states && user.states.length) {
     statusFound = user.states.find(element => element == status);
@@ -59,7 +57,6 @@ function addStatus(userId, user, status) {
   let toTake = false;
   if(user.states && user.states.length) {
     states = user.states;
-    console.log(`addStatus -> ${states} includes ${status}? ${states.includes(status)}`);
     if(!states.includes(status)) {
       toTake = true;
       states.push(status);
@@ -70,11 +67,9 @@ function addStatus(userId, user, status) {
   }
 
   if(toTake) {
-    console.log('addStatus -> Status accepted');
     Object.assign( user, { states: states});
     return usersDao.updateUser(userId, user);
   } else {
-    console.log('addStatus -> Status repeated');
     return Promise.reject('Status repeated');
   }
 }

@@ -10,8 +10,6 @@ function difficulty(request) {
         const userData = await usersDao.getUserById(userId);
         const preMessage = `Excelente, comenzarás la aventura con dificultad *${difficultyLevel}*.\n`;
 
-        console.log('userDaoInterior: ', userId, userData);
-
         let maxCapacity = 0;
         switch(difficultyLevel) {
           case 'facil': maxCapacity = 9999999;
