@@ -1,0 +1,40 @@
+<html>
+
+<head>
+  <link href="styles.css" rel="stylesheet">
+  <script type="text/javascript" src="web-main.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body onload="documentReady()">
+  <div id="chatbox">
+    <div id="chatContainer">
+    </div>
+    <div id="enterText" click="setFocus()">
+      <div>
+        <span class="prompt">></span><input type="text" value="" onkeyup="setInputWidth()"
+          onkeypress="setFakeInputWidth()" /><span id="animateCursor">_</span>
+      </div>
+    </div>
+  </div>
+  <div id="splashScreen">
+    <img src="images/quijoteSplash.png" class="backgroundSplashScreen"/>
+    <div id="actionsButtons" class="actionButtons">
+      <button id="restartButton" onclick="restartGame()" class="insideButton">Comenzar</button>
+      <button id="continueButton" onclick="continueGame()" class="insideButton">Continuar</button>
+    </div>
+    <div id="warningMessage" class="fadeOut displayNONE">
+      <p>¿Quieres borrar tu partida y comenzar de nuevo?</p>
+      <div id="actionsButtons" class="warningButtons">
+        <button id="warningRestart" onclick="startFromWarning()" class="insideButton">Si</button>
+        <button id="warningCancel" onclick="cancelContinue()" class="insideButton">No</button>
+      </div>
+    </div>
+  </div>
+  <div id="audioController">
+    <img src="images/sound-icon.png"/>
+  </div>
+  <audio id="outerAudio" src="/sounds/nightShadecut.mp3"></audio>
+</body>
+
+</html>

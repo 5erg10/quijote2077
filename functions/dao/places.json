@@ -1,0 +1,680 @@
+{
+        "biblioteca": {
+          "step": 0, 
+          "branch": 0,
+          "description": "Los libros polvorientos destacan en una estantería situada hacia la izquierda. De todos ellos hay un libro que te llama especialmente la atención",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/biblioteca.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/biblioteca_noche.png"
+            ]
+          },
+          "actions":[
+            {   
+              "action": "leer",
+              "object": { "name": "libro" },
+              "successResponse": "Lees en voz alta por que es lo que se suele hacer en estos casos, y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres... digo, si te pica la curiosidad."
+            }
+          ],
+          "connectedRooms": [
+            "habitación"
+          ]
+        },
+        "habitación": { 
+          "step": 1, 
+          "branch": 0,
+          "description": "La habitación es austera como corresponde a la de un hidalgo manchego del siglo XVI. ¡Sí!, ahora eres un hidalgo caballero. O bueno, lo seras si consigues todo lo necesario para serlo. Asi que más vale que te pongas en marcha para conseguir todo lo necesario para ser el mejor caballero de todos los castellanos. Podrias empezar por ir al zaguán de la casa, que se adivina tras bajar las escaleras... no te vas a quedar aquí para siempre y lo de volver va a estar dificil por que el portal se ha cerrado, solo puedes volver a casa convertido en caballero y con tu damisela de la mano... o muerto claro, que seria volver peor de lo que entraste en mi humilde opinion. Asi que ya sabes, explora, rebusca y consigue todo lo necesario para ser un caballero y nos podamos volver a casa, que este sitio no me gusta!",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/habitacion.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/habitacion_noche.png"
+            ]
+          },
+          "actions": [],
+          "connectedRooms": [
+            "zaguán"
+          ]
+        },
+        "zaguán": { 
+          "step": 2,
+          "branch": 0,
+          "description": "Bajas por la escalera, y estas en el zaguán. Esta amplia y ruidosa escalera te facilitará el acceso si quieres volver a la habitación. Por lo demás y para tu información, un zagüán es un recibidor, te sirve para salir de casa por el portalón, llegar al comedor o a la cocina. Poco más tenian estas casas en aquella época, y más siendo un hidalgo venido a menos.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/zaguan.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/zaguan_noche.png"
+            ]
+          },
+          "actions": [            {   
+            "action": "examinar",
+            "object": { "name": "escalera" },
+            "requirementObject": ["vela"], 
+            "successResponse": "Parece que uno de los escalones esta un poco suelto, ya decia yo que crugia siempre que pasabamos por aqui. Muy agudo al haberte dado cuenta.",
+            "failResponse": "El zagüán es tan amplio como lugubre, no verias aqui ni a un elefante sin un poco de luz."          
+            }
+          ],
+          "connectedRooms": [
+            "comedor", "cocina", "portalón"
+          ]
+        },
+        "cocina": { 
+          "step": 3, 
+          "branch": 0,
+          "description": "La cocina esta estupensamente descuidada, si, pero es acogedora. Una solitaria alacena a un lado, al fondo la despensa y poco más. Yo no esperaria encontrar comida ahi... ¿oyes eso?, oh dios mio, ¿no serán ratas?",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/cocina.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/cocina_noche.png"
+              ]
+            },
+          "actions": [
+            {   
+              "action": "abrir",
+              "object": { "name": "alacena" },
+              "requirementStatus": ["poner_armadura"],
+              "successResponse": "Una rata salta, te intenta morder, pero gracias a la armadura lo único que consigue es romperse los dientes",
+              "failResponse": "La rata salta sobre tu hidalgo rostro perjudicando tus globos oculares, ya no estás en condiciones de continuar con tu hidalga azaña",
+              "endReason":"death"
+            },
+            {   
+              "action": "examinar",
+              "object": { "name": "alacena" },
+              "requirementStatus": ["abrir_alacena"],
+              "successResponse": "Sobre una de las repisas encuentras una llave que parece ser de utilidad",
+              "failResponse": "Convendría abrirla para poder examinarla mejor"
+            }
+          ],
+          "connectedRooms": [
+            "zaguán",
+            "despensa"
+          ]
+        },
+        "despensa": { 
+          "step": 4,
+          "branch": 0,
+          "description": "La ténue luz que penetra por la puerta permite vislumbrar un baúl, cuya superficie cubierta por el polvo de los siglos encubre recuerdos de tus antepasados",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/despensa.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/despensa_noche.png"
+            ]
+            },
+          "actions": [
+            { 
+              "action": "abrir",
+              "object": { "name":"baúl" },
+              "successResponse": "Entre las muchas antigüallas, destaca una armadura vieja y ajada"
+            },
+            { 
+              "action": "poner",
+              "object": { "name": "armadura" },
+              "requirementObject": ["armadura"], 
+              "successResponse": "Mejor llevarla puesta que cargar con ella en el zurrón, así pareces más hidalgo. Una cosa más que tachar de tu lista de cosas de caballero.",
+              "failResponse": "¿Intentas ponerte algo que ni siquiera tienes?, me temo lo peor de tu aventura..."
+            }
+          ],
+          "connectedRooms": [
+            "cocina"
+          ]
+        },
+        "comedor": { 
+          "step": 3, 
+          "branch": 0,
+          "description": "El comedor de tu casa. Rústico, sencillo... esta claro que tu familia pasó por mejores momentos. En la pared esta colgado el escudo de armas",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/comedor.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/comedor_noche.png"
+              ]
+            },
+          "actions": [
+            { 
+              "action": "examinar",
+              "object": { "name": "pared" },
+              "successResponse": "Una espada y un escudo cuelgan de la pared. ¿Has oido?, una espada!" 
+            }
+          ],
+          "connectedRooms": [
+            "zaguán"
+          ]
+        },
+        "portalón": { 
+          "step": 3, 
+          "branch": 0,
+          "description": "El portalón de tu casa. ¿Sabes que en algún momento tendrás que salir por esa puerta si quieres convertirte en caballero verdad?, antes de que lo preguntes te lo pondré facil, antes de salir por una puerta hay que abrirla.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/portalon.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/portalon_noche.png"
+            ]
+            },
+          "actions": [
+            { 
+              "action": "abrir",
+              "object": { "name": "puerta" },
+              "requirementObject": ["llave"],
+              "successResponse": "La puerta se abre con un estruendoso chirrido, se ve que nadie la ha usado en mucho tiempo. Más adelante ya divisas Argamasilla, ¡tu gran y amado pueblo!",
+              "failResponse": "La puerta está cerrada a cal y canto, seguro que en alguna parte anda la llave"
+            }
+          ],
+          "connectedRooms": [
+            "zaguán", "argamasilla"
+          ]
+        },
+        "argamasilla": { 
+          "step": 4, 
+          "branch": 0,
+          "description": "Argamasilla de Alba, tu pueblo. Sus solitarias calles y piedras están mudas ante ti. Tu calle te lleva por un lado al arco del pueblo, todo un orgullo de la localidad!, por el otro te adentras en las calles... y frente a ti el muro donde se cuelgan siempre los bandos. Suelen hablar de chismes y bulos, pero admite que te encantan. ¿Que novedades traera el bando de hoy?.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/argamasilla.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/argamasilla_noche.png"
+              ]
+            },
+          "actions": [
+            { 
+              "action": "leer",
+              "object": { "name": "bando" },
+              "successResponse": "'Si caballero te quieres armar, las armas tendrás que velar, en una posada de este lugar, desde la cual la luna verás.', bonito poema si señor." 
+            }
+          ],
+          "connectedRooms": [
+            "calles", "arco"
+          ]
+        },
+        "arco": { 
+          "step": 5, 
+          "branch": 0,
+          "description": "El arco no es gran cosa, para que lo vamos a negar. Aunque supongo que en un pueblo tan pequeño a cualquier cosa se le llama monumento. Más adelante, siguiendo por el camino, puedes llegar a la arboleda, siempre con su sombra acogedora y secreta",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/arco.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/arco_noche.png"
+              ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "argamasilla", "arboleda"
+          ]
+        },
+        "arboleda": { 
+          "step": 6, 
+          "branch": 0,
+          "description": "¿Arboleda?, ¿selva?, las mayores sorpresas pueden esperarte en estos lugares, por lo menos el suelo es mullido y fertil con plantas que parecen suculentas. Detrás de ti dejas el arco de entrada al pueblo mientras que más adelante en el camino ves emerger el manzano, conocido en todo el pueblo.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/arboleda.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/arboleda_noche.png"
+              ]
+            },
+          "actions": [
+            {   
+              "action": "examinar",
+              "object": { "name": "suelo"},
+              "successResponse": "El suelo es fértil y plagado de níscalos con un aspecto suculento" 
+            }
+          ],
+          "connectedRooms": [
+            "manzano", "arco"
+          ]
+        },
+        "manzano": { 
+          "step": 7, 
+          "branch": 0,
+          "description": "Algo insólito en estos parajes, ¡un manzano!, quizas por su rareza sea tan famoso en el pueblo. ¡Y que manzanas tan sabrosas proporciona!, estaria bien hacerse con una, pero siempre puedes volver hacia la arboleda de camino al pueblo o continuar hacia el pinar que se encuentra más adelante, tu mismo.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/manzano.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/manzano_noche.png"
+            ]
+            },
+          "actions": [
+            {   
+              "action": "golpear",
+              "object": { "name": "manzano" },
+              "successResponse": "Una manzana cae al suelo"
+            }
+          ],
+          "connectedRooms": [
+            "arboleda", "pinar"
+          ]
+        },
+        "pinar": { 
+          "step": 8, 
+          "branch": 0,
+          "description": "Pasado el gran manzano llegas a este pinar. Estás contento porque, de momento, tu aventura se te está antojando un agradable paseo. Grandes bosques y arboledas, olor a pinos, un sol gentil. Podrias quedarte aqui todo el dia pero más adelante te espera una posada que parece ser el destino de este camino.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/pinar.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/pinar_noche.png"
+              ]
+            },
+          "actions": [
+            { 
+              "action": "examinar",
+              "object": { "name": "suelo" },
+              "successResponse": "El suelo está cubierto de hermosas flores, ¿amanitas Phalloides quizás?" 
+            }
+          ],
+          "connectedRooms": [
+            "posada", "arboleda"
+          ]
+        },
+        "muro": { 
+          "step": 9, 
+          "branch": 1,
+          "description": "Estás en un camino bloqueado por un enorme muro de piedra",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/muro.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/muro_noche.png"
+              ]
+            },
+          "actions": [
+            { 
+              "action": "colocar",
+              "object": { "name": "pedrusco" },
+              "requirementObject": ["pedrusco"],
+              "successResponse": "Colocas el pedruco en la base del muro",
+              "failResponse": "¿Que pedrusco?"
+            },
+            { 
+              "action": "subir",
+              "object": { "name": "pedrusco" },
+              "requirementStatus": ["colocar_pedrusco"],
+              "successResponse": "Al subir al pedrusco, ya no parece tan imposible escalar el muro",
+              "failResponse": "¿Que te quieres subir a qué?"
+            },
+            { 
+              "action": "escalar",
+              "object": { "name": "muro" },
+              "requirementStatus": ["subir_pedrusco"],
+              "successResponse": "El suelo esta cubierto de hermosas flores, amanitas Phalloides quizás?",
+              "failResponse": "El muro es demasiado alto, pero tú como gallardo hidalgo que eres decides intentar escalarlo. Mala suerte que te resbalas y mueres al caer desde lo alto",
+              "endReason":"death"
+            }
+          ]
+        },
+        "callejón": { 
+          "step": 10, 
+          "branch": 1,
+          "requirementStatus": ["escalar_muro"],
+          "description": "Al cruzar el muro, el camino se acaba. Tu única opción es dar media vuelta",
+          "failResponse": "Te pones de puntillas y apenas alcanzas a ver por encima del muro que bloquea tu paso",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/callejon.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/callejon_noche.png"
+              ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "posada"
+          ]
+        },
+        "posada": { 
+          "step": 9, 
+          "branch": 0,
+          "description": "Te encuentras ante la imponente puerta de una suntuosa posada... mentira, la posada luce de dudosa categoría cuanto menos y la puerta se cae a cachos, es de esas antigüas puertas ajenas que no se abren si no llamas. A la izquierda, cruzando un camino invadido por la maleza, se ve un muro limítrofe de la posada. Es un lugar discreto y apartado... ya me entiendes.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/posada.png"
+              ]
+            },
+          "actions": [
+            { 
+              "action": "llamar",
+              "object": { "name": "puerta" },
+              "successResponse": "El posadero abre la puerta entre gruñidos. Se da media vuelta mientras se rasca el trasero. Dudas si entrar a lo que parece la recepción."
+            }
+          ],
+          "connectedRooms": [
+            "muro", "recepción"
+          ]
+        },
+        "recepción": { 
+          "step": 10, 
+          "branch": 0,
+          "description": "Estás en la recepción de la posada. ¿Cuánta gente habrá pasado aqui la noche?, al fondo ves unas escaleras, de esas que se han arreglado tantas veces que ya ni se parecen a lo que fueron un dia, si es que hubo algún día que tubiesen buen aspecto.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/recepcion.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/recepcion_noche.png"
+            ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "posada", "escalera"
+          ]
+        },
+        "escalera": { 
+          "step": 11, 
+          "branch": 0,
+          "description": "El descansillo de la escalera cruje que da miedo. Quizás sería mejor ir directamente al rellano que hay arriba antes de que se derrumben, o se quemen, o que se yo.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/escaleras.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/escaleras_noche.png"
+            ]
+            },
+          "actions": [
+            { 
+              "action": "examinar",
+              "object": { "name": "candelabro" },
+              "successResponse": "Una de las velas parece suelta"
+            }
+          ],
+          "connectedRooms": [
+            "recepción", "rellano"
+          ]
+        },
+        "rellano": { 
+          "step": 12, 
+          "branch": 0,
+          "description": "Estás en el primer rellano, el primero y el único para que engañarnos. Dos puertas, a izquierda y derecha, visibles gracias a la luz de la antorcha, te abrirán el paso a la bodega y dormitorio respectivamente. ¿Una bodega al lado de una habitación dices?, sí, no se por qué te extraña",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/posada_rellano.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/posada_rellano_noche.png"
+              ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "escalera", "bodega", "dormitorio"
+          ]
+        },
+        "bodega": { 
+          "step": 13, 
+          "branch": 0,
+          "description": "La estancia esta llena de odres, Huele a vino rancio y a queso picado. ¿O era al revés?",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/bodega.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/bodega_noche.png"
+              ]
+            },
+          "actions": [
+            { 
+              "action": "abrir",
+              "object": { "name": "odre" },
+              "requirementStatus": ["golpear_odre"],
+              "successResponse": "El odre ya esta abierto, cuantos más golpes quieres darle so cafre",
+              "failResponse": "El corcho está atascado, seguramente por que lleva siglos sin abrirse, necesitarás algo contundente con lo que romperlo"
+            },
+            { 
+              "action": "golpear",
+              "object": { "name": "odre" },
+              "requirementObject": ["martillo"],
+              "successResponse": "Golpeas un odre y comienza a verter un vino de dudosa calidad",
+              "failResponse": "No tienes nada que se pueda considerar contundente, y no, una espada no se considera contundente, quieres abrir un agujero, no matarlo."
+            },
+            { 
+              "action": "beber",
+              "object": { "name":"vino", "type":"food", "lifePoints":20 },
+              "requirementStatus": ["golpear_odre"],
+              "successResponse": "Un hidalgo caballero bebiendo a morro, que vergüenza!!, en fin, por lo menos recuperas algo de fuerzas.",
+              "failResponse": "Y como piensa beber vino de unos odres cerrados oh mi hidalgo caballero?"
+            }
+          ],
+          "connectedRooms": [
+            "rellano"
+          ]
+        },
+        "dormitorio": { 
+          "step": 13, 
+          "branch": 1,
+          "description": "Bonito dormitorio este. Una cama que hasta parece limpia domina la habitacion.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/posada_dormitorio.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/posada_dormitorio_noche.png"
+              ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "rellano"
+          ]
+        },
+        "calles": { 
+          "step": 5, 
+          "branch": 1,
+          "description": "Otra calle, calles y más calles, y las tienes que atravesarlas todas para llegar a los maravillosos campos de castilla, protagonistas de infinidad de poemas.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/calles.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/calles_noche.png"
+              ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "argamasilla", "campos"
+          ]
+        },
+        "campos": { 
+          "step": 6, 
+          "branch": 1,
+          "description": "Ya dejaste las calles atrás y ante ti se extienden los bellos campos de la mancha. Cómo me gusta ese olor a trigo que inunda el aire. Más adelante en el camino ves la puerta destartalada de una venta, pero un camino oscuro llama tu atención a la izquierda. En un cartel ya casi deshecho por el paso del tiempo adivinas a leer 'peligro de acantilado, no pasar'.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/campos.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/campos_noche.png"
+              ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "calles", "venta", "acantilado"
+          ]
+        },
+        "acantilado": { 
+          "step": 6, 
+          "branch": 2,
+          "description": "Un diminuto acantilado está frente ti. Quizás podrías cruzarlo de un salto, pero parece mucha distancia incluso para un valiente hidalgo. Creo que sería mejor darse media vuelta",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/acantilado.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/acantilado_noche.png"
+              ]
+            },
+          "actions": [
+            { 
+              "action": "colocar",
+              "object": { "name": "escalón" },
+              "requirementObject": ["escalón"],
+              "successResponse": "Dejas el tablón y este hace de puente. Madre mía ademas de hidalgo eres ingeniero!!, Ahora puedes llegar al bosque que hay en frente sin problemas. Si es que alguien querria ir a ese oscuro bosque para algo.",
+              "failResponse": "¿Que quieres colocar un escalón?, ¿Qué escalón?, ¡ay madre!, ahora me dirás que los molinos son gigantes..."
+            },
+            { 
+              "action": "saltar",
+              "object": { "name": "acantilado" },
+              "successResponse": "Demasiada fe tenías en tus habilidades. Por desgracia, no llegas al otro lado y ahora eres un hidalgo estrellado",
+              "endReason":"death"
+            }
+          ],
+          "connectedRooms": [
+            "campos", "bosque"
+          ]
+        },
+        "bosque": { 
+          "step": 6, 
+          "branch": 2,
+          "requirementStatus": ["colocar_escalón"],
+          "description": "Un oscuro bosque, tan oscuro que apenas alcanzas a ver poco más que el acantilado que acabas de cruzar. Se escuchan lobos al rededor tuya. Yo me daría media vuelta y me iría",
+          "failResponse": "No puedes llegar al bosque, antes debes cruzar un acantilado que tiene pinta que no podrás cruzar de un salto",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/bosque_oscuro.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/bosque_oscuro_noche.png"
+              ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "acantilado"
+          ]
+        },
+        "venta": { 
+          "step": 8, 
+          "branch": 1,
+          "description": "Te encuentras de bruces con la puerta de la venta, esta abierta asi que nada te impide ir al recibidor. Se que esta feo entrar sin preguntar pero oye, si esta abierto... si en lugar de entrar sigues el muro llegas los prados, llenitos de cultivos de trigo.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/venta.png"
+              ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "recibidor", "prados"
+          ]
+        },
+        "recibidor": { 
+          "step": 9, 
+          "branch": 1,
+          "description": "Ves dos puertas ante ti, una te lleva al salon y por la otra llegas a un pequeño distribuidor con dos puertas más. Puertas, puertas y más puertas si.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/recibidor.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/recibidor_noche.png"
+            ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "distribuidor", "salón"
+          ]
+        },
+        "salón": { 
+          "step": 10, 
+          "branch": 1,
+          "description": "Que salón tan solitario y vacío. Desde luego aqui no saben como darle un toque hogareño a una estancia. Solo hay una gran mesa vacía y un pequeño cesto en una esquina",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/Salon-venta.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/Salon-venta_noche.png"
+            ]
+            },
+          "actions": [
+            { 
+              "action": "examinar",
+              "object": { "name": "cesto" },
+              "successResponse": "Dentro del cesto solo hay chatarra."
+            }
+          ],
+          "connectedRooms": [
+            "recibidor", "distribuidor"
+          ]
+        },
+        "distribuidor": { 
+          "step": 10, 
+          "branch": 1,
+          "description": "Este distrubidor te permite acceder a dos estancias, a la izquierda una alcoba, y a la derecha una puerta con una cerradura que esta hecha un cisco, parece como si la hubiesen intentado abrir a mordiscos... es broma... no, no es broma.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/distribuidor.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/distribuidor_noche.png"
+            ]
+            },
+          "actions": [
+            { 
+              "action": "arreglar",
+              "object": { "name": "cerradura" },
+              "requirementObject": ["alambre"],
+              "successResponse": "Gracias a tus habilidades como antiguo lazarillo, consigues arreglar la cerradura usando solo un alambre. Si no fuese por que quieres ser una valiente hidalgo para encandilar a una bella damisela, podrias ser ladrón, plantéatelo. Ahora puedes abrirla y acceder a un confortable patio",
+              "failResponse": "¿Y con qué quieres arreglarla?, ¿con una mirada seductora?, deberías buscar algo que quepa por la cerradura para poder arreglarla"
+            }
+          ],
+          "connectedRooms": [
+            "recibidor", "alcoba", "patio"
+          ]
+        },
+        "alcoba": { 
+          "step": 11, 
+          "branch": 1,
+          "description": "Un dormitorio sin más. Una cama, un suelo... poco más. Para descansar es suficiente supongo",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/venta_dormitorio.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/venta_dormitorio_noche.png"
+            ]
+            },
+          "actions": [
+            { 
+              "action": "descansar",
+              "successResponse": "Perfecto, ahora podrás seguir tu camino brioso"
+            }
+          ],
+          "connectedRooms": [
+            "distribuidor"
+          ]
+        },
+        "patio": { 
+          "step": 11, 
+          "branch": 1,
+          "requirementStatus": ["arreglar_cerradura"],
+          "description": "Al traspasar la puerta del distribuidor, accedes a un sorprendentemente acogedor patio, de no ser por que está lleno de gallinas que alborotan a tu alrededor. En una esquina disponen de un indispensable pozo decorado con una estatuilla de San jorge. Ya sabes, el santo de los caballeros, ¿que casualidad eh?",
+          "failResponse": "Estaría bien poder visitar el patio, pero una puerta rota te lo impide",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/Patio-venta.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/Patio-venta_noche.png"
+            ]
+            },
+          "actions": [
+            { 
+              "action": "velar",
+              "object": { "name": "armas" },
+              "requirementObject": ["armadura"],
+              "successResponse": "¡Perfecto!, ¡ahora ya sí que eres todo un caballero!, haces cosas raras de vez en cuando pero... un caballero al fin y al cabo",
+              "failResponse": "¿Cómo vas a velar las armas si niquiera tienes una armadura?, eso es de primero de valeroso hidalgo"
+            }
+          ],
+          "connectedRooms": [
+            "distribuidor"
+          ]
+        },
+        "prados": { 
+          "step": 6, 
+          "branch": 2,
+          "description": "Unos extensos prados, que solo destacan por un nutrido rebaño de ovejas, que pastan apacibles pero bloquean el maldito paso hacia la cancela que da acceso a los dominios de la reina.",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/prados.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/prados_noche.png"
+            ]
+            },
+          "actions": [
+            { 
+              "action": "atacar",
+              "object": { "name": "ovejas" },
+              "requirementObject": ["espada"],
+              "successResponse": "Se apartan a tu paso, permitiendo continuar tu camino a lo que parece ser una imponente cancela",
+              "failResponse": "Por más aspavientos que hagas no servirá de nada, no impones tanto como para inquietarlas a no ser que tengas algo contundente que las asuste"
+            }
+          ],
+          "connectedRooms": [
+            "venta", "cancela"
+          ]
+        },
+        "cancela": { 
+          "step": 7, 
+          "branch": 2,
+          "description": "Una gran cancela custodiada por dos soldados. Más allá se extienden los dominios del gran reino de castilla, donde valientes hidalgos ponen a prueba su destreza y conocen a sus amadas doncellas. Yo intentaría cruzarla",
+          "media": {
+            "images": [
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/cancela.png",
+              "https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/cancela_noche.png"
+            ]
+            },
+          "actions": [
+            { 
+              "action": "cruzar",
+              "object": { "name": "cancela" },
+              "requirementObject": ["espada", "armadura"],
+              "requirementStatus": ["velar_armas"],
+              "successResponse": "Cruzas la puerta y es como atravesar la entrada a otro mundo. Prados verdes hasta donde alcanza la vista, regados de pequeños bosques y riachuelos, animados por el bello cantar de las aves más distinguidas... huele a felicidad y opulencia, y como si el destino te sonriese, una bella doncella está intentando arreglar su carruaje averiado junto a sus monjes acompañantes. ¡¡Es la oportunidad ideal para demostrar tu valía ante una bella dama!!",
+              "failResponse": "Los soldados te echan a empujones entre sonoras risas. No tienes todo lo necesario para ser un caballero decían",
+              "endReason":"end"
+            }
+          ],
+          "connectedRooms": [
+            "prados"
+          ]
+        }
+}

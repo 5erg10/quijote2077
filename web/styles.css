@@ -1,0 +1,391 @@
+@font-face {
+  font-family: 'PressStart2P';
+  src: url('./fonts/PressStart2P.ttf')  format('truetype');
+}
+
+@font-face {
+  font-family: 'EnterCommand';
+  src: url('./fonts/EnterCommand.ttf')  format('truetype');
+}
+
+@font-face {
+  font-family: 'EnterCommand Bold';
+  src: url('./fonts/EnterCommand-Bold.ttf')  format('truetype');
+}
+
+@font-face {
+  font-family: 'EnterCommand Italic';
+  src: url('./fonts/EnterCommand-Italic.ttf')  format('truetype');
+}
+
+@keyframes cursorAnimation {
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+
+@-o-keyframes cursorAnimation{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+
+@-moz-keyframes cursorAnimation{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+
+@-webkit-keyframes cursorAnimation{
+  0%   { opacity:1; }
+  50%  { opacity:0; }
+  100% { opacity:1; }
+}
+
+#animateCursor {
+  -webkit-animation: cursorAnimation .75s infinite;
+  -moz-animation: cursorAnimation .75s infinite;
+  -o-animation: cursorAnimation .75s infinite;
+  animation: cursorAnimation .75s infinite;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  align-items: center;
+  background-color: black;
+  color: white;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  font-family: "PressStart2P";
+  font-size: 12px;
+  width: 100%;
+}
+
+p {
+  line-height: 2;
+  padding: 20px;
+}
+
+#chatbox {
+  height: 80%;
+  min-height: 200px;
+  position: relative;
+  width: 80%;
+}
+
+#enterText {
+  bottom: 0;
+  height: 50px;
+  left: 0;
+  position: absolute;
+  width: 100%;
+}
+
+#enterText .prompt {
+  margin-right: 5px;
+}
+
+input {
+  background-color: black;
+  border: 0;
+  color: white;
+  font-family: "PressStart2P";
+  font-size: 12px;
+  max-width: 100%;
+  width: 0px;
+}
+
+input:focus {
+  outline: 0;
+}
+
+button {
+  background-color: aliceblue;
+  border: 0;
+  border-radius: 15px;
+  font-family: "PressStart2P";
+  font-size: 12px;
+  padding: 5px 10px;
+}
+
+button:hover {
+  background-color: dodgerblue;
+  color: aliceblue;
+}
+
+button:focus {
+  outline: 0;
+}
+
+#chatContainer {
+  height: 100%;
+  margin: 0 auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 90%;
+  position: absolute;
+  bottom: 80px;
+}
+
+.quixoteChat {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  margin: 10px;
+  padding: 10px;
+}
+
+.quixoteAvatar {
+  border: 2px solid white;
+  border-radius: 60px;
+  height: 60px;
+  width: 60px;
+}
+
+.quixoteText {
+  align-items: center;
+  border: 2px solid white;
+  margin: 10px;
+  min-height: 50px;
+  padding: 10px 20px;
+  width: 75%;
+}
+
+.quixoteText b {
+  color: yellow;
+}
+
+.userChat {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px;
+  padding: 10px;
+}
+
+.userAvatar {
+  border: 2px solid #22ecf3;
+  border-radius: 60px;
+  height: 60px;
+  width: 60px;
+}
+
+.userText {
+  align-items: center;
+  border: 2px solid #22ecf3;
+  margin: 10px;
+  min-height: 50px;
+  padding: 10px 20px;
+  text-align: left;
+  width: 75%;
+}
+
+.userText b {
+  color: yellow;
+}
+
+#chatContainer::-webkit-scrollbar-track {
+  background-color: whitesmoke;
+  border-left: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  margin-bottom: 30px;
+}
+
+#chatContainer::-webkit-scrollbar {
+  background-color: aliceblue;
+  display: none;
+  width: 16px;
+}
+
+#chatContainer::-webkit-scrollbar-thumb {
+  background-color: lightgray;
+}
+
+.typingAvatar {
+  border-radius: 90px;
+  border: 1px solid aliceblue;
+  height: 20px;
+  margin-right: 10px;
+  width: 20px;
+}
+
+.placeImage {
+  width: 100%;
+}
+
+.placeImage img {
+  margin: 10px 0;
+  width: inherit;
+}
+
+.easyModePlaces {
+  align-items: center;
+  display: flex;
+  margin: 0 auto;
+  width: 60%;
+}
+
+.easyModePlaces ul {
+  list-style-type: none;
+}
+
+.easyModePlaces ul li {
+  background-color: tomato;
+  border-radius: 15px;
+  font-size: 10px;
+  margin-bottom: 10px;
+  padding: 0 10px;
+}
+
+.easyModeAvatar {
+  width: min-content;
+}
+
+#splashScreen {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #000000;
+}
+
+.backgroundSplashScreen {
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.actionButtons {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin: 0;
+  position: absolute;
+  top: 70%;
+  -ms-transform: translateY(-70%);
+  transform: translateY(-70%);
+  color: #000000;
+  font-size: 22px;
+}
+.insideButton {
+  background-color: #22ecf3;
+  padding: 15px;
+  margin: 15px;
+  width: 150px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 0px;
+}
+
+.insideButton:hover {
+  color: inherit;
+  text-decoration: inherit;
+  background-color: #22ecf3;
+}
+
+.insideButton:disabled {
+  color: #7e7e7e;
+  background-color: #cccccc;
+}
+
+.insideButton:active {
+  background-color: #19a2a7;
+}
+
+#warningMessage {
+  position: absolute;
+  background-color: #000000;
+  border: solid 1px #22ecf3;
+  width: 300px;
+  height: 200px;
+  top: 55%;
+  left: 50%;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+
+.warningButtons {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  margin: 0;
+  position: absolute;
+  top: 70%;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  color: #000000;
+  font-size: 22px;
+}
+
+#logo {
+  width: 60px;
+  height: 80px;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+}
+
+#logo > img {
+  width: 100%;
+  height: 100%;
+}
+
+#audioController {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  cursor: pointer;
+}
+#audioController > img {
+  width: 100%;
+  height: 100%;
+}
+
+.fadeOut {
+  opacity: 0 !important;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.displayNONE {
+  display: none;
+}
+
+@media only screen and (max-width: 600px) {
+  #chatbox {
+    height: 100%;
+    width: 100%;
+  }
+
+  #enterText {
+    height: 50px;
+    padding: 0 15px;
+    width: 100%;
+  }
+
+  #chatContainer {
+    width: 100%;
+    height: 75%;
+  }
+
+  .easyModePlaces {
+    width: 40%;
+  }
+}
