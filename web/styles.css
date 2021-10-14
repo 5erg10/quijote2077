@@ -157,6 +157,10 @@ button:focus {
   width: 75%;
 }
 
+.quixoteText img {
+  margin: 3% 20%;
+}
+
 .quixoteText b {
   color: yellow;
 }
