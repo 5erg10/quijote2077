@@ -159,6 +159,7 @@ button:focus {
 
 .quixoteText img {
   margin: 3% 20%;
+  width: 60%;
 }
 
 .quixoteText b {
@@ -358,9 +359,22 @@ button:focus {
   right: 30px;
   cursor: pointer;
 }
+
 #audioController > img {
   width: 100%;
   height: 100%;
+}
+
+#audioController > p {
+  font-size: 8px;
+  padding: 0;
+  white-space: nowrap;
+  margin-top: 5px;
+  opacity: 0;
+}
+
+#audioController:hover > p {
+  opacity: 1;
 }
 
 .fadeOut {

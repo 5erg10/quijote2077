@@ -23,7 +23,7 @@ function end(agent, endingMessage, userAccount, userName) {
 function death(agent, endingMessage, userAccount) {
   agent.add(endingMessage);
 
-  agent.add('<img src="https://raw.githubusercontent.com/next-francisconavarro/hci-quijote/develop/images/blackDeath.jpg">');
+  agent.add('<img src="images/places/blackDeath.jpg">');
   agent.add('\n\nSi deseas iniciar una *nueva partida*, di *REINICIAR*');
   return usersDao.removeUser(userAccount);
 }
