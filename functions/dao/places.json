@@ -14,6 +14,18 @@
               "action": "leer",
               "object": { "name": "libro" },
               "successResponse": "Lees en voz alta por que es lo que se suele hacer en estos casos, y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres... digo, si te pica la curiosidad."
+            },{   
+              "action": "coger",
+              "object": { "name": "libro" },
+              "successResponse": "Lees en voz alta por que es lo que se suele hacer en estos casos, y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres... digo, si te pica la curiosidad."
+            },{   
+              "action": "examinar",
+              "object": { "name": "libro" },
+              "successResponse": "Lees en voz alta por que es lo que se suele hacer en estos casos, y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres... digo, si te pica la curiosidad."
+            },{   
+              "action": "revisar",
+              "object": { "name": "libro" },
+              "successResponse": "Lees en voz alta por que es lo que se suele hacer en estos casos, y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres... digo, si te pica la curiosidad."
             }
           ],
           "connectedRooms": [
