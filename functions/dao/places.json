@@ -82,6 +82,13 @@
               "requirementStatus": ["abrir_alacena"],
               "successResponse": "Sobre una de las repisas encuentras una llave que parece ser de utilidad",
               "failResponse": "Convendría abrirla para poder examinarla mejor"
+            },
+            {   
+              "action": "revisar",
+              "object": { "name": "alacena" },
+              "requirementStatus": ["abrir_alacena"],
+              "successResponse": "Sobre una de las repisas encuentras una llave que parece ser de utilidad",
+              "failResponse": "Convendría abrirla para poder examinarla mejor"
             }
           ],
           "connectedRooms": [
