@@ -56,16 +56,15 @@ function documentReady() {
 async function sendText({keyCode, currentTarget}) {
   if (keyCode == 13) {
     const input = currentTarget.value;
-
-    showLoading(currentTarget);
-    setInputWidth();
-
-    const text = await request(input);
-    responses.append(quixoteChat(text));
-    setTimeout(() => {
-      responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: "smooth" });
-    }, 500);
-    
+    if (input && input !== '') {
+      showLoading(currentTarget);
+      setInputWidth();
+      const text = await request(input);
+      responses.append(quixoteChat(text));
+      setTimeout(() => {
+        responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: "smooth" });
+      }, 500);
+    }
   }
 }
 
