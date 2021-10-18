@@ -13,19 +13,19 @@
             {   
               "action": "leer",
               "object": { "name": "libro" },
-              "successResponse": "Lees en voz alta por que es lo que se suele hacer en estos casos, y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres... digo, si te pica la curiosidad."
+              "successResponse": "Lees en voz alta y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres..."
             },{   
               "action": "coger",
               "object": { "name": "libro" },
-              "successResponse": "Lees en voz alta por que es lo que se suele hacer en estos casos, y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres... digo, si te pica la curiosidad."
+              "successResponse": "Lees en voz alta y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres..."
             },{   
               "action": "examinar",
               "object": { "name": "libro" },
-              "successResponse": "Lees en voz alta por que es lo que se suele hacer en estos casos, y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres... digo, si te pica la curiosidad."
+              "successResponse": "Lees en voz alta y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres..."
             },{   
               "action": "revisar",
               "object": { "name": "libro" },
-              "successResponse": "Lees en voz alta por que es lo que se suele hacer en estos casos, y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres... digo, si te pica la curiosidad."
+              "successResponse": "Lees en voz alta y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres..."
             }
           ],
           "connectedRooms": [
@@ -35,7 +35,7 @@
         "habitación": { 
           "step": 1, 
           "branch": 0,
-          "description": "La habitación es austera como corresponde a la de un hidalgo manchego del siglo XVI. ¡Sí!, ahora eres un hidalgo caballero. O bueno, lo seras si consigues todo lo necesario para serlo. Asi que más vale que te pongas en marcha para conseguir todo lo necesario para ser el mejor caballero de todos los castellanos. Podrias empezar por ir al zaguán de la casa, que se adivina tras bajar las escaleras... no te vas a quedar aquí para siempre y lo de volver va a estar dificil por que el portal se ha cerrado, solo puedes volver a casa convertido en caballero y con tu damisela de la mano... o muerto claro, que seria volver peor de lo que entraste en mi humilde opinion. Asi que ya sabes, explora, rebusca y consigue todo lo necesario para ser un caballero y nos podamos volver a casa, que este sitio no me gusta!",
+          "description": "La habitación es austera como corresponde a la de un hidalgo manchego del siglo XVI. ¡Sí!, ahora eres un hidalgo caballero. El portal se ha cerrado, asi que ya no puedes volver a casa. La unica forma de volver a abrirlo es volver aqui convertido en un autentico caballero. ¿Se me habia olvidado comentate todo esto verdad?. Bueno, no te queda mas remedio que explorar y buscar la forma de convertirte en caballero. Abajo esta el zaguan, quizas podrias empezar por ahi",
           "media": {
             "images": [
               "images/places/habitacion.png",
@@ -50,7 +50,7 @@
         "zaguán": { 
           "step": 2,
           "branch": 0,
-          "description": "Bajas por la escalera, y estas en el zaguán. Esta amplia y ruidosa escalera te facilitará el acceso si quieres volver a la habitación. Por lo demás y para tu información, un zagüán es un recibidor, te sirve para salir de casa por el portalón, llegar al comedor o a la cocina. Poco más tenian estas casas en aquella época, y más siendo un hidalgo venido a menos.",
+          "description": "Bajas por la escalera, y estas en el zaguán. Esta amplia y ruidosa escalera te facilitará el acceso si quieres volver a la habitación. Desde este zaguán tienes acceso a la cocina, al comedor y al portalón de la casa. Poco más tenian estas casas en aquella época, y más siendo un hidalgo venido a menos.",
           "media": {
             "images": [
               "images/places/zaguan.png",
@@ -72,7 +72,7 @@
         "cocina": { 
           "step": 3, 
           "branch": 0,
-          "description": "La cocina esta estupensamente descuidada, si, pero es acogedora. Una solitaria alacena a un lado, al fondo la despensa y poco más. Yo no esperaria encontrar comida ahi... ¿oyes eso?, oh dios mio, ¿no serán ratas?",
+          "description": "La cocina esta estupensamente descuidada, si, pero es acogedora. Una solitaria alacena a un lado, al fondo la despensa y poco más. Yo no esperaria encontrar comida aquí... ¿oyes eso?, oh dios mio, ¿no serán ratas?",
           "media": {
             "images": [
               "images/places/cocina.png",
@@ -121,6 +121,16 @@
           "actions": [
             { 
               "action": "abrir",
+              "object": { "name":"baúl" },
+              "successResponse": "Entre las muchas antigüallas, destaca una armadura vieja y ajada"
+            },
+            { 
+              "action": "examinar",
+              "object": { "name":"baúl" },
+              "successResponse": "Entre las muchas antigüallas, destaca una armadura vieja y ajada"
+            },
+            { 
+              "action": "revisar",
               "object": { "name":"baúl" },
               "successResponse": "Entre las muchas antigüallas, destaca una armadura vieja y ajada"
             },
@@ -231,6 +241,10 @@
               "action": "examinar",
               "object": { "name": "suelo"},
               "successResponse": "El suelo es fértil y plagado de níscalos con un aspecto suculento" 
+            },{   
+              "action": "revisar",
+              "object": { "name": "suelo"},
+              "successResponse": "El suelo es fértil y plagado de níscalos con un aspecto suculento" 
             }
           ],
           "connectedRooms": [
@@ -271,6 +285,10 @@
           "actions": [
             { 
               "action": "examinar",
+              "object": { "name": "suelo" },
+              "successResponse": "El suelo está cubierto de hermosas flores, ¿amanitas Phalloides quizás?" 
+            },{ 
+              "action": "revisar",
               "object": { "name": "suelo" },
               "successResponse": "El suelo está cubierto de hermosas flores, ¿amanitas Phalloides quizás?" 
             }
