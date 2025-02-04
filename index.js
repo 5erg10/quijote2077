@@ -1,6 +1,17 @@
 const express = require('express');
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
+
+// https://quijote2077.up.railway.app/webhook
+
 const app = express();
 const port = process.env.PORT || 3000;
+
+const sslOptions = {
+  key: fs.readFileSync(path.join(__dirname, 'credentials/key.pem')),
+  cert: fs.readFileSync(path.join(__dirname, 'credentials/cert.pem')),
+};
 
 const {WebhookClient} = require('dialogflow-fulfillment');
 
@@ -51,5 +62,8 @@ app.post('/webhook', express.json(),(request, response) => {
   agent.handleRequest(intentMap);
 });
 
-app.listen(port, 
-  () => console.log("Server is running at " + port));
+app.listen(port, () => console.log("Server is running at " + port));
+
+// https.createServer(sslOptions, app).listen(port, () => {
+//   console.log(`Servidor HTTPS ejecutándose en https://localhost:${port}`);
+// });

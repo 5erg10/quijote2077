@@ -7,6 +7,7 @@ async function runIntent(sessionId, text) {
   const sessionClient = new dialogflow.SessionsClient({
     keyFilename: './credentials/quijote2077cred.json'
   });
+
   const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 
   const request = {
@@ -29,6 +30,7 @@ async function runIntent(sessionId, text) {
       }
     }
   };
+
   let output = '';
  
   // Send request and log result
@@ -41,12 +43,14 @@ async function runIntent(sessionId, text) {
   } else if (result.fulfillmentText) {
     output = result.fulfillmentText
   }
+
   if (result.intent) {
     console.log(`  Intent: ${result.intent.displayName}`);
   } else {
     console.log(`  No intent matched.`);
   }
-
+  
+  console.log('output: ', output)
   return output;
 }
 
@@ -57,7 +61,7 @@ module.exports = function(req, res) {
     return res.send(401)
   }
 
-  runIntent(id, text).then(response =>
+  runIntent(id, text).then(response => {
     res.send(response)
-  );
+  });
 }
