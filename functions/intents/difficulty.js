@@ -10,6 +10,8 @@ function difficulty(request) {
         const userData = await usersDao.getUserById(userId);
         const preMessage = `Excelente, comenzarás la aventura con dificultad *${difficultyLevel}*.\n`;
 
+        agent.add(preMessage);
+
         let maxCapacity = 0;
         switch(difficultyLevel) {
           case 'facil': maxCapacity = 9999999;
@@ -27,7 +29,7 @@ function difficulty(request) {
         return placesDao.getPlaceById('biblioteca').then(place => {
           if(place) {
             agent.add(`<img src="${place.media.images[0]}">`);
-            return agent.add(`${preMessage}${textByDifficulty(place.description, difficulty)}`);
+            return agent.add(`${textByDifficulty(place.description, difficulty)}`);
           }
         });
     }

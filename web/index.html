@@ -1,42 +1,41 @@
-<html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <link href="styles.css" rel="stylesheet">
+    <title>Quijote 2077</title>
+    <script type="text/javascript" src="web-main.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head>
 
-<head>
-  <link href="styles.css" rel="stylesheet">
-  <title>Quijote 2077</title>
-  <script type="text/javascript" src="web-main.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-</head>
-
-<body onload="documentReady()">
-  <div id="chatbox">
-    <div id="chatContainer">
-    </div>
-    <div id="enterText" click="setFocus()">
-      <div>
-        <span class="prompt">></span><input type="text" value="" onkeyup="setInputWidth()"
-          onkeypress="setFakeInputWidth()" /><span id="animateCursor">_</span>
+  <body onload="documentReady()">
+    <div id="chatbox">
+      <div id="chatContainer">
+      </div>
+      <div id="enterText" click="setFocus()">
+        <div>
+          <span class="prompt">></span><input type="text" value="" onkeyup="setInputWidth()"
+            onkeypress="setFakeInputWidth()" label=" " placeholder="..."/><span id="animateCursor">_</span>
+        </div>
       </div>
     </div>
-  </div>
-  <div id="splashScreen">
-    <img src="images/quijoteSplash.png" class="backgroundSplashScreen"/>
-    <div id="actionsButtons" class="actionButtons">
-      <button id="restartButton" onclick="restartGame()" class="insideButton">Comenzar</button>
-      <button id="continueButton" onclick="continueGame()" class="insideButton">Continuar</button>
-    </div>
-    <div id="warningMessage" class="fadeOut displayNONE">
-      <p>¿Quieres borrar tu partida y comenzar de nuevo?</p>
-      <div id="actionsButtons" class="warningButtons">
-        <button id="warningRestart" onclick="startFromWarning()" class="insideButton">Si</button>
-        <button id="warningCancel" onclick="cancelContinue()" class="insideButton">No</button>
+    <div id="splashScreen">
+      <img src="images/quijoteSplash.png" class="backgroundSplashScreen" alt="quixote main screen splash image"/>
+      <div id="actionsButtons" class="actionButtons">
+        <button id="restartButton" onclick="restartGame()" class="insideButton">Comenzar</button>
+        <button id="continueButton" onclick="continueGame()" class="insideButton">Continuar</button>
+      </div>
+      <div id="warningMessage" class="fadeOut displayNONE">
+        <p>¿Quieres borrar tu partida y comenzar de nuevo?</p>
+        <div id="actionsButtons" class="warningButtons">
+          <button id="warningRestart" onclick="startFromWarning()" class="insideButton">Si</button>
+          <button id="warningCancel" onclick="cancelContinue()" class="insideButton">No</button>
+        </div>
       </div>
     </div>
-  </div>
-  <div id="audioController">
-    <img src="images/mute-icon.png"/>
-    <p>MUSIC OFF</p>
-  </div>
-  <audio id="outerAudio" loop src="/sounds/nightShadecut.mp3"></audio>
-</body>
-
+    <div id="audioController">
+      <img src="images/mute-icon.png" alt="sound mute icon"/>
+      <p>MUSIC OFF</p>
+    </div>
+    <audio id="outerAudio" loop src="/sounds/nightShadecut.mp3"></audio>
+  </body>
 </html>

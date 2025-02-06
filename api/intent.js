@@ -50,8 +50,8 @@ async function runIntent(sessionId, text) {
     console.log(`  No intent matched.`);
   }
   
-  console.log('output: ', output)
-  return output;
+  console.log('output: ', {text: output, intent: result.intent.displayName});
+  return {text: output, intent: result.intent.displayName};
 }
 
 module.exports = function(req, res) {

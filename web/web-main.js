@@ -83,7 +83,7 @@ function restartGame() {
     startGame();
     createUID();
     setTimeout(() => {
-      responses.append(quixoteChat("Hola?, hay alguien ahí?"));
+      responses.append(quixoteChat("Hola?"));
     }, 2000);
   } else {
     toogleElementOpacity(warningMessage, false);
@@ -134,21 +134,37 @@ function toogleElementOpacity(element, open) {
 }
 
 async function request(input) {
-  const response = await fetch(`api/intent?text=${input}&id=${getUID()}`);
-  let text = await response.text();
-  
-  // set bold
-  text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');
-  currentPlace = ((text.match(/src="([^&]*)"/) || 'none')[1].match(/([^/]+?).$/) || 'none')[0].replace(/.png/,'');
-  if( currentPlace !== "n" ) {
-    storage.setItem("currentPlace", currentPlace);
-    if(audioActive && playList[currentPlace] && currentTrack !== playList[currentPlace]) {
-      currentTrack = playList[currentPlace];
-      playMusic(currentTrack);
+
+  const request = await fetch(`api/intent?text=${input}&id=${getUID()}`);
+
+  const response = await request.text();
+
+  let text = JSON.parse(response).text;
+  const intent = JSON.parse(response).intent;
+
+  console.log('text response: ', text);
+  console.log('intent response: ', intent);
+
+  if (intent === 'negacion') {
+    toogleElementOpacity(splashScreen, false);
+  } else {
+    // convierto los asteriscos en negritas
+    text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');
+
+    currentPlace = ((text.match(/src="([^&]*)"/) || 'none')[1].match(/([^/]+?).$/) || 'none')[0].replace(/.png/,'');
+
+    if( currentPlace !== "n" ) {
+      storage.setItem("currentPlace", currentPlace);
+      if(audioActive && playList[currentPlace] && currentTrack !== playList[currentPlace]) {
+        currentTrack = playList[currentPlace];
+        playMusic(currentTrack);
+      }
     }
+    saveLastResponse(text);
+    return text;
   }
-  saveLastResponse(text);
-  return text;
+
+ 
 }
 
 function playMusic(soundTrack) {

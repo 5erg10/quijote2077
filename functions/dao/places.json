@@ -2,7 +2,7 @@
         "biblioteca": {
           "step": 0, 
           "branch": 0,
-          "description": "Los libros polvorientos destacan en una estantería situada hacia la izquierda. De todos ellos hay un libro que te llama especialmente la atención",
+          "description": "Estas de visita en casa de tu tia Agatha. Mientras los demas toman el tentempie y hablan sobre asuntos que no te interesan, tu aprovechas para ir a explorar la casa. Se han dicho muchas cosas sobre tu tia y esa casa, y te pica la curiosidad. <br><br> Atravesando un pasillo ves una puerta abierta y al pasar por delante puedes comprobar que se trata de la bilbioteca. Por el estado de todo lo que hay alli dentro, cualquiera diria que hace mucho que esa puerta permanecia cerrada. <br><br> Decides entrar a curioserar la estancia pero solo hay libros polvorientos en las estanterias, aunque de todos ellos hay un libro que te esta llamando poderosamente la atención ... <br><br>",
           "media": {
             "images": [
               "images/places/biblioteca.png",
@@ -35,7 +35,7 @@
         "habitación": { 
           "step": 1, 
           "branch": 0,
-          "description": "La habitación es austera como corresponde a la de un hidalgo manchego del siglo XVI. ¡Sí!, ahora eres un hidalgo caballero. El portal se ha cerrado, asi que ya no puedes volver a casa. La unica forma de volver a abrirlo es volver aqui convertido en un autentico caballero. ¿Se me habia olvidado comentate todo esto verdad?. Bueno, no te queda mas remedio que explorar y buscar la forma de convertirte en caballero. Abajo esta el zaguan, quizas podrias empezar por ahi",
+          "description": "Al cruzar, el portal se cierra detras de ti, asi que ya no puedes volver a casa. La unica forma de volver a abrirlo es volver aquì convertido en un autentico caballero. ¿Se me habia olvidado comentate todo esto verdad?. <br><br> Bueno, no te queda mas remedio que explorar y buscar la forma de convertirte en caballero. <br><br> Ahora mismo estas en una habitación austera, como corresponde a la de un hidalgo manchego del siglo XVI. ¡Sí!, ahora eres un hidalgo caballero. <br><br> A traves de la puerta de la habitaciòn se puede ver una escalera que baja al zaguan, diria que no te queda mas remedio que bajar a inspeccionar la casa.",
           "media": {
             "images": [
               "images/places/habitacion.png",
