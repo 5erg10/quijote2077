@@ -37,6 +37,8 @@ async function runIntent(sessionId, text) {
   const responses = await sessionClient.detectIntent(request);
   const result = responses[0].queryResult;
 
+  console.log('result: ', result)
+
   if (result.fulfillmentMessages.length) {
     const lines = result.fulfillmentMessages.map(msg => msg.text && msg.text.text.join('<br>'));
     output = lines.join('<br>');

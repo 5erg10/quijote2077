@@ -72,7 +72,7 @@
         "cocina": { 
           "step": 3, 
           "branch": 0,
-          "description": "La cocina esta estupensamente descuidada, si, pero es acogedora. Una solitaria alacena a un lado, al fondo la despensa y poco más. Yo no esperaria encontrar comida aquí... ¿oyes eso?, oh dios mio, ¿no serán ratas?",
+          "description": "La cocina esta estupendamente descuidada, pero es acogedora. Una solitaria alacena a un lado, al fondo la despensa y poco más. Yo no esperaria encontrar comida aquí... ¿oyes eso?, oh dios mio, ¿no serán ratas?",
           "media": {
             "images": [
               "images/places/cocina.png",
@@ -111,7 +111,7 @@
         "despensa": { 
           "step": 4,
           "branch": 0,
-          "description": "La ténue luz que penetra por la puerta permite vislumbrar un baúl, cuya superficie cubierta por el polvo de los siglos encubre recuerdos de tus antepasados",
+          "description": "La ténue luz que penetra por la puerta permite vislumbrar un baúl cuya superficie esta cubierta por el polvo de los siglos.",
           "media": {
             "images": [
               "images/places/despensa.png",
@@ -122,17 +122,17 @@
             { 
               "action": "abrir",
               "object": { "name":"baúl" },
-              "successResponse": "Entre las muchas antigüallas, destaca una armadura vieja y ajada"
+              "successResponse": "Entre las muchas antigüallas que hay dentro, destaca una armadura vieja y ajada"
             },
             { 
               "action": "examinar",
               "object": { "name":"baúl" },
-              "successResponse": "Entre las muchas antigüallas, destaca una armadura vieja y ajada"
+              "successResponse": "Entre las muchas antigüallas que hay dentro, destaca una armadura vieja y ajada"
             },
             { 
               "action": "revisar",
               "object": { "name":"baúl" },
-              "successResponse": "Entre las muchas antigüallas, destaca una armadura vieja y ajada"
+              "successResponse": "Entre las muchas antigüallas que hay dentro, destaca una armadura vieja y ajada"
             },
             { 
               "action": "poner",
@@ -159,8 +159,23 @@
           "actions": [
             { 
               "action": "examinar",
+              "object": { "name": "escudo" },
+              "successResponse": "Una espada esta colocada detras del escudo. ¿Has oido?, una espada!" 
+            },
+            { 
+              "action": "revisar",
+              "object": { "name": "escudo" },
+              "successResponse": "Una espada esta colocada detras del escudo. ¿Has oido?, una espada!" 
+            },
+            { 
+              "action": "examinar",
               "object": { "name": "pared" },
-              "successResponse": "Una espada y un escudo cuelgan de la pared. ¿Has oido?, una espada!" 
+              "successResponse": "detras del escudo se ve una espada. ¿Has oido?, una espada!" 
+            },
+            { 
+              "action": "revisar",
+              "object": { "name": "pared" },
+              "successResponse": "Detras del escudo de adivina una espada. ¿Has oido?, una espada!" 
             }
           ],
           "connectedRooms": [

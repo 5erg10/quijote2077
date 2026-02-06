@@ -13,8 +13,12 @@ function afirmative(request) {
 
 function negative(request) {
     return agent => {
-        const message = `Pues ya siento que me digas que no`;
-        agent.add(message);
+        const context = agent.context.get('welcome')?.name;
+        if (context == 'welcome') {
+            agent.add("Pues ya lo siento que no quieras jugar.");
+        } else {
+            agent.add("No que?");
+        }
         return Promise.resolve();
     };
 };

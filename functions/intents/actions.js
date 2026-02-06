@@ -42,7 +42,7 @@ function contextActionsTreatment(agent, userAccount, user, place, action, object
   let requirementsOk;
 
   if(allowedAction) {
-    const objects = !user.objects?[]:user.objects;
+    const objects = !user.objects ? [] : user.objects;
     requirementsOk = arrayUtils.isSubset(currentAction.requirementObject, objects.map(item => item.name)) &&
       arrayUtils.isSubset(currentAction.requirementStatus, user.states);
   }

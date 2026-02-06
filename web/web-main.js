@@ -139,6 +139,8 @@ async function request(input) {
 
   const response = await request.text();
 
+  console.log(JSON.parse(response))
+
   let text = JSON.parse(response).text;
   const intent = JSON.parse(response).intent;
 

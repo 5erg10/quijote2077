@@ -1,4 +1,5 @@
 let isSubset = (arr, target) => {
+  console.log('have item: ', arr, target)
   if(arr == undefined)
     return true;
   else if(arr && target == undefined)

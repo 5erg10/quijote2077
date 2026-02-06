@@ -14,7 +14,8 @@ function checkRequirementStatusAllowed(user, objectName) {
           requirementStatusCont += 1;
         };
       });
-      statusOk = requirementStatusCont >= user.objectsList[objectName].requirementStatus.length
+      const statusLength = user.objectsList[objectName].numOfRequirementsNeeded || user.objectsList[objectName].requirementStatus.length;
+      statusOk = requirementStatusCont >= statusLength
     } else {
       statusOk = false;
     }
@@ -28,7 +29,7 @@ function checkRequirementStatusAllowed(user, objectName) {
           requirementObjectsCont += 1;
          };
       });
-      objectNeededOk = requirementObjectsCont >= user.objectsList[objectName].requirementObject;
+      objectNeededOk = requirementObjectsCont >=  user.objectsList[objectName].requirementObject;
     } else {
       objectNeededOk = false;
     }
