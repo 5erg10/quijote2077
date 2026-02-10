@@ -3,8 +3,6 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-// https://quijote2077.up.railway.app/webhook
-
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -37,6 +35,8 @@ app.get('/', (request, response) => {
   response.redirect('/index.html');
 });
 
+app.get('/userstate', require('./api/userState'));
+
 app.get('/api/intent/', require('./api/intent'));
 
 app.post('/webhook', express.json(),(request, response) => {
@@ -44,6 +44,8 @@ app.post('/webhook', express.json(),(request, response) => {
   const agent = new WebhookClient({ request, response });
 
   let intentMap = new Map();
+
+  console.log('texto: ', request.body.queryResult.queryText)
 
   function addIntent(name, fn, needsHelp) {
     intentMap.set(name, agent => {
@@ -67,7 +69,3 @@ app.post('/webhook', express.json(),(request, response) => {
 });
 
 app.listen(port, () => console.log("Server is running at " + port));
-
-// https.createServer(sslOptions, app).listen(port, () => {
-//   console.log(`Servidor HTTPS ejecutándose en https://localhost:${port}`);
-// });

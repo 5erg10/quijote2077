@@ -37,7 +37,7 @@ async function runIntent(sessionId, text) {
   const responses = await sessionClient.detectIntent(request);
   const result = responses[0].queryResult;
 
-  console.log('result: ', result)
+  console.log('result: ', result.queryText)
 
   if (result.fulfillmentMessages.length) {
     const lines = result.fulfillmentMessages.map(msg => msg.text && msg.text.text.join('<br>'));
@@ -47,9 +47,9 @@ async function runIntent(sessionId, text) {
   }
 
   if (result.intent) {
-    console.log(`  Intent: ${result.intent.displayName}`);
+    console.log(`Intent: ${result.intent.displayName}`);
   } else {
-    console.log(`  No intent matched.`);
+    console.log(`No intent matched.`);
   }
   
   console.log('output: ', {text: output, intent: result.intent.displayName});

@@ -1,6 +1,7 @@
 const storage = window.localStorage;
-let textarea, responses, splashScreen, continueButton, warningMessage, currentPlace, currentTrack, outerAudio, audioController;
+let textarea, responses, splashScreen, continueButton, warningMessage, currentPlace, currentTrack, outerAudio, audioController, weightStatBar, energyStatBar, weightInfillText, energyInfillText;
 let audioActive = false;
+let userData;
 
 const playList = {
   biblioteca: 'sounds/interiorCut2.mp3',
@@ -43,9 +44,13 @@ function documentReady() {
   splashScreen = document.querySelector('#splashScreen');
   warningMessage = document.querySelector('#warningMessage');
   continueButton = document.querySelector('#continueButton');
-  audioController = document.querySelector('#audioController');
+  audioController = document.querySelector('#audioControllerButton');
   outerAudio = document.querySelector('#outerAudio');
   currentPlace = storage.getItem("currentPlace");
+  energyStatBar = document.querySelector("#energyStatBar");
+  weightStatBar = document.querySelector("#weightStatBar");
+  energyInfillText = document.querySelector("#energyInfillText");
+  weightInfillText = document.querySelector("#weightInfillText");
   document.addEventListener('click', setFocus);
   if(!getUID()) {
     continueButton.disabled = true;
@@ -63,7 +68,8 @@ async function sendText({keyCode, currentTarget}) {
       responses.append(quixoteChat(text));
       setTimeout(() => {
         responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: "smooth" });
-      }, 500);
+        if(getUID()) getUserData();
+      }, 300);
     }
   }
 }
@@ -90,7 +96,8 @@ function restartGame() {
   }
 }
 
-function continueGame() {
+async function continueGame() {
+  getUserData();
   loadLastResponse();
   startGame();
 }
@@ -113,10 +120,28 @@ function getUID() {
   return storage.getItem('UID');
 }
 
+async function getUserData() {
+  const userRequest = await fetch(`/userstate?uuid=${getUID()}`);
+  userData = JSON.parse(await userRequest.text());
+  console.log('user Data: ', userData);
+  energyInfillText.innerHTML = `Energia ${userData.energy}/100`;
+  weightInfillText.innerHTML = `Peso ${userData.maxWeight}/100`;
+  energyStatBar.style.width = `${userData.energy}%`;
+  weightStatBar.style.width = `${userData.maxWeight}%`;
+}
+
 function createUID() {
   storage.removeItem('UID');
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0];
   storage.setItem('UID', uint32.toString(16));
+}
+
+function selecDificult(level) {
+  sendText({keyCode: 13, currentTarget: {value: level}});
+  setTimeout(() => {
+    document.querySelector('#enterText').classList.remove("displayNONE");
+    document.querySelector('#enterDifficult').classList.add("displayNONE");
+  }, 1000);
 }
 
 function toogleElementOpacity(element, open) {
@@ -163,10 +188,14 @@ async function request(input) {
       }
     }
     saveLastResponse(text);
-    return text;
+    if (intent === 'Guardar mi nombre' && text.includes('dificultad')) {
+      document.querySelector('#enterText').classList.add("displayNONE");
+      document.querySelector('#enterDifficult').classList.remove("displayNONE");
+      return text = 'Selecciona el nivel de dificultad: ';
+    } else {
+      return text;
+    }
   }
-
- 
 }
 
 function playMusic(soundTrack) {

@@ -55,6 +55,7 @@
     "type": "util",
     "jointToSuccess": false,
     "requirementStatus": ["abrir_alacena"],
+    "originDescription": "",
     "ordinaryDescription": "Dejaste la llave de la puerta de tu casa tirada en el suelo.",
     "successResponse": "Guardala bien, nunca se sabe.",
     "unFindResponse": "Que llave?, donde?",

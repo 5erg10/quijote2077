@@ -8,13 +8,41 @@
   </head>
 
   <body onload="documentReady()">
-    <div id="chatbox">
+    <div class="chatbox">
+      <div class="headerContainer">
+        <div id="characterMenuIcon" class="characterMenuIcon">
+          <img alt="character icon" src="images/don-quixote.png"/>
+        </div>
+        <div class="audioControllerButton" id="audioControllerButton">
+          <img src="images/mute-icon.png" alt="sound mute icon"/>
+          <p>MUSIC OFF</p>
+        </div>
+      </div>
       <div id="chatContainer">
       </div>
-      <div id="enterText" click="setFocus()">
-        <div>
-          <span class="prompt">></span><input type="text" value="" onkeyup="setInputWidth()"
-            onkeypress="setFakeInputWidth()" label=" " placeholder="..."/><span id="animateCursor">_</span>
+      <div id="inputsBox" class="inputsBox">
+        <div id="inputs" class="inputs">
+          <div class="mainDifficultSelector displayNONE" id="enterDifficult">
+            <div onclick="selecDificult('facil')">Facil</div>
+            <div onclick="selecDificult('medio')">Medio</div>
+            <div onclick="selecDificult('dificil')">Dificil</div>
+          </div>
+          <div class="inputBox" id="enterText" click="setFocus()">
+            <div>
+              <span class="prompt">></span><input type="text" value="" onkeyup="setInputWidth()"
+                onkeypress="setFakeInputWidth()" label=" " placeholder="..."/><span id="animateCursor">_</span>
+            </div>
+          </div>
+        </div>
+        <div class="statsBox" id="statsBox">
+          <div class="statBar">
+            <div id="weightStatBar" class="barInfill"></div>
+            <div class="infillText" id="weightInfillText">Peso</div>
+          </div>
+          <div class="statBar">
+            <div id="energyStatBar" class="barInfill"></div>
+            <div class="infillText" id="energyInfillText">Energia</div>
+          </div>
         </div>
       </div>
     </div>
@@ -31,10 +59,6 @@
           <button id="warningCancel" onclick="cancelContinue()" class="insideButton">No</button>
         </div>
       </div>
-    </div>
-    <div id="audioController">
-      <img src="images/mute-icon.png" alt="sound mute icon"/>
-      <p>MUSIC OFF</p>
     </div>
     <audio id="outerAudio" loop src="/sounds/nightShadecut.mp3"></audio>
   </body>
