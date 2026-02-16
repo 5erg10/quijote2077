@@ -72,7 +72,7 @@
         "cocina": { 
           "step": 3, 
           "branch": 0,
-          "description": "La cocina esta estupendamente descuidada, pero es acogedora. Una solitaria alacena a un lado, al fondo la despensa y poco más. Yo no esperaria encontrar comida aquí... ¿oyes eso?, oh dios mio, ¿no serán ratas?",
+          "description": "La cocina esta estupendamente descuidada, pero es acogedora. A un lado puedes ver una alacena, quizas dentro podamos encontrar algo de comida, al fondo la despensa y poco más. ¿oyes eso?, oh dios mio, ¿no serán ratas?",
           "media": {
             "images": [
               "images/places/cocina.png",
@@ -84,7 +84,7 @@
               "action": "abrir",
               "object": { "name": "alacena" },
               "requirementStatus": ["poner_armadura"],
-              "successResponse": "Una rata salta, te intenta morder, pero gracias a la armadura lo único que consigue es romperse los dientes",
+              "successResponse": "Una rata salta, te intenta morder, pero gracias a la armadura lo único que consigue es romperse los dientes. Ahora que ya no hay ratas que quieran acabar con tu vida podriamos revisar con calma la alacena por si hubiese algo interesante, en las alacenas suela haber comida.",
               "failResponse": "La rata salta sobre tu hidalgo rostro perjudicando tus globos oculares, ya no estás en condiciones de continuar con tu hidalga azaña",
               "endReason":"death"
             },
@@ -92,7 +92,7 @@
               "action": "examinar",
               "object": { "name": "alacena" },
               "requirementStatus": ["abrir_alacena"],
-              "successResponse": "Sobre una de las repisas encuentras una llave que parece ser de utilidad",
+              "successResponse": "Pues no hay comida, si que eres pobre!!, pero sobre una de las repisas hay una llave, yo la cogeria, las llaves siempre sirven para algo.",
               "failResponse": "Convendría abrirla para poder examinarla mejor"
             },
             {   
@@ -149,7 +149,7 @@
         "comedor": { 
           "step": 3, 
           "branch": 0,
-          "description": "El comedor de tu casa. Rústico, sencillo... esta claro que tu familia pasó por mejores momentos. En la pared esta colgado el escudo de armas",
+          "description": "El comedor de tu casa. Rústico, sencillo... esta claro que tu familia pasó por mejores momentos. En la pared esta colgado el escudo de armas y una espada bien grande y medio oxidada.",
           "media": {
             "images": [
               "images/places/comedor.png",
@@ -660,7 +660,7 @@
           "step": 11, 
           "branch": 1,
           "requirementStatus": ["arreglar_cerradura"],
-          "description": "Al traspasar la puerta del distribuidor, accedes a un sorprendentemente acogedor patio, de no ser por que está lleno de gallinas que alborotan a tu alrededor. En una esquina disponen de un indispensable pozo decorado con una estatuilla de San jorge. Ya sabes, el santo de los caballeros, ¿que casualidad eh?",
+          "description": "Al traspasar la puerta del distribuidor, accedes a un sorprendentemente acogedor patio. En en centro del patio hay pozo decorado con una estatuilla de San jorge. Ya sabes, el santo de los caballeros, ¿que casualidad eh?",
           "failResponse": "Estaría bien poder visitar el patio, pero una puerta rota te lo impide",
           "media": {
             "images": [

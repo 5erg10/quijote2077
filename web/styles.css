@@ -249,6 +249,14 @@ input:focus {
   outline: 0;
 }
 
+.statsBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
 .statBar {
   width: 250px;
   height: 30px;

@@ -117,7 +117,7 @@
     "jointToSuccess": false,
     "originDescription": "",
     "ordinaryDescription": "",
-    "requirementStatus": ["examinar_suelo"],
+    "requirementStatus": ["examinar_suelo", "revisar_suelo"],
     "successResponse": "Perfecto, tener comida siempre te salva de algún que otro apuro",
     "failResponse": "¿Un níscalo?,¿donde lo has visto?",
     "unFindResponse": "yo no veo ningún níscalo por aqui, tu si??",

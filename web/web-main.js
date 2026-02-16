@@ -1,5 +1,5 @@
 const storage = window.localStorage;
-let textarea, responses, splashScreen, continueButton, warningMessage, currentPlace, currentTrack, outerAudio, audioController, weightStatBar, energyStatBar, weightInfillText, energyInfillText;
+let textarea, responses, splashScreen, continueButton, warningMessage, currentPlace, currentTrack, outerAudio, audioController, weightStatBar, energyStatBar, weightInfillText, energyInfillText, statsBox;
 let audioActive = false;
 let userData;
 
@@ -51,6 +51,8 @@ function documentReady() {
   weightStatBar = document.querySelector("#weightStatBar");
   energyInfillText = document.querySelector("#energyInfillText");
   weightInfillText = document.querySelector("#weightInfillText");
+  statsBox = document.querySelector("#statsBox");
+  statsBox.style.display = `none`;
   document.addEventListener('click', setFocus);
   if(!getUID()) {
     continueButton.disabled = true;
@@ -124,10 +126,13 @@ async function getUserData() {
   const userRequest = await fetch(`/userstate?uuid=${getUID()}`);
   userData = JSON.parse(await userRequest.text());
   console.log('user Data: ', userData);
-  energyInfillText.innerHTML = `Energia ${userData.energy}/100`;
-  weightInfillText.innerHTML = `Peso ${userData.maxWeight}/100`;
-  energyStatBar.style.width = `${userData.energy}%`;
-  weightStatBar.style.width = `${userData.maxWeight}%`;
+  if (!!userData) {
+    energyInfillText.innerHTML = `Energia ${userData.energy}/100`;
+    weightInfillText.innerHTML = `Peso ${100 - userData.maxWeight}/100`;
+    energyStatBar.style.width = `${userData.energy}%`;
+    weightStatBar.style.width = `${100 - userData.maxWeight}%`;
+    statsBox.style.display = `flex`;
+  }
 }
 
 function createUID() {
