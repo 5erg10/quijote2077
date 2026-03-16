@@ -1,7 +1,10 @@
 const storage = window.localStorage;
-let textarea, responses, splashScreen, continueButton, warningMessage, currentPlace, currentTrack, outerAudio, audioController, weightStatBar, energyStatBar, weightInfillText, energyInfillText, statsBox;
+
+let textarea, responses, splashScreen, continueButton, warningMessage, currentPlace,
+currentTrack, outerAudio, audioController, weightStatBar, energyStatBar, weightInfillText,
+energyInfillText, statsBox, userData;
+
 let audioActive = false;
-let userData;
 
 const playList = {
   biblioteca: 'sounds/interiorCut2.mp3',

@@ -5,7 +5,7 @@ const projectId = 'primerproyecto-lkbltx'
 async function runIntent(sessionId, text) {
   // Create a new session
   const sessionClient = new dialogflow.SessionsClient({
-    keyFilename: './credentials/quijote2077cred.json'
+    keyFilename: './credentials/quijote2077-dialog_flow.json'
   });
 
   const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
