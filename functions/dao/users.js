@@ -1,5 +1,5 @@
 var admin = require("firebase-admin");
-var serviceAccount = require("../../credentials/quijote-2077-firebase.json");
+var serviceAccount = require("../../credentials/quijote2077-firebase.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
