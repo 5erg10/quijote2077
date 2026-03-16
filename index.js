@@ -1,15 +1,7 @@
 const express = require('express');
-const https = require('https');
-const fs = require('fs');
-const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 4500;
-
-const sslOptions = {
-  key: fs.readFileSync(path.join(__dirname, 'credentials/key.pem')),
-  cert: fs.readFileSync(path.join(__dirname, 'credentials/cert.pem')),
-};
 
 const {WebhookClient} = require('dialogflow-fulfillment');
 
