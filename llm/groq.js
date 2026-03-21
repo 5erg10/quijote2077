@@ -28,7 +28,6 @@ async function processMessage({ userText, user, engineResult = null, helpHint = 
     .map(o => o.name)
     .join(', ') || 'ninguno';
 
-  // --- MODO UNIFICADO: una sola llamada devuelve intents + narrativa ---
   const systemPrompt = `Eres el cerebro de "Quijote 2077", una aventura conversacional ambientada en la época de El Quijote con toques retrofuturistas.
 Tienes DOS responsabilidades en cada turno:
 
@@ -47,23 +46,47 @@ Estado actual del juego:
 - Lugares conocidos: ${placeNames.join(', ')}
 - Objetos del mundo: ${objectNames.join(', ')}
 
-Acciones válidas para el JSON:
-- viajar -> {"action":"viajar","place":"nombre"}
-- coger -> {"action":"coger","object":"nombre"}
-- tirar -> {"action":"tirar","object":"nombre"}
-- comer -> {"action":"comer","object":"nombre"}
-- examinar -> {"action":"examinar","object":"nombre"}
-- usar -> {"action":"usar","action_verb":"verbo","object":"nombre"}
-- inventario -> {"action":"inventario"}
-- ayuda -> {"action":"ayuda"}
-- afirmar -> {"action":"afirmar"}
-- negar -> {"action":"negar"}
-- fallback -> {"action":"fallback"}
+ACCIONES VÁLIDAS y sus SINÓNIMOS (mapea siempre al action indicado):
+
+- viajar → ir a, caminar a, dirigirse a, moverse a, desplazarse a, marchar a, ir hacia
+  JSON: {"action":"viajar","place":"nombre del lugar"}
+
+- coger → agarrar, tomar, recoger, coger, llevarse, hacerse con, alzar, levantar
+  JSON: {"action":"coger","object":"nombre del objeto"}
+
+- tirar → soltar, dejar, abandonar, deshacerse de, arrojar, desechar, poner en el suelo
+  JSON: {"action":"tirar","object":"nombre del objeto"}
+
+- comer → ingerir, zampar, devorar, probar, saborear, beber (si es comida), tomar (si es comida)
+  JSON: {"action":"comer","object":"nombre del objeto"}
+
+- examinar → mirar, observar, inspeccionar, estudiar, revisar, leer, ojear, ver, contemplar, fijarse en, echar un vistazo, escuchar (si aplica al objeto), tocar, palpar, oler
+  JSON: {"action":"examinar","object":"nombre del objeto"}
+
+- usar → utilizar, emplear, golpear, abrir, cerrar, activar, accionar, mover, empujar, tirar de, encender, apagar, atacar con, clavar, insertar, aplicar
+  JSON: {"action":"usar","action_verb":"verbo exacto usado","object":"nombre del objeto"}
+
+- inventario → ver mi inventario, qué llevo, qué tengo, mis objetos, mi mochila, mis cosas
+  JSON: {"action":"inventario"}
+
+- ayuda → ayuda, socorro, no sé qué hacer, estoy perdido, pista, hint, qué hago
+  JSON: {"action":"ayuda"}
+
+- afirmar → sí, claro, por supuesto, desde luego, afirmativo, de acuerdo, ok, vale, quiero
+  JSON: {"action":"afirmar"}
+
+- negar → no, nunca, para nada, negativo, ni hablar, no quiero
+  JSON: {"action":"negar"}
+
+REGLA CRÍTICA DE MAPEO:
+Si el jugador usa un verbo que es sinónimo de una acción válida, SIEMPRE mapéalo a esa acción.
+Usa "fallback" SOLO cuando sea imposible determinar ninguna intención reconocible.
+Ejemplo: "leo el libro" → examinar libro. "ojeo el libro" → examinar libro. "abro la puerta" → usar puerta.
 
 RESPONDE SIEMPRE con este JSON exacto, sin texto extra, sin markdown:
 {
-  "intents": [/* array de intents extraídos del texto del jugador */],
-  "narrative": "/* respuesta narrativa para el jugador, máximo 3 párrafos */"
+  "intents": [/* array de intents extraídos */],
+  "narrative": "/* respuesta narrativa, máximo 3 párrafos */"
 }
 
 REGLAS NARRATIVA:
