@@ -1,11 +1,11 @@
 {
   "name": "quijote-web",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "Aventura conversacional Quijote 2077 - powered by OpenAI",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "engines": {
     "node": "20"
@@ -13,14 +13,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/dialogflow": "^6.13.0",
     "@google-cloud/storage": "^7.14.0",
-    "actions-on-google": "2.14.0",
-    "dialogflow-fulfillment": "^0.6.1",
+    "dotenv": "^16.4.5",
     "express": "^4.21.2",
-    "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
     "moment": "^2.30.1",
+    "openai": "^4.77.0",
     "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
