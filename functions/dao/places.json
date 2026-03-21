@@ -14,6 +14,12 @@
               "action": "leer",
               "object": { "name": "libro" },
               "successResponse": "Lees en voz alta y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres..."
+            },
+            {   
+              "action": "cruzar",
+              "object": { "name": "portal" },
+              "requirementStatus": ["leer_libro"],
+              "successResponse": ""
             }
           ],
           "connectedRooms": [
