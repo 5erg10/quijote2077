@@ -14,18 +14,6 @@
               "action": "leer",
               "object": { "name": "libro" },
               "successResponse": "Lees en voz alta y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres..."
-            },{   
-              "action": "coger",
-              "object": { "name": "libro" },
-              "successResponse": "Lees en voz alta y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres..."
-            },{   
-              "action": "examinar",
-              "object": { "name": "libro" },
-              "successResponse": "Lees en voz alta y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres..."
-            },{   
-              "action": "revisar",
-              "object": { "name": "libro" },
-              "successResponse": "Lees en voz alta y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres..."
             }
           ],
           "connectedRooms": [
@@ -94,13 +82,6 @@
               "requirementStatus": ["abrir_alacena"],
               "successResponse": "Pues no hay comida, si que eres pobre!!, pero sobre una de las repisas hay una llave, yo la cogeria, las llaves siempre sirven para algo.",
               "failResponse": "Convendría abrirla para poder examinarla mejor"
-            },
-            {   
-              "action": "revisar",
-              "object": { "name": "alacena" },
-              "requirementStatus": ["abrir_alacena"],
-              "successResponse": "Sobre una de las repisas encuentras una llave que parece ser de utilidad",
-              "failResponse": "Convendría abrirla para poder examinarla mejor"
             }
           ],
           "connectedRooms": [
@@ -121,16 +102,6 @@
           "actions": [
             { 
               "action": "abrir",
-              "object": { "name":"baúl" },
-              "successResponse": "Entre las muchas antigüallas que hay dentro, destaca una armadura vieja y ajada"
-            },
-            { 
-              "action": "examinar",
-              "object": { "name":"baúl" },
-              "successResponse": "Entre las muchas antigüallas que hay dentro, destaca una armadura vieja y ajada"
-            },
-            { 
-              "action": "revisar",
               "object": { "name":"baúl" },
               "successResponse": "Entre las muchas antigüallas que hay dentro, destaca una armadura vieja y ajada"
             },
@@ -163,19 +134,9 @@
               "successResponse": "Una espada esta colocada detras del escudo. ¿Has oido?, una espada!" 
             },
             { 
-              "action": "revisar",
-              "object": { "name": "escudo" },
-              "successResponse": "Una espada esta colocada detras del escudo. ¿Has oido?, una espada!" 
-            },
-            { 
               "action": "examinar",
               "object": { "name": "pared" },
               "successResponse": "detras del escudo se ve una espada. ¿Has oido?, una espada!" 
-            },
-            { 
-              "action": "revisar",
-              "object": { "name": "pared" },
-              "successResponse": "Detras del escudo de adivina una espada. ¿Has oido?, una espada!" 
             }
           ],
           "connectedRooms": [
@@ -254,10 +215,6 @@
           "actions": [
             {   
               "action": "examinar",
-              "object": { "name": "suelo"},
-              "successResponse": "El suelo es fértil y plagado de níscalos con un aspecto suculento" 
-            },{   
-              "action": "revisar",
               "object": { "name": "suelo"},
               "successResponse": "El suelo es fértil y plagado de níscalos con un aspecto suculento" 
             }
