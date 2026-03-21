@@ -14,7 +14,7 @@ async function execute(intent, userId, user) {
     return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
   }
 
-  if (placeName === selectedPlace) {
+  if (arrayUtils.normalize(placeName) === arrayUtils.normalize(selectedPlace)) {
     await countIntents.count(userId);
     return { action: 'viajar', success: false, message: '¡Ya estás en este lugar!' };
   }
@@ -32,22 +32,21 @@ async function execute(intent, userId, user) {
     return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
   }
 
-  // --- COMPROBAR ACCESIBILIDAD ---
-  // Usamos getConnectedRooms() que es síncrona y lee directamente
-  // de places.json sin ninguna lógica de resolución que pueda fallar.
-  // getPlaceById() puede rechazar la Promise con lugares de nombre especial
-  // (tildes, espacios...) cuando se llama sin el parámetro room.
+  // Obtener connectedRooms del lugar actual con tolerancia a tildes
   let connectedRooms;
   try {
     connectedRooms = placesDao.getConnectedRooms(placeName);
   } catch (e) {
-    // Si el lugar actual no existe en el JSON (caso extraño), permitir viaje
     connectedRooms = [];
   }
 
   const placesKnown = user.placesKnown || [];
 
-  if (!connectedRooms.includes(selectedPlace) && !placesKnown.includes(selectedPlace)) {
+  // Comparar normalizando tildes en ambos sentidos
+  const isConnected = arrayUtils.includesNormalized(connectedRooms, selectedPlace);
+  const isKnown = arrayUtils.includesNormalized(placesKnown, selectedPlace);
+
+  if (!isConnected && !isKnown) {
     await countIntents.count(userId);
     return {
       action: 'viajar',
@@ -56,13 +55,13 @@ async function execute(intent, userId, user) {
     };
   }
 
-  // --- COMPROBAR REQUISITOS DE ACCESO ---
+  // Comprobar requisitos de acceso
   if (!arrayUtils.isSubset(place.requirementStatus || [], user.states || [])) {
     await countIntents.count(userId);
     return { action: 'viajar', success: false, message: place.failResponse || 'No puedes ir allí ahora mismo.' };
   }
 
-  // --- COMPROBAR ENERGÍA ---
+  // Comprobar energía
   const distance = calculateDistance(user.room[placeName], place);
   const newHungry = user.hungry - distance;
 
@@ -75,16 +74,18 @@ async function execute(intent, userId, user) {
     return resetResult;
   }
 
-  // --- ACTUALIZAR ESTADO ---
+  // Actualizar estado
   const newRoom = { [selectedPlace]: place };
   let updatedPlaces = [...placesKnown];
-  if (!updatedPlaces.includes(selectedPlace)) updatedPlaces.push(selectedPlace);
+  if (!arrayUtils.includesNormalized(updatedPlaces, selectedPlace)) {
+    updatedPlaces.push(selectedPlace);
+  }
 
   Object.assign(user, { room: newRoom, hungry: newHungry, placesKnown: updatedPlaces });
   await usersDao.updateUser(userId, user);
 
   const objectsInPlace = Object.values(user.objectsList || {})
-    .filter(o => o.currentPlace === selectedPlace)
+    .filter(o => arrayUtils.normalize(o.currentPlace) === arrayUtils.normalize(selectedPlace))
     .map(o => (o.jointToSuccess ? o.ordinaryDescription : o.originDescription))
     .filter(Boolean)
     .join(' ');
