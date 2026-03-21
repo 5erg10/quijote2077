@@ -6,7 +6,7 @@ let textarea, responses, splashScreen, continueButton, warningMessage, currentPl
 
 let audioActive = false;
 let inputContent = '';
-let gamePhase = 'welcome'; // 'welcome' | 'naming' | 'difficulty' | 'playing'
+let isGameOver = false;
 
 const playList = {
   biblioteca: 'sounds/interiorCut2.mp3',
@@ -67,21 +67,54 @@ async function sendText({ keyCode, currentTarget }) {
   if (keyCode === 13) {
     const input = currentTarget.value.trim();
     if (!input) return;
+
+    // Si es game over, solo aceptar "reiniciar"
+    if (isGameOver) {
+      if (input.toLowerCase().includes('reiniciar')) {
+        handleRestart();
+      }
+      currentTarget.value = '';
+      return;
+    }
+
     showLoading(currentTarget);
     setInputWidth();
     const result = await request(input);
     if (result) {
       responses.append(quixoteChat(result.text));
-      // Mostrar selector de dificultad si el servidor lo pide
       if (result.showDifficulty) {
         showDifficultySelector();
       }
+      // Si es game over, ocultar stats y bloquear parcialmente el input
+      if (result.gameOver) {
+        handleGameOver();
+      }
       setTimeout(() => {
         responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: 'smooth' });
-        if (getUID()) getUserData();
+        if (getUID() && !result.gameOver) getUserData();
       }, 300);
     }
   }
+}
+
+function handleGameOver() {
+  isGameOver = true;
+  statsBox.style.display = 'none';
+  pauseMusic();
+  // Borrar el UID del localStorage: el usuario ya no existe en Firebase
+  storage.removeItem('UID');
+  storage.removeItem('currentPlace');
+  storage.removeItem('last');
+}
+
+function handleRestart() {
+  isGameOver = false;
+  createUID();
+  // Disparar el saludo inicial
+  setTimeout(async () => {
+    const result = await request('');
+    if (result) responses.append(quixoteChat(result.text));
+  }, 300);
 }
 
 function showDifficultySelector() {
@@ -103,7 +136,6 @@ function restartGame() {
   if (!getUID()) {
     createUID();
     startGame();
-    // Enviamos un primer mensaje vacío para disparar el saludo del servidor
     setTimeout(async () => {
       const result = await request('');
       if (result) responses.append(quixoteChat(result.text));
@@ -140,6 +172,8 @@ function getUID() {
 async function getUserData() {
   try {
     const userRequest = await fetch(`/userstate?uuid=${getUID()}`);
+    // 204 significa que el usuario no existe (game over), no hacer nada
+    if (userRequest.status === 204) return;
     userData = await userRequest.json();
     if (userData && userData.energy !== undefined) {
       energyInfillText.innerHTML = `Energia ${userData.energy}/100`;
@@ -192,7 +226,7 @@ async function request(input) {
     // Convertir *texto* en negritas
     text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');
 
-    // Extraer lugar de imagen para la música
+    // Extraer lugar de imagen para la música (ignorar blackDeath)
     const imgMatch = text.match(/src="([^&"]*)"/);
     if (imgMatch) {
       const imgPath = imgMatch[1];
@@ -208,7 +242,7 @@ async function request(input) {
     }
 
     saveLastResponse(text);
-    return { text, intent, showDifficulty: data.showDifficulty || false };
+    return { text, intent, showDifficulty: data.showDifficulty || false, gameOver: data.gameOver || false };
 
   } catch (e) {
     console.error('request error:', e);
