@@ -11,12 +11,12 @@ async function execute(intent, userId, user) {
 
   if (!selectedPlace) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
+    return { action: 'viajar', success: false, message: 'Nadie ha o\u00eddo hablar de ese lugar nunca!' };
   }
 
   if (placeName === selectedPlace) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: '¡Ya estás en este lugar!' };
+    return { action: 'viajar', success: false, message: '\u00a1Ya est\u00e1s en este lugar!' };
   }
 
   let place;
@@ -24,26 +24,20 @@ async function execute(intent, userId, user) {
     place = await placesDao.getPlaceById(selectedPlace, user.room);
   } catch (e) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
+    return { action: 'viajar', success: false, message: 'Nadie ha o\u00eddo hablar de ese lugar nunca!' };
   }
 
   if (!place) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
+    return { action: 'viajar', success: false, message: 'Nadie ha o\u00eddo hablar de ese lugar nunca!' };
   }
 
-  // --- COMPROBAR ACCESIBILIDAD ---
-  // El jugador solo puede viajar a un lugar si:
-  //   1. Está en connectedRooms del lugar actual (adyacente), O
-  //   2. Ya ha visitado ese lugar antes (placesKnown)
+  // Comprobar accesibilidad: adyacente o ya visitado
   const currentPlaceData = await placesDao.getPlaceById(placeName).catch(() => null);
   const connectedRooms = (currentPlaceData && currentPlaceData.connectedRooms) || [];
   const placesKnown = user.placesKnown || [];
 
-  const isConnected = connectedRooms.includes(selectedPlace);
-  const isKnown = placesKnown.includes(selectedPlace);
-
-  if (!isConnected && !isKnown) {
+  if (!connectedRooms.includes(selectedPlace) && !placesKnown.includes(selectedPlace)) {
     await countIntents.count(userId);
     return {
       action: 'viajar',
@@ -52,24 +46,26 @@ async function execute(intent, userId, user) {
     };
   }
 
-  // --- COMPROBAR REQUISITOS DE ACCESO (estados necesarios) ---
+  // Comprobar requisitos de acceso (estados necesarios)
   if (!arrayUtils.isSubset(place.requirementStatus || [], user.states || [])) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: place.failResponse || 'No puedes ir allí ahora mismo.' };
+    return { action: 'viajar', success: false, message: place.failResponse || 'No puedes ir all\u00ed ahora mismo.' };
   }
 
-  // --- COMPROBAR ENERGÍA ---
+  // Comprobar energ\u00eda
   const distance = calculateDistance(user.room[placeName], place);
   const newHungry = user.hungry - distance;
 
   if (newHungry <= 0) {
-    return gameOperations.buildResetResult(
-      'Te encuentras muy débil para seguir caminando. Tu vista se nubla y caes desmayado en el suelo.',
+    const resetResult = gameOperations.buildResetResult(
+      'Te encuentras muy d\u00e9bil para seguir caminando. Tu vista se nubla y caes desmayado en el suelo.',
       'hungry'
     );
+    await gameOperations.applyReset(userId, user.userName, 'hungry');
+    return resetResult;
   }
 
-  // --- ACTUALIZAR ESTADO DEL USUARIO ---
+  // Actualizar estado del usuario
   const newRoom = { [selectedPlace]: place };
   let updatedPlaces = [...placesKnown];
   if (!updatedPlaces.includes(selectedPlace)) updatedPlaces.push(selectedPlace);
@@ -77,14 +73,12 @@ async function execute(intent, userId, user) {
   Object.assign(user, { room: newRoom, hungry: newHungry, placesKnown: updatedPlaces });
   await usersDao.updateUser(userId, user);
 
-  // Objetos presentes en el nuevo lugar
   const objectsInPlace = Object.values(user.objectsList || {})
     .filter(o => o.currentPlace === selectedPlace)
     .map(o => (o.jointToSuccess ? o.ordinaryDescription : o.originDescription))
     .filter(Boolean)
     .join(' ');
 
-  // Imagen del lugar (día/noche)
   const images = (place.media && place.media.images) || [];
   const imageUrl = images.length > 1 && isNight(user) ? images[1] : images[0];
 
