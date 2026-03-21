@@ -1,7 +1,6 @@
 const usersDao = require('../functions/dao/users');
 const gameEngine = require('../engine/gameEngine');
-const { parseIntent } = require('../llm/intentParser');
-const { callLLM } = require('../llm/gemini');  // <- cambiado de openai a gemini
+const { processMessage } = require('../llm/groq');
 
 module.exports = async (req, res) => {
   const { text, id } = req.body;
@@ -16,38 +15,40 @@ module.exports = async (req, res) => {
     const hasName = userExists && user.userName;
     const hasDifficulty = hasName && user.difficulty;
 
-    // --- FASE 1: Usuario nuevo, sin datos en Firebase ---
+    // --- FASE 1: Usuario nuevo ---
     if (!userExists || !hasName) {
       return res.json(await handleWelcome(id, text, userExists ? user : null));
     }
 
-    // --- FASE 2: Tiene nombre pero no ha elegido dificultad ---
+    // --- FASE 2: Nombre guardado, falta dificultad ---
     if (!hasDifficulty) {
       return res.json(await handleDifficulty(id, text, user));
     }
 
-    // --- FASE 3: FLUJO NORMAL ---
+    // --- FASE 3: Juego normal ---
     if (!text || !text.trim()) {
       return res.json({ text: '¿Qué quieres hacer, hidalgo?', intent: 'idle' });
     }
 
-    const intents = await parseIntent(text, user);
-    console.log('Intents parsed:', JSON.stringify(intents));
+    // Llamada 1 a Groq: extraer intents
+    const { intents } = await processMessage({ userText: text, user });
+    console.log('Intents:', JSON.stringify(intents));
 
+    // Motor del juego (sin LLM, lógica pura)
     const engineResult = await gameEngine.execute(intents, id, user);
-    console.log('Engine result:', JSON.stringify(engineResult));
+    console.log('Engine:', JSON.stringify(engineResult));
 
     // Ayuda adaptativa
     const countIntents = require('../functions/utils/countIntents');
     const freshUser = await usersDao.getUserById(id);
-    const helpText = await countIntents.checkIfNeedHelp(id, freshUser, intents[0] && intents[0].action);
+    const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, intents[0] && intents[0].action);
 
-    const narrative = await callLLM({
+    // Llamada 2 a Groq: generar narrativa con resultado del motor
+    const { narrative } = await processMessage({
       userText: text,
-      intents,
-      engineResult,
       user: freshUser,
-      helpHint: helpText
+      engineResult,
+      helpHint
     });
 
     return res.json({ text: narrative, intent: intents[0] && intents[0].action });
@@ -60,14 +61,12 @@ module.exports = async (req, res) => {
 
 async function handleWelcome(id, text, user) {
   const name = text && text.trim();
-
   if (!name) {
     return {
       text: 'Hola aventurero! No sé si eres un valiente o un inconsciente al saludarme, pero en fin... ¿Quieres embarcarte en esta aventura? Si es así, dime tu nombre.',
       intent: 'welcome'
     };
   }
-
   await usersDao.addUser(id, name, { lat: 39.5137458, lng: -3.0046506 });
   return {
     text: `¡${name}! Buen nombre para un hidalgo. Ahora elige tu nivel de dificultad: *facil*, *medio* o *dificil*.`,
@@ -79,24 +78,16 @@ async function handleWelcome(id, text, user) {
 async function handleDifficulty(id, text, user) {
   const level = text && text.toLowerCase().trim();
   const validLevels = ['facil', 'medio', 'dificil'];
-
   if (!level || !validLevels.includes(level)) {
-    return {
-      text: 'Por favor elige entre *facil*, *medio* o *dificil*.',
-      intent: 'difficulty',
-      showDifficulty: true
-    };
+    return { text: 'Por favor elige entre *facil*, *medio* o *dificil*.', intent: 'difficulty', showDifficulty: true };
   }
-
   const capacityMap = { facil: 9999999, medio: 100, dificil: 50 };
   const difficulty = { level, maxCapacity: capacityMap[level] };
   await usersDao.updateUser(id, { ...user, difficulty });
-
   const placesDao = require('../functions/dao/places');
   const { textByDifficulty } = require('../functions/utils/difficultyUtils');
   const place = await placesDao.getPlaceById('biblioteca');
   const userWithDifficulty = { ...user, difficulty };
-
   return {
     text: `Excelente, comenzarás con dificultad *${level}*.\n<img src="${place.media.images[0]}">\n${textByDifficulty(place.description, userWithDifficulty)}`,
     intent: 'difficulty'
