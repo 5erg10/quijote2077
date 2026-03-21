@@ -1,10 +1,12 @@
 var admin = require("firebase-admin");
 var serviceAccount = require("../../credentials/quijote2077-firebase.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://quijote-2077-firebase-default-rtdb.europe-west1.firebasedatabase.app/"
-});
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://quijote-2077-firebase-default-rtdb.europe-west1.firebasedatabase.app/"
+  });
+}
 
 const objectOriginLocation = require('../dao/objectByPlacesOrigin.json');
 
