@@ -1,7 +1,7 @@
 {
   "name": "quijote-web",
   "version": "2.0.0",
-  "description": "Aventura conversacional Quijote 2077 - powered by OpenAI",
+  "description": "Aventura conversacional Quijote 2077 - powered by Gemini",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -14,11 +14,11 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/storage": "^7.14.0",
+    "@google/generative-ai": "^0.21.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
     "firebase-admin": "^13.0.2",
     "moment": "^2.30.1",
-    "openai": "^4.77.0",
     "uuid": "^11.0.3"
   },
   "devDependencies": {

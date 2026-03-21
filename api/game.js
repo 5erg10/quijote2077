@@ -1,7 +1,7 @@
 const usersDao = require('../functions/dao/users');
 const gameEngine = require('../engine/gameEngine');
 const { parseIntent } = require('../llm/intentParser');
-const { callLLM } = require('../llm/openai');
+const { callLLM } = require('../llm/gemini');  // <- cambiado de openai a gemini
 
 module.exports = async (req, res) => {
   const { text, id } = req.body;
@@ -17,7 +17,6 @@ module.exports = async (req, res) => {
     const hasDifficulty = hasName && user.difficulty;
 
     // --- FASE 1: Usuario nuevo, sin datos en Firebase ---
-    // texto vacío o primer mensaje → pedir nombre
     if (!userExists || !hasName) {
       return res.json(await handleWelcome(id, text, userExists ? user : null));
     }
@@ -27,7 +26,7 @@ module.exports = async (req, res) => {
       return res.json(await handleDifficulty(id, text, user));
     }
 
-    // --- FASE 3: FLUJO NORMAL - LLM interpreta y genera respuesta ---
+    // --- FASE 3: FLUJO NORMAL ---
     if (!text || !text.trim()) {
       return res.json({ text: '¿Qué quieres hacer, hidalgo?', intent: 'idle' });
     }
@@ -38,7 +37,7 @@ module.exports = async (req, res) => {
     const engineResult = await gameEngine.execute(intents, id, user);
     console.log('Engine result:', JSON.stringify(engineResult));
 
-    // Comprobar si hay ayuda adaptativa pendiente
+    // Ayuda adaptativa
     const countIntents = require('../functions/utils/countIntents');
     const freshUser = await usersDao.getUserById(id);
     const helpText = await countIntents.checkIfNeedHelp(id, freshUser, intents[0] && intents[0].action);
@@ -62,7 +61,6 @@ module.exports = async (req, res) => {
 async function handleWelcome(id, text, user) {
   const name = text && text.trim();
 
-  // Sin nombre todavía: mostrar bienvenida
   if (!name) {
     return {
       text: 'Hola aventurero! No sé si eres un valiente o un inconsciente al saludarme, pero en fin... ¿Quieres embarcarte en esta aventura? Si es así, dime tu nombre.',
@@ -70,9 +68,7 @@ async function handleWelcome(id, text, user) {
     };
   }
 
-  // Tiene nombre: crear usuario en Firebase y pedir dificultad
   await usersDao.addUser(id, name, { lat: 39.5137458, lng: -3.0046506 });
-
   return {
     text: `¡${name}! Buen nombre para un hidalgo. Ahora elige tu nivel de dificultad: *facil*, *medio* o *dificil*.`,
     intent: 'setName',
@@ -94,7 +90,6 @@ async function handleDifficulty(id, text, user) {
 
   const capacityMap = { facil: 9999999, medio: 100, dificil: 50 };
   const difficulty = { level, maxCapacity: capacityMap[level] };
-
   await usersDao.updateUser(id, { ...user, difficulty });
 
   const placesDao = require('../functions/dao/places');

@@ -1,13 +1,13 @@
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const placesDao = require('../functions/dao/places');
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const VALID_ACTIONS = ['viajar', 'coger', 'tirar', 'comer', 'usar', 'examinar', 'inventario', 'ayuda', 'afirmar', 'negar', 'fallback'];
 
 /**
- * Usa GPT para parsear el texto libre del usuario y extraer
- * una lista ordenada de intents estructurados.
+ * Usa Gemini para parsear el texto libre del usuario y extraer
+ * una lista ordenada de intents estructurados en JSON.
  * Devuelve siempre un array de intents, aunque solo haya uno.
  */
 async function parseIntent(text, user) {
@@ -15,52 +15,53 @@ async function parseIntent(text, user) {
   const objectNames = placesDao.getItems();
   const currentPlace = Object.keys(user.room)[0];
 
-  const systemPrompt = `Eres el analizador de intenciones de "Quijote 2077", una aventura conversacional.
+  const prompt = `Eres el analizador de intenciones de "Quijote 2077", una aventura conversacional.
+Tu única tarea es extraer la intención del jugador y devolver un array JSON estricto.
+No generes texto narrativo. Responde SOLO con el array JSON, sin markdown, sin explicaciones.
 
-Tu única tarea es extraer la intención del jugador del texto que escribe y devolverla en formato JSON estricto.
-No generes texto narrativo. Solo JSON.
-
-Lugares válidos del juego: ${placeNames.join(', ')}
-Objetos válidos del juego: ${objectNames.join(', ')}
+Lugares válidos: ${placeNames.join(', ')}
+Objetos válidos: ${objectNames.join(', ')}
 Lugar actual del jugador: ${currentPlace}
 
 Acciones válidas:
-- viajar: moverse a un lugar. Parámetro: "place" (nombre del lugar)
-- coger: recoger un objeto. Parámetro: "object" (nombre del objeto)
-- tirar: soltar un objeto del inventario. Parámetro: "object"
-- comer: comer un objeto del inventario. Parámetro: "object"
-- usar: usar/interactuar con algo del entorno. Parámetros: "action" y "object"
-- examinar: examinar/revisar algo. Parámetro: "object"
-- inventario: ver el inventario. Sin parámetros.
-- ayuda: pedir ayuda. Sin parámetros.
-- afirmar: respuesta afirmativa (sí, claro, por supuesto...). Sin parámetros.
-- negar: respuesta negativa (no, nunca...). Sin parámetros.
-- fallback: no se entiende la acción. Sin parámetros.
+- viajar: parámetro "place"
+- coger: parámetro "object"
+- tirar: parámetro "object"
+- comer: parámetro "object"
+- usar: parámetros "action_verb" y "object"
+- examinar: parámetro "object"
+- inventario: sin parámetros
+- ayuda: sin parámetros
+- afirmar: respuesta afirmativa (sí, claro...)
+- negar: respuesta negativa (no, nunca...)
+- fallback: no se entiende
 
-Si el jugador menciona varias acciones en una frase, devuelve un array con todas en orden.
-Siempre devuelve un array JSON. Ejemplos:
+Ejemplos de respuesta:
 [{"action": "viajar", "place": "biblioteca"}]
 [{"action": "coger", "object": "espada"}, {"action": "viajar", "place": "comedor"}]
-[{"action": "usar", "action_verb": "examinar", "object": "escalera"}]
+[{"action": "examinar", "object": "escalera"}]
 
-IMPORTANTE: Responde SOLO con el array JSON, sin explicaciones, sin markdown, sin texto extra.`;
+Texto del jugador: "${text}"
 
-  const response = await client.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: text }
-    ],
-    max_tokens: 200,
-    temperature: 0.1
+Responde SOLO con el array JSON:`;
+
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+    generationConfig: {
+      maxOutputTokens: 200,
+      temperature: 0.1
+    }
   });
 
-  const raw = response.choices[0].message.content.trim();
-  
+  const result = await model.generateContent(prompt);
+  const raw = result.response.text().trim()
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/\s*```$/i, '');
+
   try {
     const parsed = JSON.parse(raw);
     const intents = Array.isArray(parsed) ? parsed : [parsed];
-    // Validar que las acciones sean válidas
     return intents.map(intent => ({
       ...intent,
       action: VALID_ACTIONS.includes(intent.action) ? intent.action : 'fallback'
