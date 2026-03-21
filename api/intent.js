@@ -3,57 +3,60 @@ const projectId = 'primerproyecto-lkbltx'
 
 
 async function runIntent(sessionId, text) {
-  // Create a new session
-  const sessionClient = new dialogflow.SessionsClient({
-    keyFilename: './credentials/quijote2077-dialogflow.json'
-  });
+  try {
+    const sessionClient = new dialogflow.SessionsClient({
+      keyFilename: './credentials/quijote2077-dialogflow.json'
+    });
 
-  const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
+    const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 
-  const request = {
-    session: sessionPath,
-    queryInput: {
-      text: {
-        text,
-        languageCode: 'es-ES',
-        payload: {
-          name: 'as',
-          parameters: {
-              foo: 'bar',
+    const request = {
+      session: sessionPath,
+      queryInput: {
+        text: {
+          text,
+          languageCode: 'es-ES',
+          payload: {
+            name: 'as',
+            parameters: {
+                foo: 'bar',
+            }
           }
-        }
+        },
       },
-    },
-    queryParams: {
-      payload: {
-        foo: 'bar',
+      queryParams: {
+        payload: {
+          foo: 'bar',
+        }
       }
-    }
-  };
+    };
 
-  let output = '';
- 
-  // Send request and log result
-  const responses = await sessionClient.detectIntent(request);
-  const result = responses[0].queryResult;
-
-  console.log('result: ', result.queryText)
-
-  if (result.fulfillmentMessages.length) {
-    const lines = result.fulfillmentMessages.map(msg => msg.text && msg.text.text.join('<br>'));
-    output = lines.join('<br>');
-  } else if (result.fulfillmentText) {
-    output = result.fulfillmentText
-  }
-
-  if (result.intent) {
-    console.log(`Intent: ${result.intent.displayName}`);
-  } else {
-    console.log(`No intent matched.`);
-  }
+    let output = '';
   
-  console.log('output: ', {text: output, intent: result.intent.displayName});
-  return {text: output, intent: result.intent.displayName};
+    // Send request and log result
+    const responses = await sessionClient.detectIntent(request);
+    const result = responses[0].queryResult;
+
+    console.log('result: ', result.queryText)
+
+    if (result.fulfillmentMessages.length) {
+      const lines = result.fulfillmentMessages.map(msg => msg.text && msg.text.text.join('<br>'));
+      output = lines.join('<br>');
+    } else if (result.fulfillmentText) {
+      output = result.fulfillmentText
+    }
+
+    if (result.intent) {
+      console.log(`Intent: ${result.intent.displayName}`);
+    } else {
+      console.log(`No intent matched.`);
+    }
+    
+    console.log('output: ', {text: output, intent: result.intent.displayName});
+    return {text: output, intent: result.intent.displayName};
+  } catch(err) {
+    throw new Error(err);
+  }
 }
 
 module.exports = function(req, res) {
@@ -65,5 +68,5 @@ module.exports = function(req, res) {
 
   runIntent(id, text).then(response => {
     res.send(response)
-  });
+  }).catch(err => res.status(500).send(err));
 }

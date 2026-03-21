@@ -34,7 +34,7 @@ function travel(agent, userId, user) {
     countIntents.count(userId);
     return agent.add('¡Ya estás en este lugar!');
   } else {
-    return placesDao.getPlaceById(selectedPlace, user.room).then(place => {
+    return placesDao.getPlaceById(selectedPlace, user.room).then(async place => {
         if(place) {
             const distance = calculateTravelCoeficient(user.room[placeName], place);
             const newPlace = {};
@@ -52,7 +52,7 @@ function travel(agent, userId, user) {
               if(currentHungry > 0) {
                 const images = place.media && place.media.images || []; 
                 Object.assign( user, { placesKnown: Object.assign(user.placesKnown, updatedPlaces), room: newPlace, hungry: currentHungry });
-                usersDao.updateUser(userId, user);
+                await usersDao.updateUser(userId, user);
 
                 if (images.length) {
                   if (isNight(user) && images.length>1) {

@@ -4,6 +4,7 @@ const getUserState = (uuid) => {
     return new Promise(async (resolve, reject) => {
         try {
             const userData = await userService(uuid);
+            if (!userData.userName) return reject();
             const objectList = Object.values(userData.objectsList).reduce((acc, object) => {
                 if(object.jointToSuccess) acc.push(object);
                 return acc;
