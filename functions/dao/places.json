@@ -19,7 +19,9 @@
               "action": "cruzar",
               "object": { "name": "portal" },
               "requirementStatus": ["leer_libro"],
-              "successResponse": ""
+              "travelTo": "habitación",
+              "successResponse": "Cruzas el portal y al otro lado te encuentras en una habitación austera...",
+              "failResponse": "El portal no existe todavía. Quizás hay algo en esta biblioteca que debería llamar tu atención..."
             }
           ],
           "connectedRooms": [
@@ -52,12 +54,12 @@
             ]
           },
           "actions": [            {   
-            "action": "examinar",
-            "object": { "name": "escalera" },
-            "requirementObject": ["vela"], 
-            "successResponse": "Parece que uno de los escalones esta un poco suelto, ya decia yo que crugia siempre que pasabamos por aqui. Muy agudo al haberte dado cuenta.",
-            "failResponse": "El zagüán es tan amplio como lugubre, no verias aqui ni a un elefante sin un poco de luz."          
-            }
+          "action": "examinar",
+          "object": { "name": "escalera" },
+          "requirementObject": ["vela"], 
+          "successResponse": "Parece que uno de los escalones esta un poco suelto, ya decia yo que crugia siempre que pasabamos por aqui. Muy agudo al haberte dado cuenta.",
+          "failResponse": "El zagüán es tan amplio como lugubre, no verias aqui ni a un elefante sin un poco de luz."          
+          }
           ],
           "connectedRooms": [
             "comedor", "cocina", "portalón"
