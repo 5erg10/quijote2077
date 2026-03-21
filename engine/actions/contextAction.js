@@ -5,45 +5,43 @@ const gameOperations = require('../../functions/business/gameOperations');
 const countIntents = require('../../functions/utils/countIntents');
 const { resolveCanonicalVerb, getValidActionsForPlace } = require('../../llm/actionContext');
 
+// Importamos travel para delegar cuando la acción tiene travelTo
+const travelAction = require('./travel');
+
 async function execute(intent, userId, user) {
   const objectName = intent.object;
   const placeName = Object.keys(user.room)[0];
 
   const place = await placesDao.getPlaceById(placeName);
   if (!place) {
-    return { action: intent.action, success: false, message: 'No puedo hacer eso aqu\u00ed.' };
+    return { action: intent.action, success: false, message: 'No puedo hacer eso aquí.' };
   }
 
-  // Resolver verbo can\u00f3nico
+  // Resolver verbo canónico
   const validActions = getValidActionsForPlace(place);
   const canonicalVerb = resolveCanonicalVerb(intent.action, validActions);
 
   if (canonicalVerb === 'fallback') {
     await countIntents.count(userId);
-    return { action: intent.action, success: false, message: 'Eso no se puede hacer aqu\u00ed.' };
+    return { action: intent.action, success: false, message: 'Eso no se puede hacer aquí.' };
   }
 
-  // Buscar acci\u00f3n: primero por verbo+objeto (match exacto), luego solo por verbo
-  // IMPORTANTE: si hay objeto en el intent, es obligatorio que coincida.
-  // Solo hacemos fallback a "solo verbo" si el intent no trajo objeto.
+  // Buscar acción por verbo+objeto (match exacto), luego solo por verbo
   let matchedAction;
   if (objectName) {
     matchedAction = (place.actions || []).find(
       a => a.action === canonicalVerb && a.object && a.object.name === objectName
     );
-    // Si hay objeto en el intent pero no coincide con ninguna acci\u00f3n,
-    // intentamos buscar solo por verbo como \u00faltimo recurso
     if (!matchedAction) {
       matchedAction = (place.actions || []).find(a => a.action === canonicalVerb);
     }
   } else {
-    // Sin objeto: coger la primera acci\u00f3n que coincida con el verbo
     matchedAction = (place.actions || []).find(a => a.action === canonicalVerb);
   }
 
   if (!matchedAction) {
     await countIntents.count(userId);
-    return { action: canonicalVerb, success: false, message: 'Eso no se puede hacer aqu\u00ed.' };
+    return { action: canonicalVerb, success: false, message: 'Eso no se puede hacer aquí.' };
   }
 
   // --- VERIFICAR REQUISITOS ---
@@ -55,10 +53,8 @@ async function execute(intent, userId, user) {
   const requirementsOk = statusOk && objectsOk;
 
   if (!requirementsOk) {
-    // Si fallar tiene consecuencias fatales, game over
     if (matchedAction.endReason) {
       const resetResult = gameOperations.buildResetResult(matchedAction.failResponse, matchedAction.endReason);
-      // Aplicar el reset en Firebase
       await gameOperations.applyReset(userId, user.userName, matchedAction.endReason);
       return resetResult;
     }
@@ -66,7 +62,20 @@ async function execute(intent, userId, user) {
     return { action: canonicalVerb, success: false, message: matchedAction.failResponse };
   }
 
-  // --- EJECUTAR: guardar estado ---
+  // --- EJECUTAR ---
+
+  // Si la acción tiene travelTo, delegamos al motor de viaje en lugar de
+  // guardar un estado. Esto permite acciones narrativas como "cruzar portal"
+  // que en realidad son viajes con requisito previo (leer_libro, etc.).
+  if (matchedAction.travelTo) {
+    return travelAction.execute(
+      { action: 'viajar', place: matchedAction.travelTo },
+      userId,
+      user
+    );
+  }
+
+  // Guardar estado
   const objectKey = matchedAction.object && matchedAction.object.name
     ? `_${matchedAction.object.name}`
     : '';
@@ -75,11 +84,10 @@ async function execute(intent, userId, user) {
   try {
     await statesDao.addStatus(userId, user, statusKey);
   } catch (e) {
-    // El estado ya existe: acci\u00f3n repetida
     return { action: canonicalVerb, success: false, message: 'Ya has hecho eso.' };
   }
 
-  // Si el \u00e9xito de la acci\u00f3n tambi\u00e9n tiene endReason (final del juego)
+  // Si el éxito también tiene endReason (final del juego)
   if (matchedAction.endReason) {
     const resetResult = gameOperations.buildResetResult(matchedAction.successResponse, matchedAction.endReason);
     await gameOperations.applyReset(userId, user.userName, matchedAction.endReason);
