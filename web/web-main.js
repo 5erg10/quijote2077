@@ -85,13 +85,14 @@ async function sendText({ keyCode, currentTarget }) {
       if (result.showDifficulty) {
         showDifficultySelector();
       }
-      // Si es game over, ocultar stats y bloquear parcialmente el input
       if (result.gameOver) {
         handleGameOver();
       }
       setTimeout(() => {
         responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: 'smooth' });
         if (getUID() && !result.gameOver) getUserData();
+        // Autofocus al input después de pintar la respuesta
+        setFocus();
       }, 300);
     }
   }
@@ -101,7 +102,6 @@ function handleGameOver() {
   isGameOver = true;
   statsBox.style.display = 'none';
   pauseMusic();
-  // Borrar el UID del localStorage: el usuario ya no existe en Firebase
   storage.removeItem('UID');
   storage.removeItem('currentPlace');
   storage.removeItem('last');
@@ -110,7 +110,6 @@ function handleGameOver() {
 function handleRestart() {
   isGameOver = false;
   createUID();
-  // Disparar el saludo inicial
   setTimeout(async () => {
     const result = await request('');
     if (result) responses.append(quixoteChat(result.text));
@@ -172,7 +171,6 @@ function getUID() {
 async function getUserData() {
   try {
     const userRequest = await fetch(`/userstate?uuid=${getUID()}`);
-    // 204 significa que el usuario no existe (game over), no hacer nada
     if (userRequest.status === 204) return;
     userData = await userRequest.json();
     if (userData && userData.energy !== undefined) {
@@ -223,10 +221,8 @@ async function request(input) {
     let text = data.text || '';
     const intent = data.intent || '';
 
-    // Convertir *texto* en negritas
     text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');
 
-    // Extraer lugar de imagen para la música (ignorar blackDeath)
     const imgMatch = text.match(/src="([^&"]*)"/);
     if (imgMatch) {
       const imgPath = imgMatch[1];
