@@ -8,9 +8,6 @@
  *   - El verbo canónico (el que está en places.json)
  *   - Todos sus sinónimos
  * Y devuelve SIEMPRE el verbo canónico, nunca el sinónimo.
- *
- * Añadir un lugar nuevo con un verbo nuevo solo requiere
- * añadir una entrada aquí. No hay que tocar nada más.
  */
 
 // Mapa: verbo canónico → array de sinónimos que el jugador puede usar
@@ -19,12 +16,12 @@ const SYNONYMS_BY_CANONICAL = {
   examinar:  ['mirar', 'observar', 'inspeccionar', 'estudiar', 'contemplar',
                'ver', 'ojear', 'revisar', 'comprobar', 'fijarse', 'echar un vistazo'],
   leer:      ['leer', 'ojear', 'hojear', 'descifrar', 'deletrear',
-               'revisar', 'examinar', 'mirar', 'ver'],   // leer absorbe revisar/examinar cuando el objeto es legible
+               'revisar', 'examinar', 'mirar', 'ver'],
 
   // --- Verbos de manipulación de objetos ---
   abrir:     ['abrir', 'destapar', 'descerrajar', 'forzar', 'desbloquear', 'destrancar'],
   golpear:   ['golpear', 'pegar', 'dar un golpe', 'aporrear', 'sacudir', 'zurrar',
-               'atizar', 'romper', 'partir', 'aporrear'],
+               'atizar', 'romper', 'partir'],
   colocar:   ['colocar', 'poner', 'depositar', 'situar', 'apoyar', 'dejar'],
   subir:     ['subirse', 'encaramarse', 'montar', 'trepar', 'auparse'],
   escalar:   ['escalar', 'trepar', 'subir', 'ascender', 'encaramarse'],
@@ -39,7 +36,18 @@ const SYNONYMS_BY_CANONICAL = {
   atacar:    ['atacar', 'embestir', 'abalanzarse', 'arremeter', 'luchar', 'pelear', 'cargar contra'],
 
   // --- Acciones de sistema (siempre disponibles) ---
-  viajar:    ['ir a', 'caminar a', 'dirigirse a', 'moverse a', 'marchar a', 'ir hacia', 'desplazarse a'],
+  viajar:    [
+    // Movimiento genérico
+    'ir a', 'caminar a', 'dirigirse a', 'moverse a', 'marchar a', 'ir hacia', 'desplazarse a',
+    // Atravesar portales/umbrales/puertas mágicas (biblioteca → habitación)
+    'cruzar el portal', 'atravesar el portal', 'entrar por el portal',
+    'pasar por el portal', 'cruzar el umbral', 'atravesar el umbral',
+    'entrar en la habitación', 'ir a la habitación', 'cruzar hacia la habitación',
+    // Cruzar la cancela final
+    'cruzar la cancela', 'atravesar la cancela', 'pasar la cancela',
+    // Entrar/salir genérico
+    'entrar en', 'salir hacia', 'bajar a', 'subir a', 'acceder a'
+  ],
   coger:     ['coger', 'agarrar', 'tomar', 'recoger', 'llevarse', 'alzar', 'levantar', 'hacerse con'],
   tirar:     ['tirar', 'soltar', 'dejar', 'abandonar', 'deshacerse de', 'arrojar'],
   comer:     ['comer', 'zampar', 'devorar', 'ingerir', 'masticar', 'comerse'],
@@ -47,6 +55,23 @@ const SYNONYMS_BY_CANONICAL = {
   ayuda:     ['ayuda', 'socorro', 'no sé qué hacer', 'estoy perdido', 'pista', 'qué hago'],
   afirmar:   ['sí', 'claro', 'por supuesto', 'de acuerdo', 'ok', 'vale'],
   negar:     ['no', 'nunca', 'para nada', 'ni hablar', 'no quiero'],
+};
+
+/**
+ * Frases contextuales por par (lugarOrigen → lugarDestino).
+ * Cuando el LLM ve al jugador en un lugar origen y escribe
+ * alguna de estas frases, debe mapearlas a viajar + destino.
+ * Esto enriquece el prompt con contexto narrativo específico.
+ */
+const CONTEXTUAL_TRAVEL_HINTS = {
+  'biblioteca→habitación': [
+    'cruzo el portal', 'cruzar el portal', 'atravieso el portal',
+    'entro por el portal', 'paso por el portal', 'me adentro en el portal',
+    'accedo a la habitación', 'voy a la habitación'
+  ],
+  'cancela→más allá': [
+    'cruzar la cancela', 'atravesar la cancela', 'pasar la cancela'
+  ]
 };
 
 /**
@@ -58,38 +83,56 @@ function getSynonyms(canonicalVerb) {
 
 /**
  * Construye el bloque de acciones para el system prompt del LLM.
- * Para cada acción del lugar muestra el verbo canónico, el objeto
- * y todos los sinónimos que el jugador puede usar.
- * El LLM SIEMPRE debe devolver el verbo canónico en el JSON.
+ * Incluye acciones específicas del lugar Y los destinos de viaje
+ * disponibles con sus frases contextuales.
  */
 function buildActionContextPrompt(place, placeName) {
-  if (!place || !place.actions || place.actions.length === 0) {
-    return `En "${placeName}" no hay acciones específicas disponibles más allá de viajar a otro lugar.`;
+  const lines = [];
+
+  // --- Acciones específicas del lugar ---
+  if (place && place.actions && place.actions.length > 0) {
+    const verbsInPlace = [...new Set(place.actions.map(a => a.action))];
+    const actionLines = verbsInPlace.map(verb => {
+      const actionsForVerb = place.actions.filter(a => a.action === verb);
+      const objects = actionsForVerb
+        .map(a => a.object && a.object.name)
+        .filter(Boolean)
+        .join(', ');
+      const synonyms = getSynonyms(verb);
+      const synonymLine = synonyms.length
+        ? ` | el jugador puede decir: ${synonyms.slice(0, 5).join(', ')}...`
+        : '';
+      const objectPart = objects
+        ? `, "object": "${actionsForVerb[0].object && actionsForVerb[0].object.name}"`
+        : '';
+      return `  • VERBO CANÓNICO: "${verb}"${objects ? ` → objeto(s): ${objects}` : ''}${synonymLine}\n    JSON: {"action":"${verb}"${objectPart}}`;
+    });
+    lines.push(`ACCIONES DISPONIBLES EN "${placeName.toUpperCase()}":`);
+    lines.push(...actionLines);
+  } else {
+    lines.push(`En "${placeName}" no hay acciones específicas disponibles más allá de viajar.`);
   }
 
-  // Agrupar por verbo canónico para evitar repetir el mismo verbo
-  const verbsInPlace = [...new Set(place.actions.map(a => a.action))];
+  // --- Destinos de viaje disponibles con frases contextuales ---
+  const connectedRooms = (place && place.connectedRooms) || [];
+  if (connectedRooms.length > 0) {
+    lines.push(`\nDESTINOS DE VIAJE DESDE "${placeName.toUpperCase()}":`);
+    connectedRooms.forEach(dest => {
+      const contextKey = `${placeName}→${dest}`;
+      const contextualPhrases = CONTEXTUAL_TRAVEL_HINTS[contextKey] || [];
+      const phrasesNote = contextualPhrases.length
+        ? ` | frases contextuales: "${contextualPhrases.slice(0, 4).join('", "')}"`
+        : '';
+      lines.push(`  • "${dest}"${phrasesNote} → JSON: {"action":"viajar","place":"${dest}"}`);
+    });
+    lines.push(`  REGLA: Si el jugador usa cualquier frase que implique moverse a uno de estos destinos, devuelve {"action":"viajar","place":"nombre_destino"}.`);
+  }
 
-  const actionLines = verbsInPlace.map(verb => {
-    const actionsForVerb = place.actions.filter(a => a.action === verb);
-    const objects = actionsForVerb
-      .map(a => a.object && a.object.name)
-      .filter(Boolean)
-      .join(', ');
-    const synonyms = getSynonyms(verb);
-    const synonymLine = synonyms.length
-      ? ` | el jugador puede decir: ${synonyms.slice(0, 6).join(', ')}...`
-      : '';
-    const objectPart = objects ? `, "object": "${actionsForVerb[0].object && actionsForVerb[0].object.name}"` : '';
-    return `  • VERBO CANÓNICO: "${verb}"${objects ? ` → objeto(s): ${objects}` : ''}${synonymLine}\n    JSON a devolver: {"action":"${verb}"${objectPart}}`;
-  });
-
-  return `ACCIONES DISPONIBLES EN "${placeName.toUpperCase()}" (usa SIEMPRE el verbo canónico en el JSON, aunque el jugador use un sinónimo):\n${actionLines.join('\n')}`;
+  return lines.join('\n');
 }
 
 /**
  * Devuelve el array de verbos canónicos válidos para el lugar actual.
- * Usado para validar la respuesta del LLM.
  */
 function getValidActionsForPlace(place) {
   const placeVerbs = place && place.actions
@@ -102,13 +145,9 @@ function getValidActionsForPlace(place) {
 /**
  * Dado un verbo que viene del LLM (puede ser sinónimo),
  * intenta encontrar su verbo canónico buscando en la tabla.
- * Usado como fallback en el motor si el LLM devuelve un sinónimo.
  */
 function resolveCanonicalVerb(verb, validActionsForPlace) {
-  // Si ya es canónico y válido, devolver tal cual
   if (validActionsForPlace.includes(verb)) return verb;
-
-  // Buscar en la tabla cuál canónico tiene este verbo como sinónimo
   for (const [canonical, synonyms] of Object.entries(SYNONYMS_BY_CANONICAL)) {
     if (synonyms.includes(verb) && validActionsForPlace.includes(canonical)) {
       return canonical;
