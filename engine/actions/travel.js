@@ -16,7 +16,7 @@ async function execute(intent, userId, user) {
 
   if (placeName === selectedPlace) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: '\u00a1Ya estás en este lugar!' };
+    return { action: 'viajar', success: false, message: '¡Ya estás en este lugar!' };
   }
 
   let place;
@@ -32,22 +32,46 @@ async function execute(intent, userId, user) {
     return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
   }
 
-  // Comprobar requisitos de acceso
+  // --- COMPROBAR ACCESIBILIDAD ---
+  // El jugador solo puede viajar a un lugar si:
+  //   1. Está en connectedRooms del lugar actual (adyacente), O
+  //   2. Ya ha visitado ese lugar antes (placesKnown)
+  const currentPlaceData = await placesDao.getPlaceById(placeName).catch(() => null);
+  const connectedRooms = (currentPlaceData && currentPlaceData.connectedRooms) || [];
+  const placesKnown = user.placesKnown || [];
+
+  const isConnected = connectedRooms.includes(selectedPlace);
+  const isKnown = placesKnown.includes(selectedPlace);
+
+  if (!isConnected && !isKnown) {
+    await countIntents.count(userId);
+    return {
+      action: 'viajar',
+      success: false,
+      message: `No puedes ir directamente a ${selectedPlace}. Solo puedes moverte a lugares conectados o que ya hayas visitado.`
+    };
+  }
+
+  // --- COMPROBAR REQUISITOS DE ACCESO (estados necesarios) ---
   if (!arrayUtils.isSubset(place.requirementStatus || [], user.states || [])) {
     await countIntents.count(userId);
     return { action: 'viajar', success: false, message: place.failResponse || 'No puedes ir allí ahora mismo.' };
   }
 
+  // --- COMPROBAR ENERGÍA ---
   const distance = calculateDistance(user.room[placeName], place);
   const newHungry = user.hungry - distance;
 
   if (newHungry <= 0) {
-    return gameOperations.buildResetResult('Te encuentras muy débil para seguir caminando. Tu vista se nubla y caes desmayado en el suelo.', 'hungry');
+    return gameOperations.buildResetResult(
+      'Te encuentras muy débil para seguir caminando. Tu vista se nubla y caes desmayado en el suelo.',
+      'hungry'
+    );
   }
 
-  // Actualizar ubicación
+  // --- ACTUALIZAR ESTADO DEL USUARIO ---
   const newRoom = { [selectedPlace]: place };
-  let updatedPlaces = [...(user.placesKnown || [])];
+  let updatedPlaces = [...placesKnown];
   if (!updatedPlaces.includes(selectedPlace)) updatedPlaces.push(selectedPlace);
 
   Object.assign(user, { room: newRoom, hungry: newHungry, placesKnown: updatedPlaces });
@@ -61,7 +85,7 @@ async function execute(intent, userId, user) {
     .join(' ');
 
   // Imagen del lugar (día/noche)
-  const images = place.media && place.media.images || [];
+  const images = (place.media && place.media.images) || [];
   const imageUrl = images.length > 1 && isNight(user) ? images[1] : images[0];
 
   return {
