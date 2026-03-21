@@ -259,10 +259,6 @@
               "action": "examinar",
               "object": { "name": "suelo" },
               "successResponse": "El suelo está cubierto de hermosas flores, ¿amanitas Phalloides quizás?" 
-            },{ 
-              "action": "revisar",
-              "object": { "name": "suelo" },
-              "successResponse": "El suelo está cubierto de hermosas flores, ¿amanitas Phalloides quizás?" 
             }
           ],
           "connectedRooms": [
