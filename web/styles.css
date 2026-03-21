@@ -561,17 +561,9 @@ button:focus {
   transition: color 0.15s;
 }
 
-.characterMenu__placesList li:hover {
-  color: #fff;
-  text-shadow: 0 0 8px #22ecf3;
-}
-
 .characterMenu__placesList li.currentPlace {
-  color: #fff890;
-}
-
-.characterMenu__placesList li.currentPlace::before {
-  content: '> ';
+  color: #ffffff;
+  padding-left: 16px;
 }
 
 /* =============================================
