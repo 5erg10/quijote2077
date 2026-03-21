@@ -64,8 +64,31 @@ function documentReady() {
   document.addEventListener('click', setFocus);
   if (!getUID()) continueButton.disabled = true;
   audioController.addEventListener('click', onOffAudio);
-  // Precargar descripciones de lugares
   loadPlacesDescriptions();
+
+  // Cerrar el menú al hacer click fuera de él
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('characterMenu');
+    const popup = document.getElementById('placeDetailPopup');
+    const icon = document.getElementById('characterMenuIcon');
+    if (!menu.classList.contains('displayNONE') &&
+        !menu.contains(e.target) &&
+        !icon.contains(e.target)) {
+      closeCharacterMenu();
+    }
+    if (!popup.classList.contains('displayNONE') &&
+        !popup.contains(e.target) &&
+        !menu.contains(e.target)) {
+      closePlaceDetail();
+    }
+  });
+
+  // Cerrar el menú con Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeCharacterMenu();
+    }
+  });
 }
 
 async function loadPlacesDescriptions() {
@@ -79,22 +102,27 @@ async function loadPlacesDescriptions() {
 
 // --- CHARACTER MENU ---
 
+function closeCharacterMenu() {
+  document.getElementById('characterMenu').classList.add('displayNONE');
+  closePlaceDetail();
+}
+
 function toggleCharacterMenu() {
+  // Solo abrir si hay un usuario cargado
+  if (!userData) return;
+
   const menu = document.getElementById('characterMenu');
-  const isHidden = menu.classList.contains('displayNONE');
-  if (isHidden) {
+  if (menu.classList.contains('displayNONE')) {
     renderCharacterMenu();
     menu.classList.remove('displayNONE');
   } else {
-    menu.classList.add('displayNONE');
-    closePlaceDetail();
+    closeCharacterMenu();
   }
 }
 
 function renderCharacterMenu() {
   if (!userData) return;
 
-  // Nombre
   document.getElementById('characterMenu__name').textContent =
     (userData.name || 'HIDALGO').toUpperCase();
 
@@ -138,7 +166,6 @@ function showPlaceDetail(placeName) {
   const popup = document.getElementById('placeDetailPopup');
   document.getElementById('placeDetailPopup__name').textContent = placeName.toUpperCase();
   const placeData = placesDescriptions[placeName];
-  // Limpiar HTML de la descripción (quitar <br> etc)
   const rawDesc = placeData && placeData.description
     ? placeData.description.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
     : '-- sin descripción --';
@@ -165,9 +192,7 @@ async function sendText({ keyCode, currentTarget }) {
       return;
     }
 
-    // Cerrar el menú si está abierto
-    document.getElementById('characterMenu').classList.add('displayNONE');
-    closePlaceDetail();
+    closeCharacterMenu();
 
     showLoading(currentTarget);
     setInputWidth();
@@ -192,6 +217,7 @@ function handleGameOver() {
   storage.removeItem('UID');
   storage.removeItem('currentPlace');
   storage.removeItem('last');
+  userData = null;
 }
 
 function handleRestart() {
@@ -307,7 +333,7 @@ async function request(input) {
     let text = data.text || '';
     const intent = data.intent || '';
     text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');
-    const imgMatch = text.match(/src="([^&"]*)"/); 
+    const imgMatch = text.match(/src="([^&"]*)"/);
     if (imgMatch) {
       const imgPath = imgMatch[1];
       const placeFromImg = (imgPath.match(/([^/]+?)\.[^.]+$/) || [])[1];
