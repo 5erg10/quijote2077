@@ -1,14 +1,9 @@
 const Groq = require('groq-sdk');
 const placesDao = require('../functions/dao/places');
-const { buildActionContextPrompt, getValidActionsForPlace } = require('./actionContext');
+const { buildActionContextPrompt, getValidActionsForPlace, resolveCanonicalVerb } = require('./actionContext');
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-/**
- * Llamada ÚNICA al LLM.
- * Primera llamada (sin engineResult): extrae intents del texto libre.
- * Segunda llamada (con engineResult): genera la narrativa final.
- */
 async function processMessage({ userText, user, engineResult = null, helpHint = null }) {
   const placeName = Object.keys(user.room)[0];
   const place = await placesDao.getPlaceById(placeName).catch(() => null);
@@ -23,74 +18,55 @@ async function processMessage({ userText, user, engineResult = null, helpHint = 
 
   const validActions = getValidActionsForPlace(place);
   const actionContextBlock = buildActionContextPrompt(place, placeName);
-
-  // Extraer el mensaje canónico del motor para pasarlo explícitamente al LLM
   const engineMessage = extractEngineMessage(engineResult);
 
-  const systemPrompt = `Eres el narrador de "Quijote 2077", una aventura conversacional ambientada en la época de El Quijote con toques retrofuturistas.
+  const systemPrompt = `Eres el narrador de "Quijote 2077", una aventura conversacional ambientada en la \u00e9poca de El Quijote con toques retrofuturistas.
 Tienes DOS responsabilidades en cada turno:
-1. ANALIZAR la intención del jugador y extraerla como JSON estructurado.
-2. NARRAR la respuesta al jugador con estilo humorístico, irónico y cervantino.
+1. ANALIZAR la intenci\u00f3n del jugador y extraerla como JSON.
+2. NARRAR la respuesta con estilo humor\u00edstico, ir\u00f3nico y cervantino.
 
-Estado actual del juego:
+Estado actual:
 - Jugador: ${user.userName || 'hidalgo'}
 - Lugar: ${placeName}
-- Descripción: ${placeDescription}
-- Objetos visibles aquí: ${objectsInPlace}
+- Descripci\u00f3n: ${placeDescription}
+- Objetos visibles: ${objectsInPlace}
 - Inventario: ${objectsInInventory}
-- Energía: ${user.hungry}/100
+- Energ\u00eda: ${user.hungry}/100
 - Dificultad: ${(user.difficulty && user.difficulty.level) || 'normal'}
-- Lugares a los que puedes viajar: ${placeNames.join(', ')}
+- Lugares conocidos: ${placeNames.join(', ')}
 - Objetos del mundo: ${objectNames.join(', ')}
 
 ${actionContextBlock}
 
 ACCIONES DE SISTEMA (siempre disponibles):
-- viajar → ir a, caminar hacia, dirigirse a, moverse a
-  JSON: {"action":"viajar","place":"nombre"}
-- coger → agarrar, tomar, recoger, llevarse, alzar
-  JSON: {"action":"coger","object":"nombre"}
-- tirar → soltar, dejar, abandonar, deshacerse de
-  JSON: {"action":"tirar","object":"nombre"}
-- comer → ingerir, zampar, devorar, probar
-  JSON: {"action":"comer","object":"nombre"}
-- inventario → qué llevo, mis objetos, mi mochila
-  JSON: {"action":"inventario"}
-- ayuda → socorro, pista, no sé qué hacer
-  JSON: {"action":"ayuda"}
-- afirmar → sí, claro, de acuerdo, ok
-  JSON: {"action":"afirmar"}
-- negar → no, nunca, ni hablar
-  JSON: {"action":"negar"}
+- viajar \u2192 ir a, caminar hacia, dirigirse a | JSON: {"action":"viajar","place":"nombre"}
+- coger \u2192 agarrar, tomar, recoger, alzar | JSON: {"action":"coger","object":"nombre"}
+- tirar \u2192 soltar, dejar, abandonar | JSON: {"action":"tirar","object":"nombre"}
+- comer \u2192 ingerir, zampar, devorar | JSON: {"action":"comer","object":"nombre"}
+- inventario \u2192 qu\u00e9 llevo, mis objetos | JSON: {"action":"inventario"}
+- ayuda \u2192 socorro, pista, estoy perdido | JSON: {"action":"ayuda"}
+- afirmar \u2192 s\u00ed, claro, ok | JSON: {"action":"afirmar"}
+- negar \u2192 no, nunca, ni hablar | JSON: {"action":"negar"}
 
-REGLA CRÍTICA DE MAPEO: Mapea SIEMPRE el verbo del jugador a la acción más cercana.
-Usa "fallback" SOLO si es imposible determinar ninguna intención.
-Acciones válidas en este lugar: ${validActions.join(', ')}
+REGLA CR\u00cdTICA: Usa SIEMPRE el VERBO CAN\u00d3NICO en el JSON aunque el jugador use un sin\u00f3nimo.
+Ejemplo: si en este lugar el verbo can\u00f3nico es "leer" y el jugador escribe "ojeo el libro" \u2192 devuelve {"action":"leer","object":"libro"}
+Usa fallback SOLO si es imposible determinar ninguna intenci\u00f3n.
+Verbos can\u00f3nicos v\u00e1lidos ahora: ${validActions.join(', ')}
 
-RESPONDE SIEMPRE con este JSON exacto, sin texto extra, sin markdown:
+RESPONDE SIEMPRE con JSON exacto sin texto extra ni markdown:
 {
-  "intents": [/* array de intents */],
-  "narrative": "/* respuesta narrativa, máximo 3 párrafos */"
+  "intents": [/* array */],
+  "narrative": "/* m\u00e1ximo 3 p\u00e1rrafos */"
 }
 
-REGLAS CRÍTICAS DE NARRATIVA:
-- REGLA MÁS IMPORTANTE: Si existe un "Mensaje canónico del motor", ese texto contiene información esencial del juego (pistas, consecuencias, objetos descubiertos, próximos pasos). DEBES incluirlo COMPLETO e ÍNTEGRO en la narrative. Puedes enriquecerlo con estilo cervantino, pero NUNCA lo omitas ni lo resumas.
-- Si engineResult incluye imageUrl, pon <img src="URL"> al inicio de narrative.
-- Si hay múltiples acciones, narralas todas en orden respetando cada mensaje canónico.
-- Nunca rompas la inmersión ni menciones que eres una IA.
-- Si hay helpHint, inclúyelo al final de forma natural.${helpHint ? '\n- Pista a incluir: ' + helpHint : ''}`;
+REGLAS DE NARRATIVA:
+- REGLA M\u00c1S IMPORTANTE: si hay un mensaje can\u00f3nico del motor, incl\u00fayeloINTEGRO. Pu\u00e9des enriquecerlo con estilo pero NUNCA lo omitas.
+- Si engineResult tiene imageUrl, pon <img src="URL"> al inicio.
+- Nunca menciones que eres una IA.${helpHint ? '\n- Pista a incluir al final: ' + helpHint : ''}`;
 
   const userPrompt = engineResult
-    ? `El jugador ha escrito: "${userText}"
-
-Resultado del motor del juego:
-${JSON.stringify(engineResult, null, 2)}
-${engineMessage ? `\nMensaje canónico del motor (OBLIGATORIO incluirlo completo en narrative):\n"${engineMessage}"` : ''}
-
-Genera el JSON con intents y narrative:`
-    : `El jugador ha escrito: "${userText}"
-
-Extrae los intents y genera una narrative de espera breve:`;
+    ? `El jugador ha escrito: "${userText}"\n\nResultado del motor:\n${JSON.stringify(engineResult, null, 2)}${engineMessage ? `\n\nMensaje can\u00f3nico (OBLIGATORIO en narrative):\n"${engineMessage}"` : ''}\n\nGenera JSON con intents y narrative:`
+    : `El jugador ha escrito: "${userText}"\n\nExtrae intents y genera narrative de espera breve:`;
 
   const response = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
@@ -110,35 +86,25 @@ Extrae los intents y genera una narrative de espera breve:`;
     const intents = (Array.isArray(parsed.intents) ? parsed.intents : [parsed.intents || { action: 'fallback' }])
       .map(intent => ({
         ...intent,
-        action: validActions.includes(intent && intent.action) ? intent.action : 'fallback'
+        // Doble red de seguridad: si el LLM devuelve un sin\u00f3nimo, lo resolvemos aqu\u00ed
+        action: resolveCanonicalVerb(intent && intent.action, validActions)
       }));
-    const narrative = parsed.narrative || '';
-    return { intents, narrative };
+    return { intents, narrative: parsed.narrative || '' };
   } catch (e) {
-    console.error('Error parseando respuesta Groq:', raw, e);
+    console.error('Error parseando Groq:', raw, e);
     return {
       intents: [{ action: 'fallback' }],
-      narrative: 'No os entiendo, valiente hidalgo. ¿Podéis repetirlo con otras palabras?'
+      narrative: 'No os entiendo, valiente hidalgo. \u00bfPod\u00e9is repetirlo con otras palabras?'
     };
   }
 }
 
-/**
- * Extrae el mensaje o mensajes canónicos del resultado del motor
- * para pasarlos explícitamente al LLM como texto obligatorio.
- */
 function extractEngineMessage(engineResult) {
   if (!engineResult) return null;
-
-  // Resultado múltiple (varias acciones)
   if (engineResult.multiple && engineResult.results) {
-    const messages = engineResult.results
-      .map(r => r.message)
-      .filter(Boolean);
-    return messages.length ? messages.join(' | ') : null;
+    const msgs = engineResult.results.map(r => r.message).filter(Boolean);
+    return msgs.length ? msgs.join(' | ') : null;
   }
-
-  // Resultado simple
   return engineResult.message || null;
 }
 
