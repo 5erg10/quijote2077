@@ -4,7 +4,7 @@ const placesDao = require('../functions/dao/places');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 /**
- * Genera la respuesta narrativa final al usuario usando Gemini 1.5 Flash.
+ * Genera la respuesta narrativa final al usuario usando Gemini 2.0 Flash.
  * Recibe el resultado del motor del juego y lo convierte en texto
  * enriquecido con el tono y estilo del Quijote.
  */
@@ -22,28 +22,30 @@ async function callLLM({ userText, intents, engineResult, user, helpHint }) {
     .map(o => o.name)
     .join(', ') || 'ninguno';
 
-  const helpSection = helpHint ? `\nPISTA PARA EL JUGADOR (inclúyla al final de la respuesta de forma natural): ${helpHint}` : '';
+  const helpSection = helpHint
+    ? `\nPISTA PARA EL JUGADOR (incl\u00fayla al final de forma natural): ${helpHint}`
+    : '';
 
-  const prompt = `Eres el narrador de "Quijote 2077", una aventura conversacional de texto ambientada en la época de El Quijote pero con toques retrofuturistas.
+  const prompt = `Eres el narrador de "Quijote 2077", una aventura conversacional de texto ambientada en la \u00e9poca de El Quijote pero con toques retrofuturistas.
 
-Tu estilo es humorístico, irónico y cervantino. Usa un lenguaje elegante pero accesible, con expresiones de la época cuando sea natural.
-Nunca rompas la inmersión. Nunca menciones que eres una IA ni que hay un sistema informático detrás.
+Tu estilo es humor\u00edstico, ir\u00f3nico y cervantino. Usa un lenguaje elegante pero accesible, con expresiones de la \u00e9poca cuando sea natural.
+Nunca rompas la inmersi\u00f3n. Nunca menciones que eres una IA ni que hay un sistema inform\u00e1tico detr\u00e1s.
 
 Estado actual del jugador:
 - Nombre: ${user.userName || 'hidalgo'}
 - Lugar actual: ${placeName}
-- Descripción del lugar: ${placeDescription}
+- Descripci\u00f3n del lugar: ${placeDescription}
 - Objetos visibles en el lugar: ${objectsInPlace}
-- Acciones posibles aquí: ${placeActions}
+- Acciones posibles aqu\u00ed: ${placeActions}
 - Inventario del jugador: ${objectsInInventory}
-- Energía: ${user.hungry}/100
+- Energ\u00eda: ${user.hungry}/100
 - Dificultad: ${(user.difficulty && user.difficulty.level) || 'normal'}
 
 IMPORTANTE:
 - Genera SOLO el texto de respuesta narrativa, sin etiquetas ni JSON.
-- Si el resultado del motor incluye imageUrl, inclúyla como <img src="URL"> al principio.
-- Si hay múltiples acciones, narralas todas en orden.
-- Máximo 3 párrafos.${helpSection}
+- Si el resultado del motor incluye imageUrl, incl\u00fayla como <img src="URL"> al principio.
+- Si hay m\u00faltiples acciones, narralas todas en orden.
+- M\u00e1ximo 3 p\u00e1rrafos.${helpSection}
 
 El jugador ha escrito: "${userText}"
 
@@ -53,7 +55,7 @@ ${JSON.stringify(engineResult, null, 2)}
 Genera la respuesta narrativa:`;
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: {
       maxOutputTokens: 400,
       temperature: 0.75

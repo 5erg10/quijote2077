@@ -16,23 +16,23 @@ async function parseIntent(text, user) {
   const currentPlace = Object.keys(user.room)[0];
 
   const prompt = `Eres el analizador de intenciones de "Quijote 2077", una aventura conversacional.
-Tu única tarea es extraer la intención del jugador y devolver un array JSON estricto.
+Tu \u00fanica tarea es extraer la intenci\u00f3n del jugador y devolver un array JSON estricto.
 No generes texto narrativo. Responde SOLO con el array JSON, sin markdown, sin explicaciones.
 
-Lugares válidos: ${placeNames.join(', ')}
-Objetos válidos: ${objectNames.join(', ')}
+Lugares v\u00e1lidos: ${placeNames.join(', ')}
+Objetos v\u00e1lidos: ${objectNames.join(', ')}
 Lugar actual del jugador: ${currentPlace}
 
-Acciones válidas:
-- viajar: parámetro "place"
-- coger: parámetro "object"
-- tirar: parámetro "object"
-- comer: parámetro "object"
-- usar: parámetros "action_verb" y "object"
-- examinar: parámetro "object"
-- inventario: sin parámetros
-- ayuda: sin parámetros
-- afirmar: respuesta afirmativa (sí, claro...)
+Acciones v\u00e1lidas:
+- viajar: par\u00e1metro "place"
+- coger: par\u00e1metro "object"
+- tirar: par\u00e1metro "object"
+- comer: par\u00e1metro "object"
+- usar: par\u00e1metros "action_verb" y "object"
+- examinar: par\u00e1metro "object"
+- inventario: sin par\u00e1metros
+- ayuda: sin par\u00e1metros
+- afirmar: respuesta afirmativa (s\u00ed, claro...)
 - negar: respuesta negativa (no, nunca...)
 - fallback: no se entiende
 
@@ -46,7 +46,7 @@ Texto del jugador: "${text}"
 Responde SOLO con el array JSON:`;
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: {
       maxOutputTokens: 200,
       temperature: 0.1
