@@ -25,25 +25,25 @@ module.exports = async (req, res) => {
       return res.json(await handleDifficulty(id, text, user));
     }
 
-    // --- FASE 3: Juego normal ---
+    // --- FASE 3: Juego normal - UNA SOLA llamada al LLM ---
     if (!text || !text.trim()) {
       return res.json({ text: '¿Qué quieres hacer, hidalgo?', intent: 'idle' });
     }
 
-    // Llamada 1 a Groq: extraer intents
+    // Paso 1: LLM extrae intents del texto
     const { intents } = await processMessage({ userText: text, user });
     console.log('Intents:', JSON.stringify(intents));
 
-    // Motor del juego (sin LLM, lógica pura)
+    // Paso 2: motor del juego ejecuta la lógica (sin LLM, determinista)
     const engineResult = await gameEngine.execute(intents, id, user);
     console.log('Engine:', JSON.stringify(engineResult));
 
-    // Ayuda adaptativa
+    // Paso 3: ayuda adaptativa
     const countIntents = require('../functions/utils/countIntents');
     const freshUser = await usersDao.getUserById(id);
     const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, intents[0] && intents[0].action);
 
-    // Llamada 2 a Groq: generar narrativa con resultado del motor
+    // Paso 4: LLM genera narrativa con resultado del motor
     const { narrative } = await processMessage({
       userText: text,
       user: freshUser,

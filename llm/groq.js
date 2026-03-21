@@ -6,19 +6,20 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const VALID_ACTIONS = ['viajar', 'coger', 'tirar', 'comer', 'usar', 'examinar', 'inventario', 'ayuda', 'afirmar', 'negar', 'fallback'];
 
 /**
- * Llamada UNIFICADA al LLM.
- * En un solo request extrae los intents del texto del usuario
- * Y genera la respuesta narrativa, devolviendo un objeto JSON con ambas cosas.
- * Esto reduce a la mitad el consumo de tokens y requests.
+ * Llamada ÚNICA al LLM que hace dos cosas a la vez:
+ * 1. Extrae los intents del texto del usuario (array JSON)
+ * 2. Genera la respuesta narrativa basada en el resultado del motor
+ *
+ * Cuando se llama SIN engineResult -> modo parser (solo extrae intents)
+ * Cuando se llama CON engineResult -> modo narrador (genera texto para el jugador)
  */
-async function processMessage({ userText, user, engineResult, helpHint }) {
+async function processMessage({ userText, user, engineResult = null, helpHint = null }) {
   const placeName = Object.keys(user.room)[0];
   const place = await placesDao.getPlaceById(placeName).catch(() => null);
   const placeDescription = place ? place.description : '';
   const placeActions = place
     ? (place.actions || []).map(a => `${a.action} ${(a.object && a.object.name) || ''}`).join(', ')
     : '';
-
   const placeNames = placesDao.getPlaceNames();
   const objectNames = placesDao.getItems();
   const objectsInInventory = (user.objects || []).map(o => o.name).join(', ') || 'ninguno';
@@ -27,102 +28,83 @@ async function processMessage({ userText, user, engineResult, helpHint }) {
     .map(o => o.name)
     .join(', ') || 'ninguno';
 
-  const helpSection = helpHint
-    ? `\nPISTA PARA EL JUGADOR (incluyela al final de la narrativa de forma natural): ${helpHint}`
-    : '';
+  // --- MODO UNIFICADO: una sola llamada devuelve intents + narrativa ---
+  const systemPrompt = `Eres el cerebro de "Quijote 2077", una aventura conversacional ambientada en la época de El Quijote con toques retrofuturistas.
+Tienes DOS responsabilidades en cada turno:
 
-  // Fase 1: solo parsear intent (engineResult aun no existe)
-  if (!engineResult) {
-    const systemPrompt = `Eres el analizador de intenciones de "Quijote 2077", una aventura conversacional.
-Tu unica tarea es extraer la intencion del jugador y devolver un array JSON estricto.
-Responde SOLO con el array JSON, sin markdown, sin explicaciones, sin texto extra.
+1. ANALIZAR la intención del jugador y extraerla como JSON estructurado.
+2. NARRAR la respuesta al jugador con estilo humorístico, irónico y cervantino.
 
-Lugares validos: ${placeNames.join(', ')}
-Objetos validos: ${objectNames.join(', ')}
-Lugar actual del jugador: ${placeName}
-
-Acciones validas:
-- viajar: parametro "place" (nombre del lugar)
-- coger: parametro "object" (nombre del objeto)
-- tirar: parametro "object"
-- comer: parametro "object"
-- usar: parametros "action_verb" y "object"
-- examinar: parametro "object"
-- inventario: sin parametros
-- ayuda: sin parametros
-- afirmar: respuesta afirmativa
-- negar: respuesta negativa
-- fallback: no se entiende
-
-Ejemplos:
-[{"action": "viajar", "place": "biblioteca"}]
-[{"action": "coger", "object": "espada"}, {"action": "viajar", "place": "comedor"}]
-[{"action": "examinar", "object": "escalera"}]`;
-
-    const response = await groq.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userText }
-      ],
-      max_tokens: 200,
-      temperature: 0.1
-    });
-
-    const raw = response.choices[0].message.content.trim()
-      .replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '');
-
-    try {
-      const parsed = JSON.parse(raw);
-      const intents = Array.isArray(parsed) ? parsed : [parsed];
-      return {
-        intents: intents.map(i => ({
-          ...i,
-          action: VALID_ACTIONS.includes(i.action) ? i.action : 'fallback'
-        }))
-      };
-    } catch (e) {
-      console.error('Error parseando intent JSON:', raw, e);
-      return { intents: [{ action: 'fallback' }] };
-    }
-  }
-
-  // Fase 2: generar narrativa con el resultado del engine
-  const systemPrompt = `Eres el narrador de "Quijote 2077", una aventura conversacional de texto ambientada en la epoca de El Quijote con toques retrofuturistas.
-
-Tu estilo es humoristico, ironico y cervantino. Usa lenguaje elegante pero accesible.
-Nunca rompas la inmersion. Nunca menciones que eres una IA.
-
-Estado actual del jugador:
-- Nombre: ${user.userName || 'hidalgo'}
-- Lugar actual: ${placeName}
-- Descripcion del lugar: ${placeDescription}
-- Objetos visibles en el lugar: ${objectsInPlace}
-- Acciones posibles aqui: ${placeActions}
+Estado actual del juego:
+- Jugador: ${user.userName || 'hidalgo'}
+- Lugar: ${placeName}
+- Descripción: ${placeDescription}
+- Objetos visibles aquí: ${objectsInPlace}
+- Acciones posibles aquí: ${placeActions}
 - Inventario: ${objectsInInventory}
-- Energia: ${user.hungry}/100
+- Energía: ${user.hungry}/100
 - Dificultad: ${(user.difficulty && user.difficulty.level) || 'normal'}
+- Lugares conocidos: ${placeNames.join(', ')}
+- Objetos del mundo: ${objectNames.join(', ')}
 
-REGLAS:
-- Genera SOLO texto narrativo, sin JSON ni etiquetas extras.
-- Si engineResult incluye imageUrl, incluye <img src="URL"> al principio.
-- Si hay multiples acciones, narralas en orden.
-- Maximo 3 parrafos cortos.${helpSection}`;
+Acciones válidas para el JSON:
+- viajar -> {"action":"viajar","place":"nombre"}
+- coger -> {"action":"coger","object":"nombre"}
+- tirar -> {"action":"tirar","object":"nombre"}
+- comer -> {"action":"comer","object":"nombre"}
+- examinar -> {"action":"examinar","object":"nombre"}
+- usar -> {"action":"usar","action_verb":"verbo","object":"nombre"}
+- inventario -> {"action":"inventario"}
+- ayuda -> {"action":"ayuda"}
+- afirmar -> {"action":"afirmar"}
+- negar -> {"action":"negar"}
+- fallback -> {"action":"fallback"}
+
+RESPONDE SIEMPRE con este JSON exacto, sin texto extra, sin markdown:
+{
+  "intents": [/* array de intents extraídos del texto del jugador */],
+  "narrative": "/* respuesta narrativa para el jugador, máximo 3 párrafos */"
+}
+
+REGLAS NARRATIVA:
+- Nunca rompas la inmersión ni menciones que eres una IA.
+- Si engineResult incluye imageUrl, pon <img src="URL"> al inicio de narrative.
+- Si hay múltiples acciones, narralas todas en orden.
+- Si hay helpHint, inclúyelo al final de forma natural.${helpHint ? '\n- Pista a incluir: ' + helpHint : ''}`;
+
+  const userPrompt = engineResult
+    ? `El jugador ha escrito: "${userText}"\n\nResultado del motor del juego:\n${JSON.stringify(engineResult, null, 2)}\n\nGenera el JSON con intents y narrative:`
+    : `El jugador ha escrito: "${userText}"\n\nAún no hay resultado del motor. Extrae los intents y genera una narrative de espera breve si es necesario:`;
 
   const response = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
     messages: [
       { role: 'system', content: systemPrompt },
-      {
-        role: 'user',
-        content: `El jugador escribio: "${userText}"\n\nResultado del motor:\n${JSON.stringify(engineResult, null, 2)}\n\nGenera la respuesta narrativa:`
-      }
+      { role: 'user', content: userPrompt }
     ],
-    max_tokens: 400,
-    temperature: 0.75
+    max_tokens: 600,
+    temperature: 0.7,
+    response_format: { type: 'json_object' }
   });
 
-  return { narrative: response.choices[0].message.content.trim() };
+  const raw = response.choices[0].message.content.trim();
+
+  try {
+    const parsed = JSON.parse(raw);
+    const intents = (Array.isArray(parsed.intents) ? parsed.intents : [parsed.intents || { action: 'fallback' }])
+      .map(intent => ({
+        ...intent,
+        action: VALID_ACTIONS.includes(intent && intent.action) ? intent.action : 'fallback'
+      }));
+    const narrative = parsed.narrative || '';
+    return { intents, narrative };
+  } catch (e) {
+    console.error('Error parseando respuesta Groq:', raw, e);
+    return {
+      intents: [{ action: 'fallback' }],
+      narrative: 'No os entiendo, valiente hidalgo. ¿Podéis repetirlo con otras palabras?'
+    };
+  }
 }
 
 module.exports = { processMessage };
