@@ -10,7 +10,7 @@
   <body onload="documentReady()">
     <div class="chatbox">
       <div class="headerContainer">
-        <div id="characterMenuIcon" class="characterMenuIcon">
+        <div id="characterMenuIcon" class="characterMenuIcon" onclick="toggleCharacterMenu()">
           <img alt="character icon" src="images/don-quixote.png"/>
         </div>
         <div class="audioControllerButton" id="audioControllerButton">
@@ -46,6 +46,32 @@
         </div>
       </div>
     </div>
+
+    <!-- Panel de personaje -->
+    <div id="characterMenu" class="characterMenu displayNONE">
+      <div class="characterMenu__header">
+        <span id="characterMenu__name">HIDALGO</span>
+        <span class="characterMenu__close" onclick="toggleCharacterMenu()">[ X ]</span>
+      </div>
+      <div class="characterMenu__section">
+        <div class="characterMenu__sectionTitle">&gt; INVENTARIO</div>
+        <ul id="characterMenu__objects" class="characterMenu__list"></ul>
+      </div>
+      <div class="characterMenu__section">
+        <div class="characterMenu__sectionTitle">&gt; LUGARES VISITADOS</div>
+        <ul id="characterMenu__places" class="characterMenu__list characterMenu__placesList"></ul>
+      </div>
+    </div>
+
+    <!-- Popup de detalle de lugar -->
+    <div id="placeDetailPopup" class="placeDetailPopup displayNONE">
+      <div class="characterMenu__header">
+        <span id="placeDetailPopup__name"></span>
+        <span class="characterMenu__close" onclick="closePlaceDetail()">[ X ]</span>
+      </div>
+      <p id="placeDetailPopup__desc" class="placeDetailPopup__desc"></p>
+    </div>
+
     <div id="splashScreen">
       <img src="images/quijoteSplash.png" class="backgroundSplashScreen" alt="quixote main screen splash image"/>
       <div id="actionsButtons" class="actionButtons">

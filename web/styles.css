@@ -83,10 +83,15 @@ p {
   width: 60px;
   height: 60px;
   cursor: pointer;
+  transition: filter 0.2s ease;
 
   img {
     width: 100%;
   }
+}
+
+.characterMenuIcon:hover {
+  filter: drop-shadow(0 0 6px #22ecf3);
 }
 
 .headerContainer {
@@ -269,7 +274,7 @@ input:focus {
 
 .barInfill {
   height: 100%;
-  background-color: #2ecc71; /* verde */
+  background-color: #2ecc71;
   color: white;
   font-weight: bold;
   display: flex;
@@ -280,7 +285,7 @@ input:focus {
 }
 .infillText {
   position: absolute;
-  inset: 0; /* top, right, bottom, left = 0 */
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -469,7 +474,142 @@ button:focus {
 }
 
 .displayNONE {
-  display: none;
+  display: none !important;
+}
+
+/* =============================================
+   CHARACTER MENU
+============================================= */
+
+.characterMenu {
+  position: absolute;
+  top: 90px;
+  left: 20px;
+  width: 320px;
+  max-height: calc(100vh - 120px);
+  background-color: #000;
+  border: 1px solid #22ecf3;
+  overflow-y: auto;
+  z-index: 100;
+  font-family: 'PressStart2P';
+  font-size: 9px;
+  box-shadow: 0 0 20px rgba(34, 236, 243, 0.3);
+}
+
+.characterMenu__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid #22ecf3;
+  color: #22ecf3;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.characterMenu__close {
+  cursor: pointer;
+  color: #22ecf3;
+  font-size: 9px;
+}
+
+.characterMenu__close:hover {
+  color: #fff;
+}
+
+.characterMenu__section {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(34, 236, 243, 0.2);
+}
+
+.characterMenu__sectionTitle {
+  color: #fff890;
+  font-size: 8px;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.characterMenu__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.characterMenu__list li {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  line-height: 1.8;
+  color: #ccc;
+}
+
+.characterMenu__list li span.objName {
+  color: #fff;
+}
+
+.characterMenu__list li span.objOrigin {
+  color: #888;
+  font-size: 8px;
+  display: block;
+  margin-top: 2px;
+}
+
+.characterMenu__emptyMsg {
+  color: #555;
+  font-size: 8px;
+  padding: 4px 0;
+}
+
+/* Places list - clickable */
+.characterMenu__placesList li {
+  cursor: pointer;
+  color: #22ecf3;
+  transition: color 0.15s;
+}
+
+.characterMenu__placesList li:hover {
+  color: #fff;
+  text-shadow: 0 0 8px #22ecf3;
+}
+
+.characterMenu__placesList li.currentPlace {
+  color: #fff890;
+}
+
+.characterMenu__placesList li.currentPlace::before {
+  content: '> ';
+}
+
+/* =============================================
+   PLACE DETAIL POPUP
+============================================= */
+
+.placeDetailPopup {
+  position: absolute;
+  top: 90px;
+  left: 360px;
+  width: 300px;
+  background-color: #000;
+  border: 1px solid #fff890;
+  z-index: 101;
+  font-family: 'PressStart2P';
+  font-size: 9px;
+  box-shadow: 0 0 16px rgba(255, 248, 144, 0.25);
+}
+
+.placeDetailPopup .characterMenu__header {
+  border-bottom-color: #fff890;
+  color: #fff890;
+}
+
+.placeDetailPopup .characterMenu__close:hover {
+  color: #fff;
+}
+
+.placeDetailPopup__desc {
+  color: #ccc;
+  line-height: 2;
+  font-size: 8px;
+  padding: 12px 14px;
 }
 
 @media only screen and (max-width: 600px) {
@@ -491,5 +631,17 @@ button:focus {
 
   .easyModePlaces {
     width: 40%;
+  }
+
+  .characterMenu {
+    width: calc(100vw - 40px);
+    left: 20px;
+  }
+
+  .placeDetailPopup {
+    left: 20px;
+    top: auto;
+    bottom: 110px;
+    width: calc(100vw - 40px);
   }
 }

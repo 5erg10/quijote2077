@@ -8,6 +8,9 @@ let audioActive = false;
 let inputContent = '';
 let isGameOver = false;
 
+// Cache de descripciones de lugares (cargada desde el servidor)
+let placesDescriptions = {};
+
 const playList = {
   biblioteca: 'sounds/interiorCut2.mp3',
   habitacion: 'sounds/interiorCut2.mp3',
@@ -61,14 +64,99 @@ function documentReady() {
   document.addEventListener('click', setFocus);
   if (!getUID()) continueButton.disabled = true;
   audioController.addEventListener('click', onOffAudio);
+  // Precargar descripciones de lugares
+  loadPlacesDescriptions();
 }
+
+async function loadPlacesDescriptions() {
+  try {
+    const res = await fetch('/places');
+    if (res.ok) placesDescriptions = await res.json();
+  } catch (e) {
+    // Silencioso: el panel funcionará sin descripciones
+  }
+}
+
+// --- CHARACTER MENU ---
+
+function toggleCharacterMenu() {
+  const menu = document.getElementById('characterMenu');
+  const isHidden = menu.classList.contains('displayNONE');
+  if (isHidden) {
+    renderCharacterMenu();
+    menu.classList.remove('displayNONE');
+  } else {
+    menu.classList.add('displayNONE');
+    closePlaceDetail();
+  }
+}
+
+function renderCharacterMenu() {
+  if (!userData) return;
+
+  // Nombre
+  document.getElementById('characterMenu__name').textContent =
+    (userData.name || 'HIDALGO').toUpperCase();
+
+  // Inventario
+  const objList = document.getElementById('characterMenu__objects');
+  objList.innerHTML = '';
+  const objects = userData.objects || [];
+  if (objects.length === 0) {
+    objList.innerHTML = '<li><span class="characterMenu__emptyMsg">-- mochila vacía --</span></li>';
+  } else {
+    objects.forEach(obj => {
+      const li = document.createElement('li');
+      const origin = obj.originPLace || obj.originPlace || '';
+      li.innerHTML = `<span class="objName">${obj.name.toUpperCase()}</span>${origin ? `<span class="objOrigin">recogido en: ${origin}</span>` : ''}`;
+      objList.appendChild(li);
+    });
+  }
+
+  // Lugares visitados
+  const placesList = document.getElementById('characterMenu__places');
+  placesList.innerHTML = '';
+  const places = userData.placesKnown || [];
+  if (places.length === 0) {
+    placesList.innerHTML = '<li><span class="characterMenu__emptyMsg">-- ninguno aún --</span></li>';
+  } else {
+    const current = (userData.currentRoom && userData.currentRoom[0]) || '';
+    places.forEach(place => {
+      const li = document.createElement('li');
+      li.textContent = place.toUpperCase();
+      if (place === current) li.classList.add('currentPlace');
+      li.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showPlaceDetail(place);
+      });
+      placesList.appendChild(li);
+    });
+  }
+}
+
+function showPlaceDetail(placeName) {
+  const popup = document.getElementById('placeDetailPopup');
+  document.getElementById('placeDetailPopup__name').textContent = placeName.toUpperCase();
+  const placeData = placesDescriptions[placeName];
+  // Limpiar HTML de la descripción (quitar <br> etc)
+  const rawDesc = placeData && placeData.description
+    ? placeData.description.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+    : '-- sin descripción --';
+  document.getElementById('placeDetailPopup__desc').textContent = rawDesc;
+  popup.classList.remove('displayNONE');
+}
+
+function closePlaceDetail() {
+  document.getElementById('placeDetailPopup').classList.add('displayNONE');
+}
+
+// --- GAME FLOW ---
 
 async function sendText({ keyCode, currentTarget }) {
   if (keyCode === 13) {
     const input = currentTarget.value.trim();
     if (!input) return;
 
-    // Si es game over, solo aceptar "reiniciar"
     if (isGameOver) {
       if (input.toLowerCase().includes('reiniciar')) {
         handleRestart();
@@ -77,21 +165,20 @@ async function sendText({ keyCode, currentTarget }) {
       return;
     }
 
+    // Cerrar el menú si está abierto
+    document.getElementById('characterMenu').classList.add('displayNONE');
+    closePlaceDetail();
+
     showLoading(currentTarget);
     setInputWidth();
     const result = await request(input);
     if (result) {
       responses.append(quixoteChat(result.text));
-      if (result.showDifficulty) {
-        showDifficultySelector();
-      }
-      if (result.gameOver) {
-        handleGameOver();
-      }
+      if (result.showDifficulty) showDifficultySelector();
+      if (result.gameOver) handleGameOver();
       setTimeout(() => {
         responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: 'smooth' });
         if (getUID() && !result.gameOver) getUserData();
-        // Autofocus al input después de pintar la respuesta
         setFocus();
       }, 300);
     }
@@ -216,14 +303,11 @@ async function request(input) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: input, id: getUID() })
     });
-
     const data = await res.json();
     let text = data.text || '';
     const intent = data.intent || '';
-
     text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');
-
-    const imgMatch = text.match(/src="([^&"]*)"/);
+    const imgMatch = text.match(/src="([^&"]*)"/); 
     if (imgMatch) {
       const imgPath = imgMatch[1];
       const placeFromImg = (imgPath.match(/([^/]+?)\.[^.]+$/) || [])[1];
@@ -236,10 +320,8 @@ async function request(input) {
         }
       }
     }
-
     saveLastResponse(text);
     return { text, intent, showDifficulty: data.showDifficulty || false, gameOver: data.gameOver || false };
-
   } catch (e) {
     console.error('request error:', e);
     return { text: 'Ha ocurrido un error. Por favor, intenta de nuevo.', intent: 'error' };
