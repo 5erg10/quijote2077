@@ -1,10 +1,10 @@
-var admin = require("firebase-admin");
-var serviceAccount = require("../../credentials/quijote2077-firebase.json");
+var admin = require('firebase-admin');
+var serviceAccount = require('../../credentials/quijote2077-firebase.json');
 
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://quijote-2077-firebase-default-rtdb.europe-west1.firebasedatabase.app/"
+    databaseURL: 'https://quijote-2077-firebase-default-rtdb.europe-west1.firebasedatabase.app/'
   });
 }
 
@@ -15,12 +15,8 @@ function updateUser(userId, newData) {
 }
 
 function getUserById(userId) {
-  if(!userId) {
-      throw new Error('Se requiere identificador de usuario');
-  }
-  return admin.database().ref(`users/${userId}`).once('value').then(snapshot => {
-    return snapshot.val() || {};
-  });
+  if (!userId) throw new Error('Se requiere identificador de usuario');
+  return admin.database().ref(`users/${userId}`).once('value').then(snapshot => snapshot.val() || {});
 }
 
 function getUsers() {
@@ -29,10 +25,10 @@ function getUsers() {
 
 function addUser(userAccount, username, coordinates) {
   return admin.database().ref(`users/${userAccount}`).set({
-    room: { 'biblioteca': { step: 0, branch: 0 }},
+    room: { biblioteca: { step: 0, branch: 0 } },
     placesKnown: ['biblioteca'],
-    objects: [], // Inicialmente no tiene objetos en el inventario
-    states: [], // Inicialmente no tiene estados realizados
+    objects: [],
+    states: [],
     hungry: 100,
     objectsList: objectOriginLocation,
     userName: username,
@@ -41,9 +37,7 @@ function addUser(userAccount, username, coordinates) {
 }
 
 function removeUser(userAccount) {
-  const account = admin.database().ref(`users/${userAccount}`);
-
-  account.remove();
+  return admin.database().ref(`users/${userAccount}`).remove();
 }
 
 module.exports = { updateUser, addUser, getUserById, getUsers, removeUser };

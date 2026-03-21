@@ -1,31 +1,24 @@
 const usersDao = require('../dao/users');
-const { Image } = require('dialogflow-fulfillment');  
 
-// Reset de partida
-function reset(agent, userAccount, userName, endingMessage, reason) {
-  switch(reason) {
-    case 'hungry':
-    case 'death': death(agent, endingMessage, userAccount);
-      break;
-    case 'end': end(agent, endingMessage, userAccount, userName);
-      break;
+// Construye un resultado de reset sin depender de 'agent'
+function buildResetResult(message, reason) {
+  return {
+    action: 'reset',
+    gameOver: true,
+    reason,
+    message,
+    imageUrl: reason === 'death' || reason === 'hungry' ? 'images/places/blackDeath.jpg' : null,
+    restartMessage: reason !== 'end' ? '\n\nSi deseas iniciar una *nueva partida*, di *REINICIAR*' : '\n\nCONTINUARÁ...'
+  };
+}
+
+async function applyReset(userId, userName, reason) {
+  if (reason === 'end') {
+    const coordinates = { lat: 39.5137458, lng: -3.0046506 };
+    await usersDao.addUser(userId, userName, coordinates);
+  } else {
+    await usersDao.removeUser(userId);
   }
-
-  
 }
 
-function end(agent, endingMessage, userAccount, userName) {
-  agent.add(endingMessage + `\nCONTINUARÁ...`);
-  const coordinates = { lat: 39.5137458, lng: -3.0046506};
-  return usersDao.addUser(userAccount, userName, coordinates);
-}
-
-function death(agent, endingMessage, userAccount) {
-  agent.add(endingMessage);
-
-  agent.add('<img src="images/places/blackDeath.jpg">');
-  agent.add('\n\nSi deseas iniciar una *nueva partida*, di *REINICIAR*');
-  return usersDao.removeUser(userAccount);
-}
-
-module.exports = { reset };
+module.exports = { buildResetResult, applyReset };
