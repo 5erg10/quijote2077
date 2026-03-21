@@ -11,12 +11,12 @@ async function execute(intent, userId, user) {
 
   if (!selectedPlace) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: 'Nadie ha o\u00eddo hablar de ese lugar nunca!' };
+    return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
   }
 
   if (placeName === selectedPlace) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: '\u00a1Ya est\u00e1s en este lugar!' };
+    return { action: 'viajar', success: false, message: '¡Ya estás en este lugar!' };
   }
 
   let place;
@@ -24,17 +24,27 @@ async function execute(intent, userId, user) {
     place = await placesDao.getPlaceById(selectedPlace, user.room);
   } catch (e) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: 'Nadie ha o\u00eddo hablar de ese lugar nunca!' };
+    return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
   }
 
   if (!place) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: 'Nadie ha o\u00eddo hablar de ese lugar nunca!' };
+    return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
   }
 
-  // Comprobar accesibilidad: adyacente o ya visitado
-  const currentPlaceData = await placesDao.getPlaceById(placeName).catch(() => null);
-  const connectedRooms = (currentPlaceData && currentPlaceData.connectedRooms) || [];
+  // --- COMPROBAR ACCESIBILIDAD ---
+  // Usamos getConnectedRooms() que es síncrona y lee directamente
+  // de places.json sin ninguna lógica de resolución que pueda fallar.
+  // getPlaceById() puede rechazar la Promise con lugares de nombre especial
+  // (tildes, espacios...) cuando se llama sin el parámetro room.
+  let connectedRooms;
+  try {
+    connectedRooms = placesDao.getConnectedRooms(placeName);
+  } catch (e) {
+    // Si el lugar actual no existe en el JSON (caso extraño), permitir viaje
+    connectedRooms = [];
+  }
+
   const placesKnown = user.placesKnown || [];
 
   if (!connectedRooms.includes(selectedPlace) && !placesKnown.includes(selectedPlace)) {
@@ -46,26 +56,26 @@ async function execute(intent, userId, user) {
     };
   }
 
-  // Comprobar requisitos de acceso (estados necesarios)
+  // --- COMPROBAR REQUISITOS DE ACCESO ---
   if (!arrayUtils.isSubset(place.requirementStatus || [], user.states || [])) {
     await countIntents.count(userId);
-    return { action: 'viajar', success: false, message: place.failResponse || 'No puedes ir all\u00ed ahora mismo.' };
+    return { action: 'viajar', success: false, message: place.failResponse || 'No puedes ir allí ahora mismo.' };
   }
 
-  // Comprobar energ\u00eda
+  // --- COMPROBAR ENERGÍA ---
   const distance = calculateDistance(user.room[placeName], place);
   const newHungry = user.hungry - distance;
 
   if (newHungry <= 0) {
     const resetResult = gameOperations.buildResetResult(
-      'Te encuentras muy d\u00e9bil para seguir caminando. Tu vista se nubla y caes desmayado en el suelo.',
+      'Te encuentras muy débil para seguir caminando. Tu vista se nubla y caes desmayado en el suelo.',
       'hungry'
     );
     await gameOperations.applyReset(userId, user.userName, 'hungry');
     return resetResult;
   }
 
-  // Actualizar estado del usuario
+  // --- ACTUALIZAR ESTADO ---
   const newRoom = { [selectedPlace]: place };
   let updatedPlaces = [...placesKnown];
   if (!updatedPlaces.includes(selectedPlace)) updatedPlaces.push(selectedPlace);
