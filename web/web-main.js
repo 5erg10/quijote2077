@@ -1,10 +1,12 @@
 const storage = window.localStorage;
 
 let textarea, responses, splashScreen, continueButton, warningMessage, currentPlace,
-currentTrack, outerAudio, audioController, weightStatBar, energyStatBar, weightInfillText,
-energyInfillText, statsBox, userData;
+  currentTrack, outerAudio, audioController, weightStatBar, energyStatBar, weightInfillText,
+  energyInfillText, statsBox, userData;
 
 let audioActive = false;
+let inputContent = '';
+let gamePhase = 'welcome'; // 'welcome' | 'naming' | 'difficulty' | 'playing'
 
 const playList = {
   biblioteca: 'sounds/interiorCut2.mp3',
@@ -49,34 +51,42 @@ function documentReady() {
   continueButton = document.querySelector('#continueButton');
   audioController = document.querySelector('#audioControllerButton');
   outerAudio = document.querySelector('#outerAudio');
-  currentPlace = storage.getItem("currentPlace");
-  energyStatBar = document.querySelector("#energyStatBar");
-  weightStatBar = document.querySelector("#weightStatBar");
-  energyInfillText = document.querySelector("#energyInfillText");
-  weightInfillText = document.querySelector("#weightInfillText");
-  statsBox = document.querySelector("#statsBox");
-  statsBox.style.display = `none`;
+  currentPlace = storage.getItem('currentPlace');
+  energyStatBar = document.querySelector('#energyStatBar');
+  weightStatBar = document.querySelector('#weightStatBar');
+  energyInfillText = document.querySelector('#energyInfillText');
+  weightInfillText = document.querySelector('#weightInfillText');
+  statsBox = document.querySelector('#statsBox');
+  statsBox.style.display = 'none';
   document.addEventListener('click', setFocus);
-  if(!getUID()) {
-    continueButton.disabled = true;
-  }
-  audioController.addEventListener("click", onOffAudio);
+  if (!getUID()) continueButton.disabled = true;
+  audioController.addEventListener('click', onOffAudio);
 }
 
-async function sendText({keyCode, currentTarget}) {
-  if (keyCode == 13) {
-    const input = currentTarget.value;
-    if (input && input !== '') {
-      showLoading(currentTarget);
-      setInputWidth();
-      const text = await request(input);
-      responses.append(quixoteChat(text));
+async function sendText({ keyCode, currentTarget }) {
+  if (keyCode === 13) {
+    const input = currentTarget.value.trim();
+    if (!input) return;
+    showLoading(currentTarget);
+    setInputWidth();
+    const result = await request(input);
+    if (result) {
+      responses.append(quixoteChat(result.text));
+      // Mostrar selector de dificultad si el servidor lo pide
+      if (result.showDifficulty) {
+        showDifficultySelector();
+      }
       setTimeout(() => {
-        responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: "smooth" });
-        if(getUID()) getUserData();
+        responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: 'smooth' });
+        if (getUID()) getUserData();
       }, 300);
     }
   }
+}
+
+function showDifficultySelector() {
+  document.querySelector('#enterText').classList.add('displayNONE');
+  document.querySelector('#enterDifficult').classList.remove('displayNONE');
 }
 
 function cancelContinue() {
@@ -90,12 +100,14 @@ function startFromWarning() {
 }
 
 function restartGame() {
-  if(!getUID()) {
-    startGame();
+  if (!getUID()) {
     createUID();
-    setTimeout(() => {
-      responses.append(quixoteChat("Hola?"));
-    }, 2000);
+    startGame();
+    // Enviamos un primer mensaje vacío para disparar el saludo del servidor
+    setTimeout(async () => {
+      const result = await request('');
+      if (result) responses.append(quixoteChat(result.text));
+    }, 500);
   } else {
     toogleElementOpacity(warningMessage, false);
   }
@@ -109,14 +121,14 @@ async function continueGame() {
 
 function startGame() {
   toogleElementOpacity(splashScreen, true);
-  textarea.addEventListener("keyup", sendText);
+  textarea.addEventListener('keyup', sendText);
   setInputWidth();
   setFocus();
-  if(audioActive) outerAudio.play(playList[currentPlace]);
+  if (audioActive) outerAudio.play();
 }
 
 function showLoading(target) {
-  responses.append(userChat(target.value));
+  if (target.value.trim()) responses.append(userChat(target.value));
   target.value = '';
   responses.scrollTop = responses.scrollHeight;
 }
@@ -126,15 +138,18 @@ function getUID() {
 }
 
 async function getUserData() {
-  const userRequest = await fetch(`/userstate?uuid=${getUID()}`);
-  userData = JSON.parse(await userRequest.text());
-  console.log('user Data: ', userData);
-  if (!!userData) {
-    energyInfillText.innerHTML = `Energia ${userData.energy}/100`;
-    weightInfillText.innerHTML = `Peso ${100 - userData.maxWeight}/100`;
-    energyStatBar.style.width = `${userData.energy}%`;
-    weightStatBar.style.width = `${100 - userData.maxWeight}%`;
-    statsBox.style.display = `flex`;
+  try {
+    const userRequest = await fetch(`/userstate?uuid=${getUID()}`);
+    userData = await userRequest.json();
+    if (userData && userData.energy !== undefined) {
+      energyInfillText.innerHTML = `Energia ${userData.energy}/100`;
+      weightInfillText.innerHTML = `Peso ${100 - (userData.maxWeight || 0)}/100`;
+      energyStatBar.style.width = `${userData.energy}%`;
+      weightStatBar.style.width = `${100 - (userData.maxWeight || 0)}%`;
+      statsBox.style.display = 'flex';
+    }
+  } catch (e) {
+    console.error('getUserData error:', e);
   }
 }
 
@@ -145,69 +160,64 @@ function createUID() {
 }
 
 function selecDificult(level) {
-  sendText({keyCode: 13, currentTarget: {value: level}});
+  sendText({ keyCode: 13, currentTarget: { value: level } });
   setTimeout(() => {
-    document.querySelector('#enterText').classList.remove("displayNONE");
-    document.querySelector('#enterDifficult').classList.add("displayNONE");
+    document.querySelector('#enterText').classList.remove('displayNONE');
+    document.querySelector('#enterDifficult').classList.add('displayNONE');
   }, 1000);
 }
 
 function toogleElementOpacity(element, open) {
-  if(open) {
-    element.classList.add("fadeOut");
-    setTimeout(() => {
-      element.classList.add("displayNONE");
-    },200);
+  if (open) {
+    element.classList.add('fadeOut');
+    setTimeout(() => element.classList.add('displayNONE'), 200);
   } else {
-    element.classList.remove("displayNONE");
-    setTimeout(() => {
-      element.classList.remove("fadeOut");
-    },100);
+    element.classList.remove('displayNONE');
+    setTimeout(() => element.classList.remove('fadeOut'), 100);
   }
 }
 
 async function request(input) {
+  try {
+    const res = await fetch('/api/game', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: input, id: getUID() })
+    });
 
-  const request = await fetch(`api/intent?text=${input}&id=${getUID()}`);
+    const data = await res.json();
+    let text = data.text || '';
+    const intent = data.intent || '';
 
-  const response = await request.text();
-
-  console.log(JSON.parse(response))
-
-  let text = JSON.parse(response).text;
-  const intent = JSON.parse(response).intent;
-
-  console.log('text response: ', text);
-  console.log('intent response: ', intent);
-
-  if (intent === 'negacion') {
-    toogleElementOpacity(splashScreen, false);
-  } else {
-    // convierto los asteriscos en negritas
+    // Convertir *texto* en negritas
     text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');
 
-    currentPlace = ((text.match(/src="([^&]*)"/) || 'none')[1].match(/([^/]+?).$/) || 'none')[0].replace(/.png/,'');
-
-    if( currentPlace !== "n" ) {
-      storage.setItem("currentPlace", currentPlace);
-      if(audioActive && playList[currentPlace] && currentTrack !== playList[currentPlace]) {
-        currentTrack = playList[currentPlace];
-        playMusic(currentTrack);
+    // Extraer lugar de imagen para la música
+    const imgMatch = text.match(/src="([^&"]*)"/);
+    if (imgMatch) {
+      const imgPath = imgMatch[1];
+      const placeFromImg = (imgPath.match(/([^/]+?)\.[^.]+$/) || [])[1];
+      if (placeFromImg && placeFromImg !== 'blackDeath') {
+        currentPlace = placeFromImg;
+        storage.setItem('currentPlace', currentPlace);
+        if (audioActive && playList[currentPlace] && currentTrack !== playList[currentPlace]) {
+          currentTrack = playList[currentPlace];
+          playMusic(currentTrack);
+        }
       }
     }
+
     saveLastResponse(text);
-    if (intent === 'Guardar mi nombre' && text.includes('dificultad')) {
-      document.querySelector('#enterText').classList.add("displayNONE");
-      document.querySelector('#enterDifficult').classList.remove("displayNONE");
-      return text = 'Selecciona el nivel de dificultad: ';
-    } else {
-      return text;
-    }
+    return { text, intent, showDifficulty: data.showDifficulty || false };
+
+  } catch (e) {
+    console.error('request error:', e);
+    return { text: 'Ha ocurrido un error. Por favor, intenta de nuevo.', intent: 'error' };
   }
 }
 
 function playMusic(soundTrack) {
-  outerAudio.src = soundTrack || "sounds/nightShadecut.mp3";
+  outerAudio.src = soundTrack || 'sounds/nightShadecut.mp3';
   outerAudio.volume = 0.1;
   outerAudio.play();
 }
@@ -219,17 +229,17 @@ function pauseMusic() {
 
 function onOffAudio() {
   if (!audioActive) {
-    audioController.children[0].src = "images/sound-icon.png";
-    audioController.children[1].innerHTML = "MUSIC ON";
+    audioController.children[0].src = 'images/sound-icon.png';
+    audioController.children[1].innerHTML = 'MUSIC ON';
     playMusic(playList[currentPlace]);
     audioActive = true;
   } else {
-    audioController.children[0].src = "images/mute-icon.png";
-    audioController.children[1].innerHTML = "MUSIC OFF";
+    audioController.children[0].src = 'images/mute-icon.png';
+    audioController.children[1].innerHTML = 'MUSIC OFF';
     pauseMusic();
     audioActive = false;
   }
-};
+}
 
 function saveLastResponse(text) {
   storage.setItem('last', text);
@@ -237,23 +247,21 @@ function saveLastResponse(text) {
 }
 
 function loadLastResponse() {
-  responses.append(quixoteChat(storage.getItem('last')));
+  const last = storage.getItem('last');
+  if (last) responses.append(quixoteChat(last));
 }
 
 function quixoteChat(text) {
   const chat = document.createElement('div');
   const avatar = document.createElement('img');
   const p = document.createElement('p');
-
-  chat.className="quixoteChat";
-  avatar.className="quixoteAvatar";
-  avatar.src="images/don-quixote-1.png";
-  p.className="quixoteText";
+  chat.className = 'quixoteChat';
+  avatar.className = 'quixoteAvatar';
+  avatar.src = 'images/don-quixote-1.png';
+  p.className = 'quixoteText';
   p.innerHTML = text;
-
   chat.appendChild(avatar);
   chat.appendChild(p);
-
   return chat;
 }
 
@@ -261,40 +269,31 @@ function userChat(text) {
   const chat = document.createElement('div');
   const avatar = document.createElement('img');
   const p = document.createElement('p');
-
-  chat.className="userChat";
-  avatar.className="userAvatar";
-  avatar.src="images/don-quixote.png";
-  p.className="userText";
+  chat.className = 'userChat';
+  avatar.className = 'userAvatar';
+  avatar.src = 'images/don-quixote.png';
+  p.className = 'userText';
   p.innerHTML = text;
-
   chat.appendChild(p);
   chat.appendChild(avatar);
-
   return chat;
 }
 
-function setInputWidth() {  
-  if (textarea.value.length === 0) {
+function setInputWidth() {
+  if (!textarea.value || textarea.value.length === 0) {
     textarea.style.width = '3px';
-    return true;
+    return;
   }
-
   if (inputContent > textarea.value) {
     textarea.style.width = `${(textarea.value.length * 12) + 3}px`;
   }
-
-  return true;
 }
 
-function setFakeInputWidth() {  
+function setFakeInputWidth() {
   inputContent = textarea.value;
-
   textarea.style.width = `${(inputContent.length * 12) + 15}px`;
-
-  return true;
 }
 
 function setFocus() {
-  textarea.focus()
+  textarea.focus();
 }
