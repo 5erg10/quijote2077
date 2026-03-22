@@ -45,7 +45,6 @@ texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","ob
   try {
     const parsed = JSON.parse(raw);
     const actionsArr = Array.isArray(parsed) ? parsed : (parsed.intents || parsed.actions || parsed.acciones || [parsed]);
-    // llm convierte cualquier verbo que usemos en el canonico, pero lo compruebo de nuevo para asegurar integridad
     return resolveCanonicalVerb(actionsArr, availableActions);
   } catch (e) {
     console.error('Error parseando intents:', raw, e);
@@ -59,12 +58,13 @@ const generateNarrative = async ({ userText, engineResult, user, helpHint }) => 
 
   const systemPrompt = `Eres el narrador de "Quijote 2077", aventura conversacional en la epoca de El Quijote con toques retrofuturistas.
 Estilo: humoristico, ironico, cervantino. Maximo 3 parrafos. Nunca menciones que eres una IA.
-Jugador: ${user.userName || 'hidalgo'} | Lugar: ${placeName} | Energia: ${user.hungry}/100
+Jugador: ${user.userName || 'hidalgo'} | Lugar: ${placeName}
 Si hay imageUrl en el resultado, pon <img src="URL"> al inicio.
+PROHIBIDO: no menciones energia, vida, puntos de vida, distancia, pasos ni datos numericos internos del juego.
 ${helpHint ? `Incluye esta pista al final de forma natural: ${helpHint}` : ''}`.trim();
 
   const userPrompt = `El jugador escribio: "${userText}"
-Resultado: ${JSON.stringify(engineResult)}${engineMessage ? `\nMensaje obligatorio a incluir integro: "${engineMessage}"` : ''}
+Resultado: ${JSON.stringify(sanitizeEngineResult(engineResult))}${engineMessage ? `\nMensaje obligatorio a incluir integro: "${engineMessage}"` : ''}
 Genera la respuesta narrativa:`;
 
   const response = await llmClient.chat.completions.create({
@@ -78,6 +78,27 @@ Genera la respuesta narrativa:`;
   });
 
   return response.choices[0].message.content.trim();
+}
+
+const sanitizeEngineResult = (engineResult) => {
+  if (!engineResult) return engineResult;
+
+  const INTERNAL_FIELDS = ['distance', 'newHungry', 'longTrip', 'lifePoints', 'currentWeight'];
+
+  if (engineResult.multiple && engineResult.results) {
+    return {
+      ...engineResult,
+      results: engineResult.results.map(r => removeFields(r, INTERNAL_FIELDS))
+    };
+  }
+
+  return removeFields(engineResult, INTERNAL_FIELDS);
+}
+
+const removeFields = (obj, fields) => {
+  const clean = { ...obj };
+  fields.forEach(f => delete clean[f]);
+  return clean;
 }
 
 const extractEngineMessage = (engineResult) => {
