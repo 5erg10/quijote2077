@@ -1,15 +1,11 @@
-const llmEngine = require('groq-sdk');
-const config = require('../config').CONFIG;
 const { getValidActionsForPlace, resolveCanonicalVerb } = require('./actionContext');
 
-const llmClient = new llmEngine({ apiKey: process.env.LLM_API_KEY });
-
-const parseIntents = async (userText, place) => {
+const parseIntents = async (userText, place, llmClientConf) => {
  
   const availableActions = getValidActionsForPlace(place);
 
-  const response = await llmClient.chat.completions.create({
-    model: config.aiModel,
+  const response = await llmClientConf.client.chat.completions.create({
+    model: llmClientConf.model,
     messages: [
       {
         role: 'system',
@@ -44,7 +40,8 @@ texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","ob
 
   try {
     const parsed = JSON.parse(raw);
-    const actionsArr = Array.isArray(parsed) ? parsed : (parsed.intents || parsed.actions || parsed.acciones || [parsed]);
+    const actionsArr = Array.isArray(parsed) ? parsed : (parsed.intents || parsed.actions || parsed.acciones || parsed.items || [parsed]);
+    console.log('actions arr: ', actionsArr)
     return resolveCanonicalVerb(actionsArr, availableActions);
   } catch (e) {
     console.error('Error parseando intents:', raw, e);
@@ -52,7 +49,7 @@ texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","ob
   }
 }
 
-const generateNarrative = async ({ userText, engineResult, user, helpHint }) => {
+const generateNarrative = async ({ llmClientConf, userText, engineResult, user, helpHint }) => {
   const placeName = Object.keys(user.room)[0];
   const engineMessage = extractEngineMessage(engineResult);
 
@@ -67,8 +64,8 @@ ${helpHint ? `Incluye esta pista al final de forma natural: ${helpHint}` : ''}`.
 Resultado: ${JSON.stringify(sanitizeEngineResult(engineResult))}${engineMessage ? `\nMensaje obligatorio a incluir integro: "${engineMessage}"` : ''}
 Genera la respuesta narrativa:`;
 
-  const response = await llmClient.chat.completions.create({
-    model: config.aiModel,
+  const response = await llmClientConf.client.chat.completions.create({
+    model: llmClientConf.model,
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt }

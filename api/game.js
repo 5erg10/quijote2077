@@ -1,7 +1,22 @@
+require('dotenv').config();
 const usersDao = require('../functions/dao/users');
 const gameEngine = require('../engine/gameEngine');
 const placesDao = require('../functions/dao/places');
 const { parseIntents, generateNarrative } = require('../llm/llmEngine');
+const config = require('../config').CONFIG;
+const countIntents = require('../functions/utils/countIntents');
+const groqEngime = require('groq-sdk');
+const cerebrasengine = require('@cerebras/cerebras_cloud_sdk');
+
+const groqClientConf = {
+  client: new groqEngime({ apiKey: config.groqApiKey }),
+  model: config.groqAiModel
+};
+
+const llmCerebrasClientConf = {
+  client: new cerebrasengine({apiKey: config.cerebrasApiKey}),
+  model: config.cerebrasModel
+};
 
 module.exports = async (req, res) => {
   const { text, id } = req.body;
@@ -15,6 +30,7 @@ module.exports = async (req, res) => {
     const userExists = user && Object.keys(user).length > 0;
     const hasName = userExists && user.userName;
     const hasDifficulty = hasName && user.difficulty;
+    const llmClientConf = groqClientConf;
 
     if (!userExists || !hasName) {
       return res.json(await handleWelcome(id, text, userExists ? user : null));
@@ -31,13 +47,12 @@ module.exports = async (req, res) => {
     const placeName = Object.keys(user.room)[0];
     const place = await placesDao.getPlaceById(placeName).catch(() => null);
 
-    const intents = await parseIntents(text, place);
+    const intents = await parseIntents(text, place, llmClientConf);
     console.log('Intents:', JSON.stringify(intents));
 
     const engineResults = await gameEngine.execute(intents, id, user);
     console.log('Engine:', JSON.stringify(engineResults));
 
-    const countIntents = require('../functions/utils/countIntents');
     const freshUser = await usersDao.getUserById(id);
 
     const messages = [];
@@ -55,6 +70,7 @@ module.exports = async (req, res) => {
 
       const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, engineResult.action);
       const narrative = await generateNarrative({
+        llmClientConf,
         userText: text,
         engineResult,
         user: freshUser,
