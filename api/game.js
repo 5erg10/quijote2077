@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
     }
 
     if (!text || !text.trim()) {
-      return res.json({ text: '\u00bfQu\u00e9 quieres hacer, hidalgo?', intent: 'idle' });
+      return res.json({ messages: [{ text: '¿Qué quieres hacer, hidalgo?', intent: 'idle' }] });
     }
 
     const placeName = Object.keys(user.room)[0];
@@ -34,34 +34,44 @@ module.exports = async (req, res) => {
     const intents = await parseIntents(text, place);
     console.log('Intents:', JSON.stringify(intents));
 
-    const engineResult = await gameEngine.execute(intents, id, user);
-    console.log('Engine:', JSON.stringify(engineResult));
-
-    if (engineResult && engineResult.gameOver) {
-      const gameOverText = [
-        engineResult.imageUrl ? `<img src="${engineResult.imageUrl}">` : '',
-        engineResult.message || '',
-        engineResult.restartMessage || ''
-      ].filter(Boolean).join('\n');
-      return res.json({ text: gameOverText, intent: 'gameOver', gameOver: true });
-    }
+    const engineResults = await gameEngine.execute(intents, id, user);
+    console.log('Engine:', JSON.stringify(engineResults));
 
     const countIntents = require('../functions/utils/countIntents');
     const freshUser = await usersDao.getUserById(id);
-    const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, intents[0] && intents[0].action);
 
-    const narrative = await generateNarrative({
-      userText: text,
-      engineResult,
-      user: freshUser,
-      helpHint
-    });
+    const messages = [];
 
-    return res.json({ text: narrative, intent: intents[0] && intents[0].action });
+    for (const engineResult of engineResults) {
+      if (engineResult.gameOver) {
+        const gameOverText = [
+          engineResult.imageUrl ? `<img src="${engineResult.imageUrl}">` : '',
+          engineResult.message || '',
+          engineResult.restartMessage || ''
+        ].filter(Boolean).join('\n');
+        messages.push({ text: gameOverText, intent: 'gameOver', gameOver: true });
+        break;
+      }
+
+      const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, engineResult.action);
+      const narrative = await generateNarrative({
+        userText: text,
+        engineResult,
+        user: freshUser,
+        helpHint
+      });
+
+      messages.push({ text: narrative, intent: engineResult.action });
+    }
+
+    const hasGameOver = messages.some(m => m.gameOver);
+    return res.json({ messages, gameOver: hasGameOver || false });
 
   } catch (error) {
     console.error('game.js error:', error);
-    return res.status(500).json({ text: 'Ha ocurrido un error inesperado en la aventura.', intent: 'error' });
+    return res.status(500).json({
+      messages: [{ text: 'Ha ocurrido un error inesperado en la aventura.', intent: 'error' }]
+    });
   }
 };
 
@@ -69,15 +79,19 @@ async function handleWelcome(id, text, user) {
   const name = text && text.trim();
   if (!name) {
     return {
-      text: 'Hola aventurero! No s\u00e9 si eres un valiente o un inconsciente al saludarme, pero en fin... \u00bfQuieres embarcarte en esta aventura? Si es as\u00ed, dime tu nombre.',
-      intent: 'welcome'
+      messages: [{
+        text: 'Hola aventurero! No sé si eres un valiente o un inconsciente al saludarme, pero en fin... ¿Quieres embarcarte en esta aventura? Si es así, dime tu nombre.',
+        intent: 'welcome'
+      }]
     };
   }
   await usersDao.addUser(id, name, { lat: 39.5137458, lng: -3.0046506 });
   return {
-    text: `\u00a1${name}! Buen nombre para un hidalgo. Ahora elige tu nivel de dificultad: *facil*, *medio* o *dificil*.`,
-    intent: 'setName',
-    showDifficulty: true
+    messages: [{
+      text: `¡${name}! Buen nombre para un hidalgo. Ahora elige tu nivel de dificultad: *facil*, *medio* o *dificil*.`,
+      intent: 'setName',
+      showDifficulty: true
+    }]
   };
 }
 
@@ -85,7 +99,9 @@ async function handleDifficulty(id, text, user) {
   const level = text && text.toLowerCase().trim();
   const validLevels = ['facil', 'medio', 'dificil'];
   if (!level || !validLevels.includes(level)) {
-    return { text: 'Por favor elige entre *facil*, *medio* o *dificil*.', intent: 'difficulty', showDifficulty: true };
+    return {
+      messages: [{ text: 'Por favor elige entre *facil*, *medio* o *dificil*.', intent: 'difficulty', showDifficulty: true }]
+    };
   }
   const capacityMap = { facil: 9999999, medio: 100, dificil: 50 };
   const difficulty = { level, maxCapacity: capacityMap[level] };
@@ -94,7 +110,9 @@ async function handleDifficulty(id, text, user) {
   const place = await placesDao.getPlaceById('biblioteca');
   const userWithDifficulty = { ...user, difficulty };
   return {
-    text: `Excelente, comenzar\u00e1s con dificultad *${level}*.\n<img src="${place.media.images[0]}">\n${textByDifficulty(place.description, userWithDifficulty)}`,
-    intent: 'difficulty'
+    messages: [{
+      text: `Excelente, comenzarás con dificultad *${level}*.\n<img src="${place.media.images[0]}">\n${textByDifficulty(place.description, userWithDifficulty)}`,
+      intent: 'difficulty'
+    }]
   };
 }

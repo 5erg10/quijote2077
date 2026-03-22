@@ -8,7 +8,6 @@ let audioActive = false;
 let inputContent = '';
 let isGameOver = false;
 
-// Cache de descripciones de lugares (cargada desde el servidor)
 let placesDescriptions = {};
 
 const playList = {
@@ -66,7 +65,6 @@ function documentReady() {
   audioController.addEventListener('click', onOffAudio);
   loadPlacesDescriptions();
 
-  // Cerrar el menú al hacer click fuera de él
   document.addEventListener('click', (e) => {
     const menu = document.getElementById('characterMenu');
     const popup = document.getElementById('placeDetailPopup');
@@ -83,11 +81,8 @@ function documentReady() {
     }
   });
 
-  // Cerrar el menú con Escape
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeCharacterMenu();
-    }
+    if (e.key === 'Escape') closeCharacterMenu();
   });
 }
 
@@ -95,12 +90,8 @@ async function loadPlacesDescriptions() {
   try {
     const res = await fetch('/places');
     if (res.ok) placesDescriptions = await res.json();
-  } catch (e) {
-    // Silencioso: el panel funcionará sin descripciones
-  }
+  } catch (e) {}
 }
-
-// --- CHARACTER MENU ---
 
 function closeCharacterMenu() {
   document.getElementById('characterMenu').classList.add('displayNONE');
@@ -108,9 +99,7 @@ function closeCharacterMenu() {
 }
 
 function toggleCharacterMenu() {
-  // Solo abrir si hay un usuario cargado
   if (!userData) return;
-
   const menu = document.getElementById('characterMenu');
   if (menu.classList.contains('displayNONE')) {
     renderCharacterMenu();
@@ -126,7 +115,6 @@ function renderCharacterMenu() {
   document.getElementById('characterMenu__name').textContent =
     (userData.name || 'HIDALGO').toUpperCase();
 
-  // Inventario
   const objList = document.getElementById('characterMenu__objects');
   objList.innerHTML = '';
   const objects = userData.objects || [];
@@ -141,7 +129,6 @@ function renderCharacterMenu() {
     });
   }
 
-  // Lugares visitados
   const placesList = document.getElementById('characterMenu__places');
   placesList.innerHTML = '';
   const places = userData.placesKnown || [];
@@ -151,7 +138,7 @@ function renderCharacterMenu() {
     const current = (userData.currentRoom && userData.currentRoom[0]) || '';
     places.forEach(place => {
       const li = document.createElement('li');
-      li.textContent = `${place === current ? 'Estas en ': ''}${place.charAt(0).toUpperCase() + place.slice(1)}`;
+      li.textContent = `${place === current ? 'Estas en ' : ''}${place.charAt(0).toUpperCase() + place.slice(1)}`;
       if (place === current) li.classList.add('currentPlace');
       li.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -177,35 +164,58 @@ function closePlaceDetail() {
   document.getElementById('placeDetailPopup').classList.add('displayNONE');
 }
 
-// --- GAME FLOW ---
-
 async function sendText({ keyCode, currentTarget }) {
   if (keyCode === 13) {
     const input = currentTarget.value.trim();
     if (!input) return;
 
     if (isGameOver) {
-      if (input.toLowerCase().includes('reiniciar')) {
-        handleRestart();
-      }
+      if (input.toLowerCase().includes('reiniciar')) handleRestart();
       currentTarget.value = '';
       return;
     }
 
     closeCharacterMenu();
-
     showLoading(currentTarget);
     setInputWidth();
+
     const result = await request(input);
     if (result) {
-      responses.append(quixoteChat(result.text));
-      if (result.showDifficulty) showDifficultySelector();
+      const messages = result.messages || [];
+      messages.forEach(msg => {
+        let text = msg.text || '';
+        text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');
+        updateMusicFromText(text);
+        responses.append(quixoteChat(text));
+        if (msg.showDifficulty) showDifficultySelector();
+      });
+
       if (result.gameOver) handleGameOver();
+
       setTimeout(() => {
         responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: 'smooth' });
         if (getUID() && !result.gameOver) getUserData();
         setFocus();
       }, 300);
+
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg) saveLastResponse(lastMsg.text || '');
+    }
+  }
+}
+
+function updateMusicFromText(text) {
+  const imgMatch = text.match(/src="([^&"]*)"/); 
+  if (imgMatch) {
+    const imgPath = imgMatch[1];
+    const placeFromImg = (imgPath.match(/([^/]+?)\.[^.]+$/) || [])[1];
+    if (placeFromImg && placeFromImg !== 'blackDeath') {
+      currentPlace = placeFromImg;
+      storage.setItem('currentPlace', currentPlace);
+      if (audioActive && playList[currentPlace] && currentTrack !== playList[currentPlace]) {
+        currentTrack = playList[currentPlace];
+        playMusic(currentTrack);
+      }
     }
   }
 }
@@ -225,7 +235,9 @@ function handleRestart() {
   createUID();
   setTimeout(async () => {
     const result = await request('');
-    if (result) responses.append(quixoteChat(result.text));
+    if (result && result.messages) {
+      result.messages.forEach(msg => responses.append(quixoteChat(msg.text || '')));
+    }
   }, 300);
 }
 
@@ -250,7 +262,9 @@ function restartGame() {
     startGame();
     setTimeout(async () => {
       const result = await request('');
-      if (result) responses.append(quixoteChat(result.text));
+      if (result && result.messages) {
+        result.messages.forEach(msg => responses.append(quixoteChat(msg.text || '')));
+      }
     }, 500);
   } else {
     toogleElementOpacity(warningMessage, false);
@@ -330,27 +344,16 @@ async function request(input) {
       body: JSON.stringify({ text: input, id: getUID() })
     });
     const data = await res.json();
-    let text = data.text || '';
-    const intent = data.intent || '';
-    text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');
-    const imgMatch = text.match(/src="([^&"]*)"/);
-    if (imgMatch) {
-      const imgPath = imgMatch[1];
-      const placeFromImg = (imgPath.match(/([^/]+?)\.[^.]+$/) || [])[1];
-      if (placeFromImg && placeFromImg !== 'blackDeath') {
-        currentPlace = placeFromImg;
-        storage.setItem('currentPlace', currentPlace);
-        if (audioActive && playList[currentPlace] && currentTrack !== playList[currentPlace]) {
-          currentTrack = playList[currentPlace];
-          playMusic(currentTrack);
-        }
-      }
-    }
-    saveLastResponse(text);
-    return { text, intent, showDifficulty: data.showDifficulty || false, gameOver: data.gameOver || false };
+    return {
+      messages: data.messages || [],
+      gameOver: data.gameOver || false
+    };
   } catch (e) {
     console.error('request error:', e);
-    return { text: 'Ha ocurrido un error. Por favor, intenta de nuevo.', intent: 'error' };
+    return {
+      messages: [{ text: 'Ha ocurrido un error. Por favor, intenta de nuevo.', intent: 'error' }],
+      gameOver: false
+    };
   }
 }
 
