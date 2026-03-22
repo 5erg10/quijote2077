@@ -1,43 +1,43 @@
 const Groq = require('groq-sdk');
-const { getValidActionsForPlace, resolveCanonicalVerb, getSynonyms } = require('./actionContext');
+const { getValidActionsForPlace, resolveCanonicalVerb } = require('./actionContext');
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+const SYSTEM_ACTIONS = ['viajar', 'coger', 'tirar', 'comer', 'inventario', 'ayuda', 'afirmar', 'negar'];
+
 async function parseIntents(userText, place) {
-  const validActions = getValidActionsForPlace(place);
+  const placeActions = place && place.actions
+    ? [...new Set(place.actions.map(a => a.action))]
+    : [];
 
-  const actionList = validActions
-    .filter(a => a !== 'fallback')
-    .map(verb => {
-      const synonyms = getSynonyms(verb);
-      const synonymPart = synonyms.length ? ` (sinonimos: ${synonyms.slice(0, 5).join(', ')})` : '';
-      return `- ${verb}${synonymPart}`;
-    })
-    .join('\n');
-
-  const systemPrompt = `Eres un analizador de intenciones para una aventura de texto.
-Tu UNICA tarea: leer el texto del jugador e identificar que acciones quiere realizar.
-
-Acciones disponibles:\n${actionList}
-
-REGLAS:
-- Devuelve SOLO un array JSON, sin texto extra ni markdown.
-- Usa SIEMPRE el verbo canonico exacto (el que aparece antes del parentesis).
-- Si el jugador usa un sinonimo, mapea al verbo canonico.
-- Extrae el objeto o lugar mencionado cuando aplique.
-- Si hay varias acciones en una frase, devuelvelas todas en orden.
-- Si no reconoces ninguna accion, devuelve [{"action":"fallback"}].
-
-Ejemplos:
-"leo el libro" -> [{"action":"leer","object":"libro"}]
-"voy a la cocina y cojo la llave" -> [{"action":"viajar","place":"cocina"},{"action":"coger","object":"llave"}]
-"ojeo el libro" -> [{"action":"leer","object":"libro"}]`;
+  const availableActions = [...new Set([...placeActions, ...SYSTEM_ACTIONS])];
 
   const response = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
     messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userText }
+      {
+        role: 'system',
+        content: `Eres un analizador de intenciones para una aventura de texto en español.
+Dada una lista de acciones disponibles y el texto del jugador, identifica que acciones quiere realizar.
+Las acciones disponibles son verbos en español. El jugador puede usar el verbo exacto o cualquier sinonimo.
+
+REGLAS:
+- Responde SOLO con un array JSON, sin texto extra ni markdown.
+- Usa SIEMPRE el verbo canonico exacto de la lista de acciones disponibles.
+- Si el jugador usa un sinonimo de un verbo, mapea al verbo canonico.
+- Extrae el objeto o lugar mencionado cuando aplique (campo "object" o "place").
+- Si hay varias acciones en la frase, devuelvelas todas en orden.
+- Si no reconoces ninguna accion de la lista, devuelve [{"action":"fallback"}].
+
+Ejemplos:
+texto: "ojeo el libro", acciones: ["leer","viajar"] -> [{"action":"leer","object":"libro"}]
+texto: "voy a la cocina y cojo la llave", acciones: ["viajar","coger"] -> [{"action":"viajar","place":"cocina"},{"action":"coger","object":"llave"}]
+texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","object":"alacena"}]`
+      },
+      {
+        role: 'user',
+        content: JSON.stringify({ texto: userText, availableActions })
+      }
     ],
     max_tokens: 200,
     temperature: 0.1,
@@ -45,6 +45,7 @@ Ejemplos:
   });
 
   const raw = response.choices[0].message.content.trim();
+  const validActions = getValidActionsForPlace(place);
 
   try {
     const parsed = JSON.parse(raw);
@@ -70,8 +71,7 @@ Si hay imageUrl en el resultado, pon <img src="URL"> al inicio.
 ${helpHint ? `Incluye esta pista al final de forma natural: ${helpHint}` : ''}`.trim();
 
   const userPrompt = `El jugador escribio: "${userText}"
-Resultado: ${JSON.stringify(engineResult)}${engineMessage ? `
-Mensaje obligatorio a incluir integro: "${engineMessage}"` : ''}
+Resultado: ${JSON.stringify(engineResult)}${engineMessage ? `\nMensaje obligatorio a incluir integro: "${engineMessage}"` : ''}
 Genera la respuesta narrativa:`;
 
   const response = await groq.chat.completions.create({
