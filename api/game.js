@@ -13,7 +13,7 @@ const groqClientConf = {
   model: config.groqAiModel
 };
 
-const llmCerebrasClientConf = {
+const cererebrasClientConf = {
   client: new cerebrasengine({apiKey: config.cerebrasApiKey}),
   model: config.cerebrasModel
 };

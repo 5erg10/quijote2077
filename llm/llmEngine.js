@@ -52,11 +52,11 @@ texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","ob
 const generateNarrative = async ({ llmClientConf, userText, engineResult, user, helpHint }) => {
   const placeName = Object.keys(user.room)[0];
   const engineMessage = extractEngineMessage(engineResult);
+  const imagUrl = engineResult.imageUrl;
 
   const systemPrompt = `Eres el narrador de "Quijote 2077", aventura conversacional en la epoca de El Quijote con toques retrofuturistas.
 Estilo: humoristico, ironico, cervantino. Maximo 3 parrafos. Nunca menciones que eres una IA.
 Jugador: ${user.userName || 'hidalgo'} | Lugar: ${placeName}
-Si hay imageUrl en el resultado, pon <img src="URL"> al inicio.
 PROHIBIDO: no menciones energia, vida, puntos de vida, distancia, pasos ni datos numericos internos del juego.
 ${helpHint ? `Incluye esta pista al final de forma natural: ${helpHint}` : ''}`.trim();
 
@@ -74,7 +74,7 @@ Genera la respuesta narrativa:`;
     temperature: 0.75
   });
 
-  return response.choices[0].message.content.trim();
+  return `${imagUrl ? `<img src="${imagUrl}"/>` : ''}` + response.choices[0].message.content.trim();
 }
 
 const sanitizeEngineResult = (engineResult) => {
