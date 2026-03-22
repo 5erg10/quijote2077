@@ -1,6 +1,7 @@
 const usersDao = require('../functions/dao/users');
 const gameEngine = require('../engine/gameEngine');
-const { processMessage } = require('../llm/groq');
+const placesDao = require('../functions/dao/places');
+const { parseIntents, generateNarrative } = require('../llm/groq');
 
 module.exports = async (req, res) => {
   const { text, id } = req.body;
@@ -15,32 +16,27 @@ module.exports = async (req, res) => {
     const hasName = userExists && user.userName;
     const hasDifficulty = hasName && user.difficulty;
 
-    // --- FASE 1: Usuario nuevo ---
     if (!userExists || !hasName) {
       return res.json(await handleWelcome(id, text, userExists ? user : null));
     }
 
-    // --- FASE 2: Nombre guardado, falta dificultad ---
     if (!hasDifficulty) {
       return res.json(await handleDifficulty(id, text, user));
     }
 
-    // --- FASE 3: Juego normal ---
     if (!text || !text.trim()) {
       return res.json({ text: '\u00bfQu\u00e9 quieres hacer, hidalgo?', intent: 'idle' });
     }
 
-    // Paso 1: LLM extrae intents del texto
-    const { intents } = await processMessage({ userText: text, user });
+    const placeName = Object.keys(user.room)[0];
+    const place = await placesDao.getPlaceById(placeName).catch(() => null);
+
+    const intents = await parseIntents(text, place);
     console.log('Intents:', JSON.stringify(intents));
 
-    // Paso 2: motor del juego ejecuta la l\u00f3gica (sin LLM, determinista)
     const engineResult = await gameEngine.execute(intents, id, user);
     console.log('Engine:', JSON.stringify(engineResult));
 
-    // Paso 3: si hay game over, devolver directamente sin llamar al LLM.
-    // El usuario ya fue borrado de Firebase en este punto y no podemos
-    // hacer m\u00e1s consultas a su estado.
     if (engineResult && engineResult.gameOver) {
       const gameOverText = [
         engineResult.imageUrl ? `<img src="${engineResult.imageUrl}">` : '',
@@ -50,16 +46,14 @@ module.exports = async (req, res) => {
       return res.json({ text: gameOverText, intent: 'gameOver', gameOver: true });
     }
 
-    // Paso 4: ayuda adaptativa (solo si no es game over)
     const countIntents = require('../functions/utils/countIntents');
     const freshUser = await usersDao.getUserById(id);
     const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, intents[0] && intents[0].action);
 
-    // Paso 5: LLM genera narrativa con resultado del motor
-    const { narrative } = await processMessage({
+    const narrative = await generateNarrative({
       userText: text,
-      user: freshUser,
       engineResult,
+      user: freshUser,
       helpHint
     });
 
@@ -96,7 +90,6 @@ async function handleDifficulty(id, text, user) {
   const capacityMap = { facil: 9999999, medio: 100, dificil: 50 };
   const difficulty = { level, maxCapacity: capacityMap[level] };
   await usersDao.updateUser(id, { ...user, difficulty });
-  const placesDao = require('../functions/dao/places');
   const { textByDifficulty } = require('../functions/utils/difficultyUtils');
   const place = await placesDao.getPlaceById('biblioteca');
   const userWithDifficulty = { ...user, difficulty };
