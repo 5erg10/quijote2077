@@ -6,7 +6,7 @@ const llmClient = new llmEngine({ apiKey: process.env.LLM_API_KEY });
 
 const parseIntents = async (userText, place) => {
  
-  const availableActions = getValidActionsForPlace(place);;
+  const availableActions = getValidActionsForPlace(place);
 
   const response = await llmClient.chat.completions.create({
     model: config.aiModel,
