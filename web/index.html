@@ -28,10 +28,9 @@
             <div onclick="selecDificult('dificil')">Dificil</div>
           </div>
           <div class="inputBox" id="enterText" click="setFocus()">
-            <div>
-              <span class="prompt">></span><input type="text" value="" onkeyup="setInputWidth()"
-                onkeypress="setFakeInputWidth()" label=" " placeholder="..."/><span id="animateCursor">_</span>
-            </div>
+              <span class="prompt">></span>
+              <input id="chatInput" type="text" value="" onkeyup="setInputWidth()" onkeypress="setFakeInputWidth()" label=" " placeholder="..."/>
+              <span id="animateCursor">_</span>
           </div>
         </div>
         <div class="statsBox" id="statsBox">

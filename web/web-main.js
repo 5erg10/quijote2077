@@ -46,7 +46,7 @@ const playList = {
 };
 
 function documentReady() {
-  textarea = document.querySelector('#enterText input');
+  textarea = document.querySelector('#chatInput');
   responses = document.querySelector('#chatContainer');
   splashScreen = document.querySelector('#splashScreen');
   warningMessage = document.querySelector('#warningMessage');
@@ -323,6 +323,7 @@ function selecDificult(level) {
   setTimeout(() => {
     document.querySelector('#enterText').classList.remove('displayNONE');
     document.querySelector('#enterDifficult').classList.add('displayNONE');
+    setFocus();
   }, 1000);
 }
 
@@ -344,6 +345,7 @@ async function request(input) {
       body: JSON.stringify({ text: input, id: getUID() })
     });
     const data = await res.json();
+    setTimeout(setFocus, 500);
     return {
       messages: data.messages || [],
       gameOver: data.gameOver || false
