@@ -1,7 +1,7 @@
 const usersDao = require('../functions/dao/users');
 const gameEngine = require('../engine/gameEngine');
 const placesDao = require('../functions/dao/places');
-const { parseIntents, generateNarrative } = require('../llm/groq');
+const { parseIntents, generateNarrative } = require('../llm/llmEngine');
 
 module.exports = async (req, res) => {
   const { text, id } = req.body;

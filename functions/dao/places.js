@@ -1,9 +1,10 @@
-const placesList = require('./places.json');
+const placesList = require('../../gameData/places.json');
 const { normalize, includesNormalized } = require('../utils/arrayUtils');
 
 const synonimMap = [
   [ 'alcoba', 'habitación', 'dormitorio' ]
 ];
+
 const synonims = [];
 
 Object.values(synonimMap)

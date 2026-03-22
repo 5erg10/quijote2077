@@ -136,7 +136,7 @@ function renderCharacterMenu() {
     objects.forEach(obj => {
       const li = document.createElement('li');
       const origin = obj.originPLace || obj.originPlace || '';
-      li.innerHTML = `<span class="objName">${obj.name.toUpperCase()}</span>${origin ? `<span class="objOrigin">recogido en: ${origin}</span>` : ''}`;
+      li.innerHTML = `<span class="objName">${obj.name.charAt(0).toUpperCase() + obj.name.slice(1)}${origin ? `<span class="objOrigin">(Recogido en ${origin.toUpperCase()})</span>` : ''}</span>`;
       objList.appendChild(li);
     });
   }
@@ -151,7 +151,7 @@ function renderCharacterMenu() {
     const current = (userData.currentRoom && userData.currentRoom[0]) || '';
     places.forEach(place => {
       const li = document.createElement('li');
-      li.textContent = place.toUpperCase();
+      li.textContent = `${place === current ? 'Estas en ': ''}${place.charAt(0).toUpperCase() + place.slice(1)}`;
       if (place === current) li.classList.add('currentPlace');
       li.addEventListener('click', (e) => {
         e.stopPropagation();

@@ -8,7 +8,7 @@ if (!admin.apps.length) {
   });
 }
 
-const objectOriginLocation = require('../dao/objectByPlacesOrigin.json');
+const objectOriginLocation = require('../../gameData/objectByPlacesOrigin.json');
 
 function updateUser(userId, newData) {
   return admin.database().ref(`users/${userId}`).update(newData);

@@ -16,7 +16,7 @@ app.post('/api/game', require('./api/game'));
 
 // Descripciones de lugares para el panel de personaje
 app.get('/places', (req, res) => {
-  res.json(require('./functions/dao/places.json'));
+  res.json(require('./gameData/places.json'));
 });
 
 app.listen(port, () => console.log(`Quijote 2077 server running at port ${port}`));

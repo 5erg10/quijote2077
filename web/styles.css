@@ -481,7 +481,7 @@ button:focus {
   position: absolute;
   top: 90px;
   right: 20px;
-  width: 320px;
+  width: 400px;
   max-height: calc(100vh - 120px);
   background-color: #000;
   border: 1px solid #22ecf3;
@@ -526,12 +526,11 @@ button:focus {
 
 .characterMenu__list {
   list-style: none;
-  padding: 0;
+  padding: 0rem 0.5rem;
   margin: 0;
 }
 
 .characterMenu__list li {
-  padding: 6px 0;
   border-bottom: 1px solid rgba(255,255,255,0.05);
   line-height: 1.8;
   color: #ccc;
@@ -544,8 +543,8 @@ button:focus {
 .characterMenu__list li span.objOrigin {
   color: #888;
   font-size: 8px;
-  display: block;
-  margin-top: 2px;
+  display: inline-block;
+  padding-left: 0.5rem;
 }
 
 .characterMenu__emptyMsg {
@@ -556,6 +555,7 @@ button:focus {
 
 /* Places list - clickable */
 .characterMenu__placesList li {
+  font-size: 8px;
   cursor: pointer;
   color: #22ecf3;
   transition: color 0.15s;
@@ -563,7 +563,6 @@ button:focus {
 
 .characterMenu__placesList li.currentPlace {
   color: #ffffff;
-  padding-left: 16px;
 }
 
 /* =============================================

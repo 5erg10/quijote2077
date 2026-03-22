@@ -1,19 +1,15 @@
-const Groq = require('groq-sdk');
+const llmEngine = require('groq-sdk');
+const config = require('../config').CONFIG;
 const { getValidActionsForPlace, resolveCanonicalVerb } = require('./actionContext');
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const llmClient = new llmEngine({ apiKey: process.env.LLM_API_KEY });
 
-const SYSTEM_ACTIONS = ['viajar', 'coger', 'tirar', 'comer', 'inventario', 'ayuda', 'afirmar', 'negar'];
+const parseIntents = async (userText, place) => {
+ 
+  const availableActions = getValidActionsForPlace(place);;
 
-async function parseIntents(userText, place) {
-  const placeActions = place && place.actions
-    ? [...new Set(place.actions.map(a => a.action))]
-    : [];
-
-  const availableActions = [...new Set([...placeActions, ...SYSTEM_ACTIONS])];
-
-  const response = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
+  const response = await llmClient.chat.completions.create({
+    model: config.aiModel,
     messages: [
       {
         role: 'system',
@@ -45,22 +41,19 @@ texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","ob
   });
 
   const raw = response.choices[0].message.content.trim();
-  const validActions = getValidActionsForPlace(place);
 
   try {
     const parsed = JSON.parse(raw);
-    const arr = Array.isArray(parsed) ? parsed : (parsed.intents || parsed.actions || [parsed]);
-    return arr.map(intent => ({
-      ...intent,
-      action: resolveCanonicalVerb(intent && intent.action, validActions)
-    }));
+    const actionsArr = Array.isArray(parsed) ? parsed : (parsed.intents || parsed.actions || parsed.acciones || [parsed]);
+    // llm convierte cualquier verbo que usemos en el canonico, pero lo compruebo de nuevo para asegurar integridad
+    return resolveCanonicalVerb(actionsArr, availableActions);
   } catch (e) {
     console.error('Error parseando intents:', raw, e);
     return [{ action: 'fallback' }];
   }
 }
 
-async function generateNarrative({ userText, engineResult, user, helpHint }) {
+const generateNarrative = async ({ userText, engineResult, user, helpHint }) => {
   const placeName = Object.keys(user.room)[0];
   const engineMessage = extractEngineMessage(engineResult);
 
@@ -74,8 +67,8 @@ ${helpHint ? `Incluye esta pista al final de forma natural: ${helpHint}` : ''}`.
 Resultado: ${JSON.stringify(engineResult)}${engineMessage ? `\nMensaje obligatorio a incluir integro: "${engineMessage}"` : ''}
 Genera la respuesta narrativa:`;
 
-  const response = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
+  const response = await llmClient.chat.completions.create({
+    model: config.aiModel,
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt }
@@ -87,7 +80,7 @@ Genera la respuesta narrativa:`;
   return response.choices[0].message.content.trim();
 }
 
-function extractEngineMessage(engineResult) {
+const extractEngineMessage = (engineResult) => {
   if (!engineResult) return null;
   if (engineResult.multiple && engineResult.results) {
     const msgs = engineResult.results.map(r => r.message).filter(Boolean);
