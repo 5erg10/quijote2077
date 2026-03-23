@@ -7,16 +7,38 @@ const config = require('../config').CONFIG;
 const countIntents = require('../functions/utils/countIntents');
 const groqEngime = require('groq-sdk');
 const cerebrasengine = require('@cerebras/cerebras_cloud_sdk');
+const openAiEngine = require('openai');
 
-const groqClientConf = {
-  client: new groqEngime({ apiKey: config.groqApiKey }),
-  model: config.groqAiModel
-};
+const llmClients = [
+  { name: 'Groq', client: new groqEngime({ apiKey: config.groqApiKey }), model: config.groqAiModel },
+  { name: 'Cerebras', client: new cerebrasengine({apiKey: config.cerebrasApiKey}), model: config.cerebrasModel },
+  // { name: 'OpenAI', client: new openAiEngine({apiKey: config.openAiApiKey}), model: config.openAiModel },
+];
 
-const cererebrasClientConf = {
-  client: new cerebrasengine({apiKey: config.cerebrasApiKey}),
-  model: config.cerebrasModel
-};
+let currentClientIndex = 0;
+
+async function callWithFallback(fn) {
+  const startIndex = currentClientIndex;
+  currentClientIndex = (currentClientIndex + 1) % llmClients.length;
+
+  for (let attempt = 0; attempt < llmClients.length; attempt++) {
+    const index = (startIndex + attempt) % llmClients.length;
+    const llmClientConf = llmClients[index];
+    try {
+      return await fn(llmClientConf);
+    } catch (error) {
+      const status = error?.status || error?.response?.status;
+      const message = error?.message || '';
+      const isRateLimit = status === 429 || /rate.?limit|quota|exceeded|too many requests/i.test(message);
+
+      console.warn(`LLM ${llmClientConf.name} falló${isRateLimit ? ' (rate limit)' : ''}: ${message}`);
+
+      if (attempt === llmClients.length - 1) {
+        throw error;
+      }
+    }
+  }
+}
 
 module.exports = async (req, res) => {
   const { text, id } = req.body;
@@ -30,7 +52,6 @@ module.exports = async (req, res) => {
     const userExists = user && Object.keys(user).length > 0;
     const hasName = userExists && user.userName;
     const hasDifficulty = hasName && user.difficulty;
-    const llmClientConf = groqClientConf;
 
     if (!userExists || !hasName) {
       return res.json(await handleWelcome(id, text, userExists ? user : null));
@@ -47,7 +68,7 @@ module.exports = async (req, res) => {
     const placeName = Object.keys(user.room)[0];
     const place = await placesDao.getPlaceById(placeName).catch(() => null);
 
-    const intents = await parseIntents(text, place, llmClientConf);
+    const intents = await callWithFallback(client => parseIntents(text, place, client));
     console.log('Intents:', JSON.stringify(intents));
 
     const engineResults = await gameEngine.execute(intents, id, user);
@@ -69,13 +90,13 @@ module.exports = async (req, res) => {
       }
 
       const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, engineResult.action);
-      const narrative = await generateNarrative({
-        llmClientConf,
+      const narrative = await callWithFallback(client => generateNarrative({
+        llmClientConf: client,
         userText: text,
         engineResult,
         user: freshUser,
         helpHint
-      });
+      }));
 
       messages.push({ text: narrative, intent: engineResult.action });
     }

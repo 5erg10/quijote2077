@@ -196,7 +196,7 @@ async function sendText({ keyCode, currentTarget }) {
         responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: 'smooth' });
         if (getUID() && !result.gameOver) getUserData();
         setFocus();
-      }, 300);
+      }, 500);
 
       const lastMsg = messages[messages.length - 1];
       if (lastMsg) saveLastResponse(lastMsg.text || '');

@@ -8,21 +8,19 @@ const { resolveCanonicalVerb, getValidActionsForPlace } = require('../../llm/act
 // Importamos travel para delegar cuando la acción tiene travelTo
 const travelAction = require('./travel');
 
-const execute = (intent, userId, user) => {
-  return new Promise( async (resolve) => {
-    
+const execute = async (intent, userId, user) => {
     const objectName = intent.object;
     const placeName = Object.keys(user.room)[0];
     const canonicalVerb = intent.action;
 
     const place = await placesDao.getPlaceById(placeName);
     if (!place) {
-      return resolve({ action: intent.action, success: false, message: 'No puedo hacer eso aquí.' });
+      return { action: intent.action, success: false, message: 'No puedo hacer eso aquí.' };
     }
 
     if (canonicalVerb === 'fallback') {
       await countIntents.count(userId);
-      return resolve({ action: intent.action, success: false, message: 'Eso no se puede hacer aquí.' });
+      return { action: intent.action, success: false, message: 'Eso no se puede hacer aquí.' };
     }
 
     // Buscar acción por verbo+objeto (match exacto), luego solo por verbo
@@ -40,7 +38,7 @@ const execute = (intent, userId, user) => {
 
     if (!matchedAction) {
       await countIntents.count(userId);
-      return resolve({ action: canonicalVerb, success: false, message: 'Eso no se puede hacer aquí.' });
+      return { action: canonicalVerb, success: false, message: 'Eso no se puede hacer aquí.' };
     }
 
     // --- VERIFICAR REQUISITOS ---
@@ -55,10 +53,10 @@ const execute = (intent, userId, user) => {
       if (matchedAction.endReason) {
         const resetResult = gameOperations.buildResetResult(matchedAction.failResponse, matchedAction.endReason);
         await gameOperations.applyReset(userId, user.userName, matchedAction.endReason);
-        return resolve(resetResult);
+        return resetResult;
       }
       await countIntents.count(userId);
-      return resolve({ action: canonicalVerb, success: false, message: matchedAction.failResponse });
+      return { action: canonicalVerb, success: false, message: matchedAction.failResponse };
     }
 
     // --- EJECUTAR ---
@@ -67,11 +65,11 @@ const execute = (intent, userId, user) => {
     // guardar un estado. Esto permite acciones narrativas como "cruzar portal"
     // que en realidad son viajes con requisito previo (leer_libro, etc.).
     if (matchedAction.travelTo) {
-      return resolve(travelAction.execute(
+      return travelAction.execute(
         { action: 'viajar', place: matchedAction.travelTo },
         userId,
         user
-      ));
+      );
     }
 
     // Guardar estado
@@ -83,24 +81,23 @@ const execute = (intent, userId, user) => {
     try {
       await statesDao.addStatus(userId, user, statusKey);
     } catch (e) {
-      return resolve({ action: canonicalVerb, success: false, message: 'Ya has hecho eso.' });
+      return { action: canonicalVerb, success: false, message: 'Ya has hecho eso.' };
     }
 
     // Si el éxito también tiene endReason (final del juego)
     if (matchedAction.endReason) {
       const resetResult = gameOperations.buildResetResult(matchedAction.successResponse, matchedAction.endReason);
       await gameOperations.applyReset(userId, user.userName, matchedAction.endReason);
-      return resolve(resetResult);
+      return resetResult;
     }
 
-    return resolve({
+    return {
       action: canonicalVerb,
       success: true,
       object: matchedAction.object && matchedAction.object.name,
       message: matchedAction.successResponse,
       stateAdded: statusKey
-    });
-  })
+    };
 }
 
 module.exports = { execute };
