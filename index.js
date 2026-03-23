@@ -15,6 +15,8 @@ const gameLimiter = rateLimit({
 app.use(express.json());
 app.use(express.static('web'));
 
+const placesData = require('./gameData/places.json');
+
 app.get('/', (req, res) => res.redirect('/index.html'));
 
 // Estado del usuario
@@ -25,7 +27,7 @@ app.post('/api/game', gameLimiter, require('./api/game'));
 
 // Descripciones de lugares para el panel de personaje
 app.get('/places', (req, res) => {
-  res.json(require('./gameData/places.json'));
+  res.json(placesData);
 });
 
 app.listen(port, () => console.log(`Quijote 2077 server running at port ${port}`));
