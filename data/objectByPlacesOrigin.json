@@ -103,7 +103,7 @@
     "weight": 2,
     "originDescription": "En el suelo hay un currusco de pan que como te despistes sera pasto de las ratas.",
     "ordinaryDescription": "Dejaste un currusco tirado en el suelo, es una pena tirar asi la comida", 
-    "successResponse": "Esta duro como una piedra, pero cuando el hambre arrecia seguro que lo agradeces.",
+    "successResponse": "Tomas el currusco de pan y lo levantas en sus manos, mostrando un gesto de desamparo. 'Esta duro como una piedra, pero cuando el hambre arrecia seguro que lo agradeces', piensas mientras te lo guardas en un bolsillo.",
     "unFindResponse": "a veces ves curruscos que no existen?",
     "objectTakenYet": "Ya cogiste uno, ¿crees que los curruscos reaparecen de la nada?"
   },

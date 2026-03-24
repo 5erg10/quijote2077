@@ -13,7 +13,7 @@
             {   
               "action": "leer",
               "object": { "name": "libro" },
-              "successResponse": "Lees en voz alta y segun empiezas a leer un portal se abre ante ti. sin más, solo se abre y puedes ver una habitación al otro lado. Podrias ir a esa habitación si quieres..."
+              "successResponse": "¡Vaya sorpresa que te depara el libro! Al empezar a leer en voz alta, las palabras comienzan a tomar forma de cielo azul y verdes árboles, pero de repente, una luz intensa ilumina el aire y un portal se abre ante ti como una boca desmesurada. Sin más preámbulos, el portal se muestra en toda su majestad, invitándote a cruzar hacia una habitación que parece estar en el otro lado. ¿Qué pasará si entras? Podrías ir a esa habitación si quieres..."
             },
             {   
               "action": "cruzar",
@@ -31,7 +31,7 @@
         "habitación": { 
           "step": 1, 
           "branch": 0,
-          "description": "Al cruzar, el portal se cierra detras de ti, asi que ya no puedes volver a casa. La unica forma de volver a abrirlo es volver aquì convertido en un autentico caballero. ¿Se me habia olvidado comentate todo esto verdad?. <br><br> Bueno, no te queda mas remedio que explorar y buscar la forma de convertirte en caballero. <br><br> Ahora mismo estas en una habitación austera, como corresponde a la de un hidalgo manchego del siglo XVI. ¡Sí!, ahora eres un hidalgo caballero. <br><br> A traves de la puerta de la habitaciòn se puede ver una escalera que baja al zaguan, diria que no te queda mas remedio que bajar a inspeccionar la casa.",
+          "description": "Al cruzar, el portal se cierra detras de ti, asi que ya no puedes volver a casa. La unica forma de volver a abrirlo es volver aquì convertido en un autentico caballero. ¿Se me habia olvidado comentate todo esto verdad?. <br><br> Bueno, no te queda mas remedio que explorar y buscar la forma de convertirte en caballero. <br><br> Ahora mismo estas en una habitación austera, como corresponde a la de un hidalgo manchego del siglo XVI. ¡Sí!, ahora eres un hidalgo caballero. <br><br> A traves de la puerta de la habitaciòn se puede ver una escalera que baja al zaguan, diria que no te queda mas remedio que bajar al zaguan e inspeccionar la casa.",
           "media": {
             "images": [
               "images/places/habitacion.png",
