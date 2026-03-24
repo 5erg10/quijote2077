@@ -10,7 +10,7 @@ async function handleWelcome(id, text, user) {
   if (!name) {
     return {
       messages: [{
-        text: 'Hola aventurero! No sé si eres un valiente o un inconsciente al saludarme, pero en fin... ¿Quieres embarcarte en esta aventura? Si es así, dime tu nombre.',
+        text: 'Hola aventurero! No sé si eres un valiente o un inconsciente al entrar aqui, pero en fin... ¿Quieres embarcarte en esta aventura? Si me dices tu nombre lo tomare como un si.',
         intent: 'welcome'
       }]
     };
