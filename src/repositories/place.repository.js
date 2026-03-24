@@ -1,5 +1,6 @@
 const placesList = require('../../data/places.json');
-const { normalize, includesNormalized } = require('../utils/arrayUtils');
+const { includesNormalized } = require('../utils/arrayUtils');
+const stringUtils = require('../utils/stringUtils');
 
 const synonimMap = [
   [ 'alcoba', 'habitación', 'dormitorio' ]
@@ -32,9 +33,9 @@ function getPlaceById(placeId, room = {}) {
   if (place) return Promise.resolve(place);
 
   // Fallback: buscar por normalización en todas las claves
-  const normalizedInput = normalize(placeId);
+  const normalizedInput = stringUtils.normalize(placeId);
   const matchingKey = Object.keys(placesList).find(
-    key => normalize(key) === normalizedInput
+    key => stringUtils.normalize(key) === normalizedInput
   );
 
   return matchingKey
@@ -74,9 +75,9 @@ function getConnectedRooms(placeName) {
     return placesList[placeName].connectedRooms || [];
   }
   // Fallback normalizado
-  const normalizedInput = normalize(placeName);
+  const normalizedInput = stringUtils.normalize(placeName);
   const matchingKey = Object.keys(placesList).find(
-    key => normalize(key) === normalizedInput
+    key => stringUtils.normalize(key) === normalizedInput
   );
   return matchingKey ? (placesList[matchingKey].connectedRooms || []) : [];
 }

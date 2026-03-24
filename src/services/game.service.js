@@ -1,6 +1,7 @@
 const usersDao = require('../repositories/user.repository');
 const placesDao = require('../repositories/place.repository');
 const gameEngine = require('../engine/gameEngine');
+const stringUtils = require('../utils/stringUtils');
 const { parseIntents, generateNarrative } = require('./narrative.service');
 const { callWithFallback } = require('./llm.service');
 const countIntents = require('../utils/countIntents');
@@ -66,6 +67,7 @@ async function handleGameplay(id, text, user) {
   const messages = [];
 
   for (const engineResult of engineResults) {
+    let currentMessage = `${engineResult.imageUrl ? `<img src="${engineResult.imageUrl}"/>` : ''}<p>${engineResult.message ?? engineResult.placeDescription}</p>`;
     if (engineResult.gameOver) {
       const gameOverText = [
         engineResult.imageUrl ? `<img src="${engineResult.imageUrl}">` : '',
@@ -76,16 +78,23 @@ async function handleGameplay(id, text, user) {
       break;
     }
 
+    const objectsIncurrentPlace = engineResult.success ? Object.values(user.objectsList).filter(object => stringUtils.normalize(object.currentPlace) == stringUtils.normalize(engineResult.place)) : [];
+    console.log('objects in room: ', objectsIncurrentPlace.map(obj => obj.name))
+    objectsIncurrentPlace.forEach(obj => {
+      currentMessage += !obj.jointToSuccess ? `<p>${obj.originDescription}</p>` : `<p>${obj.ordinaryDescription}</p>`;
+    })
     const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, engineResult.action);
-    const narrative = await callWithFallback(client => generateNarrative({
-      llmClientConf: client,
-      userText: text,
-      engineResult,
-      user: freshUser,
-      helpHint
-    }));
+    // const narrative = await callWithFallback(client => generateNarrative({
+    //   llmClientConf: client,
+    //   userText: text,
+    //   engineResult,
+    //   user: freshUser,
+    //   helpHint
+    // }));
 
-    messages.push({ text: narrative, intent: engineResult.action });
+    if (helpHint) currentMessage += `<p>${helpHint}</p>`
+
+    messages.push({ text: currentMessage, intent: engineResult.action });
   }
 
   const hasGameOver = messages.some(m => m.gameOver);

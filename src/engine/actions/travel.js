@@ -1,6 +1,7 @@
 const placesDao = require('../../repositories/place.repository');
 const usersDao = require('../../repositories/user.repository');
 const arrayUtils = require('../../utils/arrayUtils');
+const stringUtils = require('../../utils/stringUtils');
 const gameOperations = require('../gameOperations');
 const countIntents = require('../../utils/countIntents');
 const { isNight } = require('../../utils/time');
@@ -17,7 +18,7 @@ const execute = async (intent, userId, user) => {
       return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
     }
 
-    if (arrayUtils.normalize(placeName) === arrayUtils.normalize(selectedPlace)) {
+    if (stringUtils.normalize(placeName) === stringUtils.normalize(selectedPlace)) {
       await countIntents.count(userId);
       return { action: 'viajar', success: false, message: '¡Ya estás en este lugar!' };
     }
@@ -83,7 +84,7 @@ const execute = async (intent, userId, user) => {
     await usersDao.updateUser(userId, user);
 
     const objectsInPlace = Object.values(user.objectsList || {})
-      .filter(o => arrayUtils.normalize(o.currentPlace) === arrayUtils.normalize(selectedPlace))
+      .filter(o => stringUtils.normalize(o.currentPlace) === stringUtils.normalize(selectedPlace))
       .map(o => (o.jointToSuccess ? o.ordinaryDescription : o.originDescription))
       .filter(Boolean)
       .join(' ');

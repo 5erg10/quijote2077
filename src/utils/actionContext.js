@@ -4,6 +4,7 @@
  * places.json tiene UN solo verbo canónico por acción.
  * Esta tabla mapea N sinónimos → 1 verbo canónico.
  */
+const stringUtils = require('../utils/stringUtils');
 
 const SYNONYMS_BY_CANONICAL = {
   // --- Verbos de exploración/observación ---
@@ -47,7 +48,7 @@ const convertActionOnCanonical = (action, validActions) => {
   let actionConverted = action;
   if(Object.keys(SYNONYMS_BY_CANONICAL).find(actKey => actKey == action) && validActions.includes(action)) return actionConverted;
   Object.entries(SYNONYMS_BY_CANONICAL).forEach(([key, sinonims]) => {
-    if(sinonims.includes(action.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase())) actionConverted = key;
+    if(sinonims.includes(stringUtils.normalize(action))) actionConverted = key;
   })
   return actionConverted;
 }
