@@ -1,6 +1,7 @@
 const placesDao = require('../../repositories/place.repository');
 const statesDao = require('../../repositories/state.repository');
 const arrayUtils = require('../../utils/arrayUtils');
+const { normalize } = require('../../utils/stringUtils')
 const gameOperations = require('../gameOperations');
 const countIntents = require('../../utils/countIntents');
 const { resolveCanonicalVerb, getValidActionsForPlace } = require('../../utils/actionContext');
@@ -12,8 +13,8 @@ const execute = async (intent, userId, user) => {
     const objectName = intent.object;
     const placeName = Object.keys(user.room)[0];
     const canonicalVerb = intent.action;
-
     const place = await placesDao.getPlaceById(placeName);
+
     if (!place) {
       return { action: intent.action, success: false, message: 'No puedo hacer eso aquí.' };
     }
@@ -23,18 +24,8 @@ const execute = async (intent, userId, user) => {
       return { action: intent.action, success: false, message: 'Eso no se puede hacer aquí.' };
     }
 
-    // Buscar acción por verbo+objeto (match exacto), luego solo por verbo
-    let matchedAction;
-    if (objectName) {
-      matchedAction = (place.actions || []).find(
-        a => a.action === canonicalVerb && a.object && a.object.name === objectName
-      );
-      if (!matchedAction) {
-        matchedAction = (place.actions || []).find(a => a.action === canonicalVerb);
-      }
-    } else {
-      matchedAction = (place.actions || []).find(a => a.action === canonicalVerb);
-    }
+    // Buscar acción por verbo + objeto (match exacto), si no solo por verbo
+    const matchedAction = (place.actions || []).find(a => a.action === canonicalVerb && (!!objectName ? normalize(objectName).includes(normalize(a.object?.name)) : true));
 
     if (!matchedAction) {
       await countIntents.count(userId);
@@ -49,8 +40,15 @@ const execute = async (intent, userId, user) => {
     const objectsOk = arrayUtils.isSubset(matchedAction.requirementObject || [], userObjects);
     const requirementsOk = statusOk && objectsOk;
 
+    // Si el éxito tiene endReason end (final del juego)
+    if (requirementsOk && matchedAction.endReason == 'end') {
+      const resetResult = gameOperations.buildResetResult(matchedAction.successResponse, matchedAction.endReason);
+      await gameOperations.applyReset(userId, user.userName, matchedAction.endReason);
+      return resetResult;
+    }
+
     if (!requirementsOk) {
-      if (matchedAction.endReason) {
+      if (matchedAction.endReason == 'death') {
         const resetResult = gameOperations.buildResetResult(matchedAction.failResponse, matchedAction.endReason);
         await gameOperations.applyReset(userId, user.userName, matchedAction.endReason);
         return resetResult;
@@ -82,13 +80,6 @@ const execute = async (intent, userId, user) => {
       await statesDao.addStatus(userId, user, statusKey);
     } catch (e) {
       return { action: canonicalVerb, success: false, message: 'Ya has hecho eso.' };
-    }
-
-    // Si el éxito también tiene endReason (final del juego)
-    if (matchedAction.endReason) {
-      const resetResult = gameOperations.buildResetResult(matchedAction.successResponse, matchedAction.endReason);
-      await gameOperations.applyReset(userId, user.userName, matchedAction.endReason);
-      return resetResult;
     }
 
     return {

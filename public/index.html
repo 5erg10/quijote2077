@@ -20,17 +20,19 @@
       </div>
       <div id="chatContainer">
       </div>
-      <div id="inputsBox" class="inputsBox">
-        <div id="inputs" class="inputs">
+      <div id="footerContainer" class="footerContainer">
+        <div id="inputsContainer" class="inputsContainer">
           <div class="mainDifficultSelector displayNONE" id="enterDifficult">
-            <div onclick="selecDificult('facil')">Facil</div>
-            <div onclick="selecDificult('medio')">Medio</div>
-            <div onclick="selecDificult('dificil')">Dificil</div>
+            <div onclick="selecDifficult('facil')">Facil</div>
+            <div onclick="selecDifficult('medio')">Medio</div>
+            <div onclick="selecDifficult('dificil')">Dificil</div>
           </div>
-          <div class="inputBox" id="enterText" click="setFocus()">
+          <div class="mainTextInput" id="enterText" click="setFocus()">
               <span class="prompt">></span>
-              <input id="chatInput" type="text" value="" onkeyup="setInputWidth()" onkeypress="setFakeInputWidth()" label=" " placeholder="..."/>
-              <span id="animateCursor">_</span>
+              <input id="chatInput" type="text" value="" label=" "/>
+          </div>
+          <div class="imputLoading" id="inputLoading">
+            <span>Pensando ...</span>
           </div>
         </div>
         <div class="statsBox" id="statsBox">

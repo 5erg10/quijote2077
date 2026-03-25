@@ -2,7 +2,7 @@ const storage = window.localStorage;
 
 let textarea, responses, splashScreen, continueButton, warningMessage, currentPlace,
   currentTrack, outerAudio, audioController, weightStatBar, energyStatBar, weightInfillText,
-  energyInfillText, statsBox, userData;
+  energyInfillText, statsBox, userDatabaseData, userName, loadingLabel;
 
 let audioActive = false;
 let inputContent = '';
@@ -58,6 +58,8 @@ function documentReady() {
   weightStatBar = document.querySelector('#weightStatBar');
   energyInfillText = document.querySelector('#energyInfillText');
   weightInfillText = document.querySelector('#weightInfillText');
+  loadingLabel = document.querySelector('#inputLoading');
+  loadingLabel.style.display = 'none';
   statsBox = document.querySelector('#statsBox');
   statsBox.style.display = 'none';
   document.addEventListener('click', setFocus);
@@ -86,6 +88,148 @@ function documentReady() {
   });
 }
 
+function startGame() {
+  toogleElementOpacity(splashScreen, true);
+  textarea.addEventListener('keyup', (event) => {
+    const inputText = textarea.value.trim();
+     if (event.keyCode === 13 && !!inputText) {
+      showLoading(true);
+      if (!userName) {
+        userName = inputText;
+        showDifficultySelector();
+        return;
+      }
+      addUserMessageToChat(inputText);
+      sendText(inputText);
+     }
+  });
+  addQuixoteMessageToChat('Hola aventurero! No sé si eres un valiente o un inconsciente al entrar aqui, pero en fin... ¿Quieres embarcarte en esta aventura? Si me dices tu nombre lo tomare como un si.');
+  setFocus();
+  if (audioActive) outerAudio.play();
+}
+
+function showDifficultySelector() {
+  addQuixoteMessageToChat(`¡${userName}! Buen nombre para un hidalgo. Ahora elige tu nivel de dificultad: <b>facil</b>, <b>medio</b> o <b>dificil</b>.`);
+  document.querySelector('#enterText').classList.add('displayNONE');
+  document.querySelector('#enterDifficult').classList.remove('displayNONE');
+  showLoading(false);
+}
+
+async function selecDifficult(level) {
+  try {
+    showLoading(true);
+    createUID();
+    await fetch('/user', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: storage.getItem('UID'),
+        userName,
+        level
+      })
+    });
+    
+    document.querySelector('#enterText').classList.remove('displayNONE');
+    document.querySelector('#enterDifficult').classList.add('displayNONE');
+    initGame();
+
+  } catch(err) {
+    addQuixoteMessageToChat('Hubo un error al iniciar la aplicacion.')
+  }
+}
+
+async function initGame() {
+   try {
+    textarea.value = '';
+    closeCharacterMenu();
+    const res = await fetch(`/api/initGame?userId=${storage.getItem('UID')}`);
+    const data = await res.json();
+    console.log('init mnessage: ', data)
+    if (data) processQuijoteChat(data);
+  } catch (e) {
+    console.error('request error:', e);
+    return {
+      messages: [{ text: 'Ha ocurrido un error. Por favor, intenta de nuevo.', intent: 'error' }],
+      gameOver: false
+    };
+  }
+}
+
+async function sendText(text) {
+  
+  textarea.value = '';
+  
+  closeCharacterMenu();
+
+  if (isGameOver) {
+    if (text.toLowerCase().includes('reiniciar')) {
+      isGameOver = false;
+      responses.innerHTML = '';
+    }
+    showLoading(false);
+    return;
+  }
+
+  const result = await requestUserTextResponse(text);
+
+  if (result) processQuijoteChat(result);
+}
+
+function processQuijoteChat(response) {
+  const messages = response.messages || [];
+  messages.forEach(msg => {
+    const responseText = msg.text || '';
+    updateMusicFromText(responseText);
+    addQuixoteMessageToChat(responseText);
+  });
+
+  if (response.gameOver) handleGameOver();
+
+  setTimeout(() => {
+    if (getUID() && !response.gameOver) getUserData();
+    setFocus();
+  }, 200);
+
+  const lastMsg = messages[messages.length - 1];
+  if (lastMsg) saveLastResponse(lastMsg.text || '');
+  
+  showLoading(false);
+}
+
+function addUserMessageToChat(text) {
+  responses.append(userChat(text));
+  textarea.value = '';
+  setTimeout(() => responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: 'smooth' }), 200);
+}
+
+function addQuixoteMessageToChat(text) {
+  responses.append(quixoteChat(text));
+  setTimeout(() => responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: 'smooth' }), 200);
+}
+
+async function requestUserTextResponse(text) {
+  try {
+    const res = await fetch('/api/game', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, id: getUID(), userName })
+    });
+    const data = await res.json();
+    return {
+      messages: data.messages || [],
+      gameOver: data.gameOver || false
+    };
+  } catch (e) {
+    console.error('request error:', e);
+    return {
+      messages: [{ text: 'Ha ocurrido un error. Por favor, intenta de nuevo.', intent: 'error' }],
+      gameOver: false
+    };
+  }
+}
+
 async function loadPlacesDescriptions() {
   try {
     const res = await fetch('/places');
@@ -99,7 +243,7 @@ function closeCharacterMenu() {
 }
 
 function toggleCharacterMenu() {
-  if (!userData) return;
+  if (!userDatabaseData) return;
   const menu = document.getElementById('characterMenu');
   if (menu.classList.contains('displayNONE')) {
     renderCharacterMenu();
@@ -110,14 +254,14 @@ function toggleCharacterMenu() {
 }
 
 function renderCharacterMenu() {
-  if (!userData) return;
+  if (!userDatabaseData) return;
 
   document.getElementById('characterMenu__name').textContent =
-    (userData.name || 'HIDALGO').toUpperCase();
+    (userDatabaseData.name || 'HIDALGO').toUpperCase();
 
   const objList = document.getElementById('characterMenu__objects');
   objList.innerHTML = '';
-  const objects = userData.objects || [];
+  const objects = userDatabaseData.objects || [];
   if (objects.length === 0) {
     objList.innerHTML = '<li><span class="characterMenu__emptyMsg">-- mochila vacía --</span></li>';
   } else {
@@ -131,11 +275,11 @@ function renderCharacterMenu() {
 
   const placesList = document.getElementById('characterMenu__places');
   placesList.innerHTML = '';
-  const places = userData.placesKnown || [];
+  const places = userDatabaseData.placesKnown || [];
   if (places.length === 0) {
     placesList.innerHTML = '<li><span class="characterMenu__emptyMsg">-- ninguno aún --</span></li>';
   } else {
-    const current = (userData.currentRoom && userData.currentRoom[0]) || '';
+    const current = (userDatabaseData.currentRoom && userDatabaseData.currentRoom[0]) || '';
     places.forEach(place => {
       const li = document.createElement('li');
       li.textContent = `${place === current ? 'Estas en ' : ''}${place.charAt(0).toUpperCase() + place.slice(1)}`;
@@ -164,46 +308,6 @@ function closePlaceDetail() {
   document.getElementById('placeDetailPopup').classList.add('displayNONE');
 }
 
-async function sendText({ keyCode, currentTarget }) {
-  if (keyCode === 13) {
-    const input = currentTarget.value.trim();
-    if (!input) return;
-
-    if (isGameOver) {
-      if (input.toLowerCase().includes('reiniciar')) handleRestart();
-      currentTarget.value = '';
-      return;
-    }
-
-    closeCharacterMenu();
-    showLoading(currentTarget);
-    setInputWidth();
-
-    const result = await request(input);
-    if (result) {
-      const messages = result.messages || [];
-      messages.forEach(msg => {
-        let text = msg.text || '';
-        text = text.replace(/\*([^*]+?)\*/g, '<b>$1</b>');
-        updateMusicFromText(text);
-        responses.append(quixoteChat(text));
-        if (msg.showDifficulty) showDifficultySelector();
-      });
-
-      if (result.gameOver) handleGameOver();
-
-      setTimeout(() => {
-        responses.scrollTo({ left: 0, top: responses.scrollHeight, behavior: 'smooth' });
-        if (getUID() && !result.gameOver) getUserData();
-        setFocus();
-      }, 500);
-
-      const lastMsg = messages[messages.length - 1];
-      if (lastMsg) saveLastResponse(lastMsg.text || '');
-    }
-  }
-}
-
 function updateMusicFromText(text) {
   const imgMatch = text.match(/src="([^&"]*)"/); 
   if (imgMatch) {
@@ -227,23 +331,8 @@ function handleGameOver() {
   storage.removeItem('UID');
   storage.removeItem('currentPlace');
   storage.removeItem('last');
-  userData = null;
-}
-
-function handleRestart() {
-  isGameOver = false;
-  createUID();
-  setTimeout(async () => {
-    const result = await request('');
-    if (result && result.messages) {
-      result.messages.forEach(msg => responses.append(quixoteChat(msg.text || '')));
-    }
-  }, 300);
-}
-
-function showDifficultySelector() {
-  document.querySelector('#enterText').classList.add('displayNONE');
-  document.querySelector('#enterDifficult').classList.remove('displayNONE');
+  storage.removeItem('responseDate');
+  userDatabaseData = null;
 }
 
 function cancelContinue() {
@@ -252,20 +341,16 @@ function cancelContinue() {
 
 function startFromWarning() {
   storage.removeItem('UID');
+  storage.removeItem('currentPlace');
+  storage.removeItem('last');
+  storage.removeItem('responseDate');
   toogleElementOpacity(warningMessage, true);
   restartGame();
 }
 
 function restartGame() {
   if (!getUID()) {
-    createUID();
     startGame();
-    setTimeout(async () => {
-      const result = await request('');
-      if (result && result.messages) {
-        result.messages.forEach(msg => responses.append(quixoteChat(msg.text || '')));
-      }
-    }, 500);
   } else {
     toogleElementOpacity(warningMessage, false);
   }
@@ -277,34 +362,20 @@ async function continueGame() {
   startGame();
 }
 
-function startGame() {
-  toogleElementOpacity(splashScreen, true);
-  textarea.addEventListener('keyup', sendText);
-  setInputWidth();
-  setFocus();
-  if (audioActive) outerAudio.play();
-}
-
-function showLoading(target) {
-  if (target.value.trim()) responses.append(userChat(target.value));
-  target.value = '';
-  responses.scrollTop = responses.scrollHeight;
-}
-
 function getUID() {
   return storage.getItem('UID');
 }
 
 async function getUserData() {
   try {
-    const userRequest = await fetch(`/userstate?uuid=${getUID()}`);
+    const userRequest = await fetch(`/user?uuid=${getUID()}`);
     if (userRequest.status === 204) return;
-    userData = await userRequest.json();
-    if (userData && userData.energy !== undefined) {
-      energyInfillText.innerHTML = `Energia ${userData.energy}/100`;
-      weightInfillText.innerHTML = `Peso ${100 - (userData.maxWeight || 0)}/100`;
-      energyStatBar.style.width = `${userData.energy}%`;
-      weightStatBar.style.width = `${100 - (userData.maxWeight || 0)}%`;
+    userDatabaseData = await userRequest.json();
+    if (userDatabaseData && userDatabaseData.energy !== undefined) {
+      energyInfillText.innerHTML = `Energia ${userDatabaseData.energy}/100`;
+      weightInfillText.innerHTML = `Peso ${100 - (userDatabaseData.maxWeight || 0)}/100`;
+      energyStatBar.style.width = `${userDatabaseData.energy}%`;
+      weightStatBar.style.width = `${100 - (userDatabaseData.maxWeight || 0)}%`;
       statsBox.style.display = 'flex';
     }
   } catch (e) {
@@ -318,15 +389,6 @@ function createUID() {
   storage.setItem('UID', uint32.toString(16));
 }
 
-function selecDificult(level) {
-  sendText({ keyCode: 13, currentTarget: { value: level } });
-  setTimeout(() => {
-    document.querySelector('#enterText').classList.remove('displayNONE');
-    document.querySelector('#enterDifficult').classList.add('displayNONE');
-    setFocus();
-  }, 1000);
-}
-
 function toogleElementOpacity(element, open) {
   if (open) {
     element.classList.add('fadeOut');
@@ -334,28 +396,6 @@ function toogleElementOpacity(element, open) {
   } else {
     element.classList.remove('displayNONE');
     setTimeout(() => element.classList.remove('fadeOut'), 100);
-  }
-}
-
-async function request(input) {
-  try {
-    const res = await fetch('/api/game', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: input, id: getUID() })
-    });
-    const data = await res.json();
-    setTimeout(setFocus, 500);
-    return {
-      messages: data.messages || [],
-      gameOver: data.gameOver || false
-    };
-  } catch (e) {
-    console.error('request error:', e);
-    return {
-      messages: [{ text: 'Ha ocurrido un error. Por favor, intenta de nuevo.', intent: 'error' }],
-      gameOver: false
-    };
   }
 }
 
@@ -391,7 +431,7 @@ function saveLastResponse(text) {
 
 function loadLastResponse() {
   const last = storage.getItem('last');
-  if (last) responses.append(quixoteChat(last));
+  if (last) addQuixoteMessageToChat(last);
 }
 
 function quixoteChat(text) {
@@ -422,21 +462,10 @@ function userChat(text) {
   return chat;
 }
 
-function setInputWidth() {
-  if (!textarea.value || textarea.value.length === 0) {
-    textarea.style.width = '3px';
-    return;
-  }
-  if (inputContent > textarea.value) {
-    textarea.style.width = `${(textarea.value.length * 12) + 3}px`;
-  }
-}
-
-function setFakeInputWidth() {
-  inputContent = textarea.value;
-  textarea.style.width = `${(inputContent.length * 12) + 15}px`;
-}
-
 function setFocus() {
   textarea.focus();
+}
+
+function showLoading(show) {
+  loadingLabel.style.display = show ? '' : 'none';
 }

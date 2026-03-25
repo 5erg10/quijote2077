@@ -72,7 +72,7 @@
     "jointToSuccess": false,
     "originDescription": "",
     "ordinaryDescription": "Dejaste esta armadura tirada en el suelo.", 
-    "successResponse": "Claro que coges la armadura, aunque guardada en la mochile no te sera de mucha ayuda.",
+    "successResponse": "Pues claro que coges la armadura, valiente hidalgo caballero serias sin tener armadura, aunque guardada en la mochila no te serà de mucha ayuda...",
     "failResponse": "¡Vaya!, ¡además de hidalgo eres adivino!, ¡¡¡Ya sabes que hay algo en el baúl sin nisiquiera haberlo abierto!!!",
     "unFindResponse": "que armadura?, donde?",
     "objectTakenYet": "Ya tienes una armadura, ¿para que querrias ponerte otra?"
@@ -117,7 +117,7 @@
     "jointToSuccess": false,
     "originDescription": "",
     "ordinaryDescription": "",
-    "requirementStatus": ["examinar_suelo", "revisar_suelo"],
+    "requirementStatus": ["examinar_suelo"],
     "successResponse": "Perfecto, tener comida siempre te salva de algún que otro apuro",
     "failResponse": "¿Un níscalo?,¿donde lo has visto?",
     "unFindResponse": "yo no veo ningún níscalo por aqui, tu si??",

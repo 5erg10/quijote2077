@@ -100,7 +100,7 @@
         "despensa": { 
           "step": 4,
           "branch": 0,
-          "description": "La ténue luz que penetra por la puerta permite vislumbrar un baúl cuya superficie esta cubierta por el polvo de los siglos.",
+          "description": "La ténue luz que penetra por la ventana permite vislumbrar un baúl cerrado cuya superficie esta cubierta por el polvo de los siglos.¿Habrà algo de valor dentro?, lo dudo viendo como esta todo en esta casa pero nunca se sabe ...",
           "media": {
             "images": [
               "images/places/despensa.png",
@@ -111,13 +111,13 @@
             { 
               "action": "abrir",
               "object": { "name":"baúl" },
-              "successResponse": "Entre las muchas antigüallas que hay dentro, destaca una armadura vieja y ajada"
+              "successResponse": "Como esperaba, el baul esta vacio. Solo tiene restos de comida que llevan ahi muuucho tiempo, polvo y una armadura vieja y ajada... un momento!, una armadura!!, ni tan mal ..."
             },
             { 
               "action": "poner",
               "object": { "name": "armadura" },
               "requirementObject": ["armadura"], 
-              "successResponse": "Mejor llevarla puesta que cargar con ella en el zurrón, así pareces más hidalgo. Una cosa más que tachar de tu lista de cosas de caballero.",
+              "successResponse": "Muy bien, una armadura es mucho mas útil puesta que guardada en el zurrón, y ademas te queda como un guante!!, así pareces más hidalgo caballero. Una cosa más que tachar de tu lista de cosas de caballero.",
               "failResponse": "¿Intentas ponerte algo que ni siquiera tienes?, me temo lo peor de tu aventura..."
             }
           ],
@@ -276,7 +276,7 @@
         "muro": { 
           "step": 9, 
           "branch": 1,
-          "description": "Estás en un camino bloqueado por un enorme muro de piedra",
+          "description": "Estás en un camino bloqueado por un enorme muro de piedra, la unica opcion de seguir el camino es pasar el muro, podrias intentar escalarlo, pero parece bastante alto.",
           "media": {
             "images": [
               "images/places/muro.png",
@@ -288,22 +288,22 @@
               "action": "colocar",
               "object": { "name": "pedrusco" },
               "requirementObject": ["pedrusco"],
-              "successResponse": "Colocas el pedruco en la base del muro",
+              "successResponse": "Colocas el pedruco en la base del muro, ingenioso!!",
               "failResponse": "¿Que pedrusco?"
             },
             { 
               "action": "subir",
               "object": { "name": "pedrusco" },
               "requirementStatus": ["colocar_pedrusco"],
-              "successResponse": "Al subir al pedrusco, ya no parece tan imposible escalar el muro",
+              "successResponse": "Al subir al pedrusco, ya no parece tan imposible escalar el muro ...",
               "failResponse": "¿Que te quieres subir a qué?"
             },
             { 
               "action": "escalar",
               "object": { "name": "muro" },
               "requirementStatus": ["subir_pedrusco"],
-              "successResponse": "El suelo esta cubierto de hermosas flores, amanitas Phalloides quizás?",
-              "failResponse": "El muro es demasiado alto, pero tú como gallardo hidalgo que eres decides intentar escalarlo. Mala suerte que te resbalas y mueres al caer desde lo alto",
+              "successResponse": "Al subir al muro lo que ves el callejòn de la parte de atras de la posada, bastante lugubre, ¿seguro que quieres ir ahi?",
+              "failResponse": "El muro es demasiado alto, como te dije, pero tú como gallardo hidalgo que eres decidiste ignorar mis advertencias e intentaste escalarlo. Mala suerte que te resbalaste y mueres al caer desde lo alto. Para la pròxima busca algo que poder colocar en el suelo para subirte y que te sea mas fàcil escalarlo.",
               "endReason":"death"
             }
           ]
@@ -312,7 +312,7 @@
           "step": 10, 
           "branch": 1,
           "requirementStatus": ["escalar_muro"],
-          "description": "Al cruzar el muro, el camino se acaba. Tu única opción es dar media vuelta",
+          "description": "Al cruzar el muro, el camino se acaba. Tu única opción es dar media vuelta, una pena con el trabajo que te costo llegar hasta aquì.",
           "failResponse": "Te pones de puntillas y apenas alcanzas a ver por encima del muro que bloquea tu paso",
           "media": {
             "images": [
@@ -328,7 +328,7 @@
         "posada": { 
           "step": 9, 
           "branch": 0,
-          "description": "Te encuentras ante la imponente puerta de una suntuosa posada... mentira, la posada luce de dudosa categoría cuanto menos y la puerta se cae a cachos, es de esas antigüas puertas ajenas que no se abren si no llamas. A la izquierda, cruzando un camino invadido por la maleza, se ve un muro limítrofe de la posada. Es un lugar discreto y apartado... ya me entiendes. puedes acercarte al muro a echar un vistazo, o puedes ir a la recepcion de la posada para ver que se cuece por ahi.",
+          "description": "Te encuentras ante la imponente puerta de una suntuosa posada... mentira, la posada luce de dudosa categoría cuanto menos y la puerta se cae a cachos, es de esas antigüas puertas ajenas que no se abren si no llamas. <br><br>A la izquierda, cruzando un camino invadido por la maleza, se ve un muro limítrofe de la posada. Es un lugar discreto y apartado... ya me entiendes. puedes acercarte al muro a echar un vistazo, o puedes ir a la recepcion de la posada para ver que se cuece por ahi.",
           "media": {
             "images": [
               "images/places/posada.png"
@@ -399,7 +399,7 @@
         "bodega": { 
           "step": 13, 
           "branch": 0,
-          "description": "La estancia esta llena de odres, Huele a vino rancio y a queso picado. ¿O era al revés?",
+          "description": "La estancia esta llena de odres, Huele a vino rancio y a queso picado. ¿O era al revés?, en cualquier caso no me vendria mal algo de ese vino, lo llevo necesitando desde que me converti en narrador de esta historia ...",
           "media": {
             "images": [
               "images/places/bodega.png",

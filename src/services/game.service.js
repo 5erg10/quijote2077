@@ -1,48 +1,28 @@
 const usersDao = require('../repositories/user.repository');
 const placesDao = require('../repositories/place.repository');
 const gameEngine = require('../engine/gameEngine');
-const stringUtils = require('../utils/stringUtils');
+const { normalize } = require('../utils/stringUtils');
 const { parseIntents, generateNarrative } = require('./narrative.service');
 const { callWithFallback } = require('./llm.service');
 const countIntents = require('../utils/countIntents');
 
-async function handleWelcome(id, text, user) {
-  const name = text && text.trim();
-  if (!name) {
-    return {
-      messages: [{
-        text: 'Hola aventurero! No sé si eres un valiente o un inconsciente al entrar aqui, pero en fin... ¿Quieres embarcarte en esta aventura? Si me dices tu nombre lo tomare como un si.',
-        intent: 'welcome'
-      }]
-    };
-  }
-  await usersDao.addUser(id, name, { lat: 39.5137458, lng: -3.0046506 });
-  return {
-    messages: [{
-      text: `¡${name}! Buen nombre para un hidalgo. Ahora elige tu nivel de dificultad: *facil*, *medio* o *dificil*.`,
-      intent: 'setName',
-      showDifficulty: true
-    }]
-  };
-}
-
-async function handleDifficulty(id, text, user) {
-  const level = text && text.toLowerCase().trim();
+async function launchWelcome(user) {
   const validLevels = ['facil', 'medio', 'dificil'];
-  if (!level || !validLevels.includes(level)) {
+
+  const { difficulty } = user;
+
+  if (!difficulty.level || !validLevels.includes(difficulty.level)) {
     return {
       messages: [{ text: 'Por favor elige entre *facil*, *medio* o *dificil*.', intent: 'difficulty', showDifficulty: true }]
     };
   }
-  const capacityMap = { facil: 9999999, medio: 100, dificil: 50 };
-  const difficulty = { level, maxCapacity: capacityMap[level] };
-  await usersDao.updateUser(id, { ...user, difficulty });
+
   const { textByDifficulty } = require('../utils/difficultyUtils');
   const place = await placesDao.getPlaceById('biblioteca');
-  const userWithDifficulty = { ...user, difficulty };
+
   return {
     messages: [{
-      text: `Excelente, comenzarás con dificultad *${level}*.\n<img src="${place.media.images[0]}">\n${textByDifficulty(place.description, userWithDifficulty)}`,
+      text: `Excelente, comenzarás con dificultad <b>${difficulty.level}</b>.\n<img src="${place.media.images[0]}">\n${textByDifficulty(place.description, user)}`,
       intent: 'difficulty'
     }]
   };
@@ -67,7 +47,9 @@ async function handleGameplay(id, text, user) {
   const messages = [];
 
   for (const engineResult of engineResults) {
-    let currentMessage = `${engineResult.imageUrl ? `<img src="${engineResult.imageUrl}"/>` : ''}<p>${engineResult.message ?? engineResult.placeDescription}</p>`;
+    
+    let currentMessage = `${engineResult.imageUrl ? `<img src="${engineResult.imageUrl}"/>` : ''}${engineResult.message ?? engineResult.placeDescription}`;
+
     if (engineResult.gameOver) {
       const gameOverText = [
         engineResult.imageUrl ? `<img src="${engineResult.imageUrl}">` : '',
@@ -78,12 +60,14 @@ async function handleGameplay(id, text, user) {
       break;
     }
 
-    const objectsIncurrentPlace = engineResult.success ? Object.values(user.objectsList).filter(object => stringUtils.normalize(object.currentPlace) == stringUtils.normalize(engineResult.place)) : [];
+    const objectsIncurrentPlace = engineResult.success ? Object.values(user.objectsList).filter(object => normalize(object.currentPlace) == normalize(engineResult.place)) : [];
     console.log('objects in room: ', objectsIncurrentPlace.map(obj => obj.name))
     objectsIncurrentPlace.forEach(obj => {
-      currentMessage += !obj.jointToSuccess ? `<p>${obj.originDescription}</p>` : `<p>${obj.ordinaryDescription}</p>`;
-    })
+      currentMessage += !obj.jointToSuccess ? `<br><br>${obj.originDescription}` : `<br><br>${obj.ordinaryDescription}`;
+    });
+
     const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, engineResult.action);
+
     // const narrative = await callWithFallback(client => generateNarrative({
     //   llmClientConf: client,
     //   userText: text,
@@ -92,7 +76,7 @@ async function handleGameplay(id, text, user) {
     //   helpHint
     // }));
 
-    if (helpHint) currentMessage += `<p>${helpHint}</p>`
+    if (helpHint) currentMessage += `<br><br>${helpHint}`
 
     messages.push({ text: currentMessage, intent: engineResult.action });
   }
@@ -101,4 +85,4 @@ async function handleGameplay(id, text, user) {
   return { messages, gameOver: hasGameOver || false };
 }
 
-module.exports = { handleWelcome, handleDifficulty, handleGameplay };
+module.exports = { launchWelcome, handleGameplay };

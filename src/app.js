@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+
 const gameRoutes = require('./routes/game.routes');
 const userRoutes = require('./routes/user.routes');
 const { errorHandler } = require('./middleware/errorHandler');

@@ -5,7 +5,7 @@ const openAiEngine = require('openai');
 
 const llmClients = [
   { name: 'Groq', client: new groqEngine({ apiKey: CONFIG.groqApiKey }), model: CONFIG.groqAiModel },
-  { name: 'Cerebras', client: new cerebrasEngine({apiKey: CONFIG.cerebrasApiKey}), model: CONFIG.cerebrasModel },
+  // { name: 'Cerebras', client: new cerebrasEngine({apiKey: CONFIG.cerebrasApiKey}), model: CONFIG.cerebrasModel },
   // { name: 'OpenAI', client: new openAiEngine({apiKey: CONFIG.openAiApiKey}), model: CONFIG.openAiModel },
 ];
 

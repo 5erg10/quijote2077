@@ -3,16 +3,13 @@ const placeNames = placesDao.getPlaceNames();
 const items = placesDao.getItems();
 const replaces = onlyUnique(placeNames.concat(items));
 
+// Añade negritas en las partes del texto que coincidan con lugares de la app para facilitar el juego
 function textByDifficulty(text, user) {
   if (user.difficulty.level === 'facil') {
-    let boldText = text;
+    const escapedPlaces = replaces.map(place => place.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const regex = new RegExp(`\\b(${escapedPlaces.join('|')})\\b`, 'gi');
 
-
-    replaces.forEach(place =>
-      boldText = boldText.replace(new RegExp(`(\\W)${place}(\\W|$)`, 'g'), `$1*${place}*$2`).replace(/\*\*/g, '*')
-    );
-
-    return boldText;
+    return text.replace(regex, '<b>$1</b>');
   }
 
   return text;
@@ -28,6 +25,7 @@ function getHelp(user, intentName) {
 }
 
 function genericHelp(user) {
+  const formatter = new Intl.ListFormat('es', { style: 'long', type: 'conjunction' });
   const room = (Object.keys(user.room) || [])[0];
   const actionsDone = user.room.actions || [];
   const actions = placesDao.getPlaceActions(room);
@@ -36,17 +34,16 @@ function genericHelp(user) {
   let response = `📝Aquí tienes algo de ayuda: \n\n - Estás en ${room}. `;
 
   if (connectedRooms.length) {
-    response += '\n - Desde aquí puedes ir a '
-    response += connectedRooms.map(room => `*${room}*`).join(' ') + '. ';
-    response = response.replace(/(.*)(\* \*)/, '$1* y *');
+    const roomsString = formatter.format(connectedRooms.map(room => `<b>${room}</b>`));
+    response += `\n - Desde aquí puedes ir a ${roomsString}.`;
   }
 
   if (actionsDone.length < actions.length) {
     response += '\n - Quizás puedas hacer algo con: ';
 
     if (actions.length > 1) {
-      response += onlyUnique(actions.map(el => el.object && `*${el.object.name}*`)).join(', ') + '...';
-      response = response.replace(/(.*)(\* \*)/, '$1* y *');
+      const objectsString = formatter.format(onlyUnique(actions.map(el => `<b>${el.object?.name || ''}</b>`)));
+      response += objectsString;
     } else {
       response += actions[0].object && actions[0].object.name;
     }

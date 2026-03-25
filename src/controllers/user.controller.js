@@ -1,36 +1,7 @@
-const userService = require('../repositories/user.repository').getUserById;
 const placesData = require('../../data/places.json');
+const { getUserState, saveUserDataService } = require('../services/user.service');
 
-const getUserState = async (uuid) => {
-  const userData = await userService(uuid);
-
-  // Si el usuario no existe (fue borrado tras game over), devolver estado vacío
-  if (!userData || Object.keys(userData).length === 0) {
-    return null;
-  }
-
-  const objectList = userData.objectsList
-    ? Object.values(userData.objectsList).reduce((acc, object) => {
-        if (object.jointToSuccess) acc.push(object);
-        return acc;
-      }, [])
-    : [];
-
-  const currentWeight = objectList.reduce((acc, object) => acc + (object.weight || 0), 0);
-
-  return {
-    difficulty: userData.difficulty && userData.difficulty.level,
-    maxWeight: userData.difficulty && userData.difficulty.maxCapacity,
-    currentWeight,
-    energy: userData.hungry,
-    objects: objectList,
-    placesKnown: userData.placesKnown,
-    currentRoom: userData.room ? Object.keys(userData.room) : [],
-    name: userData.userName
-  };
-};
-
-const handleUserState = async (req, res) => {
+const getUserData = async (req, res) => {
   const { uuid } = req.query;
   try {
     const response = await getUserState(uuid);
@@ -50,4 +21,15 @@ const handlePlaces = (req, res) => {
   res.json(placesData);
 };
 
-module.exports = { handleUserState, handlePlaces };
+const saveUserData = async (req, res) => {
+  try {
+    const { id, userName, level } = req.body;
+    await saveUserDataService({ id, userName, level });
+    res.status(200).send('user saved!');
+  } catch (err) {
+    console.log('eror: ', err);
+    res.status(400).send('error on user saved');
+  }
+}
+
+module.exports = { getUserData, handlePlaces, saveUserData };

@@ -18,37 +18,6 @@
   src: url('./fonts/EnterCommand-Italic.ttf')  format('truetype');
 }
 
-@keyframes cursorAnimation {
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-
-@-o-keyframes cursorAnimation{
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-
-@-moz-keyframes cursorAnimation{
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-
-@-webkit-keyframes cursorAnimation{
-  0%   { opacity:1; }
-  50%  { opacity:0; }
-  100% { opacity:1; }
-}
-
-#animateCursor {
-  -webkit-animation: cursorAnimation .75s infinite;
-  -moz-animation: cursorAnimation .75s infinite;
-  -o-animation: cursorAnimation .75s infinite;
-  animation: cursorAnimation .75s infinite;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -125,10 +94,8 @@ p {
 
 .mainDifficultSelector {
     display: flex;
-    position: absolute;
-    bottom: 30px;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 4rem;
     cursor: pointer;
 
@@ -176,7 +143,7 @@ p {
   border: 2px solid white;
   margin: 10px;
   min-height: 50px;
-  padding: 10px 20px;
+  padding: 1rem 2rem 2rem 2rem;
   width: 75%;
 }
 
@@ -209,7 +176,7 @@ p {
   border: 2px solid #22ecf3;
   margin: 10px;
   min-height: 50px;
-  padding: 10px 20px;
+  padding: 1rem 2rem 2rem 2rem;
   text-align: left;
   width: 75%;
 }
@@ -218,7 +185,7 @@ p {
   color: yellow;
 }
 
-.inputsBox {
+.footerContainer {
   width: 100%;
   margin: 0 auto;
   display: grid;
@@ -228,7 +195,8 @@ p {
   border-top: solid 1px white;
 }
 
-.inputBox {
+.inputsContainer {
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
@@ -236,7 +204,15 @@ p {
   justify-content: flex-start;
 }
 
-.inputBox .prompt {
+.mainTextInput {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.mainTextInput .prompt {
   margin-right: 5px;
 }
 
@@ -246,12 +222,19 @@ input {
   color: white;
   font-family: "PressStart2P";
   font-size: 12px;
-  max-width: 100%;
-  width: 0px;
+  width: 100%;
 }
 
 input:focus {
   outline: 0;
+}
+
+.imputLoading {
+  position: absolute;
+  inset: 0;
+  background: black;
+  display: flex;
+  align-items: center;
 }
 
 .statsBox {

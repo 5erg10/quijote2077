@@ -1,5 +1,9 @@
-var admin = require('firebase-admin');
-var serviceAccount = require('../../credentials/quijote2077-firebase.json');
+const admin = require('firebase-admin');
+
+const serviceAccount = require('../../credentials/quijote2077-firebase.json');
+const objectOriginLocation = require('../../data/objectByPlacesOrigin.json');
+
+console.log('salta user repository')
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -8,22 +12,21 @@ if (!admin.apps.length) {
   });
 }
 
-const objectOriginLocation = require('../../data/objectByPlacesOrigin.json');
-
-function updateUser(userId, newData) {
-  return admin.database().ref(`users/${userId}`).update(newData);
+const updateUser = (userId, newData) => {
+    return admin.database().ref(`users/${userId}`).update(newData);
 }
 
-function getUserById(userId) {
+const getUserById = (userId) => {
   if (!userId) throw new Error('Se requiere identificador de usuario');
   return admin.database().ref(`users/${userId}`).once('value').then(snapshot => snapshot.val() || {});
 }
 
-function getUsers() {
+const getUsers = () => {
   return admin.database().ref('users').once('value');
 }
 
-function addUser(userAccount, username, coordinates) {
+const addUser = (userAccount, username, level, coordinates) => {
+  const capacityMap = { facil: 9999999, medio: 100, dificil: 50 };
   return admin.database().ref(`users/${userAccount}`).set({
     room: { biblioteca: { step: 0, branch: 0 } },
     placesKnown: ['biblioteca'],
@@ -32,11 +35,15 @@ function addUser(userAccount, username, coordinates) {
     hungry: 100,
     objectsList: objectOriginLocation,
     userName: username,
-    coordinates
+    coordinates,
+    difficulty: {
+      level,
+      maxCapacity: capacityMap[level ?? 'medio']
+    }
   });
 }
 
-function removeUser(userAccount) {
+const removeUser = (userAccount) => {
   return admin.database().ref(`users/${userAccount}`).remove();
 }
 

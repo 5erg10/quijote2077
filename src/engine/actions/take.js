@@ -1,10 +1,11 @@
 const objectsDao = require('../../repositories/object.repository');
 const countIntents = require('../../utils/countIntents');
+const { normalize } = require('../../utils/stringUtils');
 
 async function execute(intent, userId, user) {
-  const objectName = intent.object;
+  const objectName = normalize(intent.object || '');
 
-  const parsedObjectName = Object.keys(user.objectsList).find(obj => objectName.toLowerCase().includes(obj.toLowerCase()) || obj.toLowerCase().includes(objectName.toLowerCase()));
+  const parsedObjectName = Object.keys(user.objectsList).find(obj => objectName.includes(normalize(obj)) || normalize(obj).includes(objectName));
 
   if (!parsedObjectName || !user.objectsList[parsedObjectName]) {
     await countIntents.count(userId);
