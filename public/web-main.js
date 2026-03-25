@@ -334,6 +334,7 @@ function handleGameOver() {
   storage.removeItem('last');
   storage.removeItem('responseDate');
   userDatabaseData = null;
+  userName = undefined;
 }
 
 function cancelContinue() {
