@@ -81,7 +81,7 @@
               "object": { "name": "alacena" },
               "requirementStatus": ["poner_armadura"],
               "successResponse": "Una rata salta, te intenta morder, pero gracias a la armadura lo único que consigue es romperse los dientes. Ahora que ya no hay ratas que quieran acabar con tu vida podriamos revisar con calma la alacena por si hubiese algo interesante, en las alacenas suela haber comida.",
-              "failResponse": "La rata salta sobre tu hidalgo rostro perjudicando tus globos oculares, ya no estás en condiciones de continuar con tu hidalga azaña",
+              "failResponse": "La rata salta sobre tu hidalgo rostro perjudicando tus globos oculares, si hubieses llevado algo con lo que protegerte como una armadura esto no habria pasado, pero en fin ... ahora ya no estás en condiciones de continuar con tu hidalga azaña",
               "endReason":"death"
             },
             {   
@@ -481,7 +481,7 @@
         "acantilado": { 
           "step": 6, 
           "branch": 2,
-          "description": "Un diminuto acantilado está frente ti. Quizás podrías cruzarlo de un salto, pero parece mucha distancia incluso para un valiente hidalgo. Creo que sería mejor darse media vuelta",
+          "description": "Un diminuto acantilado está frente ti. Quizás podrías cruzarlo de un salto, pero parece mucha distancia incluso para un valiente hidalgo. Creo que sería mejor darse media vuelta o buscar algo que usar de pruente para cruzar, ¿un tablòn por ejemplo?",
           "media": {
             "images": [
               "images/places/acantilado.png",
@@ -499,7 +499,7 @@
             { 
               "action": "saltar",
               "object": { "name": "acantilado" },
-              "successResponse": "Demasiada fe tenías en tus habilidades. Por desgracia, no llegas al otro lado y ahora eres un hidalgo estrellado",
+              "successResponse": "Demasiada fe tenías en tus habilidades, ¿como pensabas que podias saltar tan lejos?. Por desgracia, no llegas al otro lado y ahora eres un hidalgo estrellado",
               "endReason":"death"
             }
           ],

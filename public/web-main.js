@@ -167,6 +167,7 @@ async function sendText(text) {
     if (text.toLowerCase().includes('reiniciar')) {
       isGameOver = false;
       responses.innerHTML = '';
+      startGame();
     }
     showLoading(false);
     return;

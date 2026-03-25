@@ -8,7 +8,7 @@ function buildResetResult(message, reason) {
     reason,
     message,
     imageUrl: reason === 'death' || reason === 'hungry' ? 'images/places/blackDeath.jpg' : null,
-    restartMessage: reason !== 'end' ? '\n\nSi deseas iniciar una *nueva partida*, di *REINICIAR*' : '\n\nCONTINUARÁ...'
+    restartMessage: reason !== 'end' ? '\n\nSi deseas iniciar una *nueva partida*, escribe <b>REINICIAR</b>' : '\n\nCONTINUARÁ...'
   };
 }
 

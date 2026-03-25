@@ -40,7 +40,6 @@ async function handleGameplay(id, text, user) {
   console.log('Intents:', JSON.stringify(intents));
 
   const engineResults = await gameEngine.execute(intents, id, user);
-  console.log('Engine:', JSON.stringify(engineResults));
 
   const freshUser = await usersDao.getUserById(id);
 
@@ -61,7 +60,6 @@ async function handleGameplay(id, text, user) {
     }
 
     const objectsIncurrentPlace = engineResult.success ? Object.values(user.objectsList).filter(object => normalize(object.currentPlace) == normalize(engineResult.place)) : [];
-    console.log('objects in room: ', objectsIncurrentPlace.map(obj => obj.name))
     objectsIncurrentPlace.forEach(obj => {
       currentMessage += !obj.jointToSuccess ? `<br><br>${obj.originDescription}` : `<br><br>${obj.ordinaryDescription}`;
     });
