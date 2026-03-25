@@ -83,6 +83,20 @@ function documentReady() {
     }
   });
 
+  textarea.addEventListener('keyup', (event) => {
+      const inputText = textarea.value.trim();
+      if (event.keyCode === 13 && !!inputText) {
+        showLoading(true);
+        if (!userName) {
+          userName = inputText;
+          showDifficultySelector();
+          return;
+        }
+        addUserMessageToChat(inputText);
+        sendText(inputText);
+      }
+  });
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeCharacterMenu();
   });
@@ -90,19 +104,6 @@ function documentReady() {
 
 function startGame() {
   toogleElementOpacity(splashScreen, true);
-  textarea.addEventListener('keyup', (event) => {
-    const inputText = textarea.value.trim();
-     if (event.keyCode === 13 && !!inputText) {
-      showLoading(true);
-      if (!userName) {
-        userName = inputText;
-        showDifficultySelector();
-        return;
-      }
-      addUserMessageToChat(inputText);
-      sendText(inputText);
-     }
-  });
   addQuixoteMessageToChat('Hola aventurero! No sé si eres un valiente o un inconsciente al entrar aqui, pero en fin... ¿Quieres embarcarte en esta aventura? Si me dices tu nombre lo tomare como un si.');
   setFocus();
   if (audioActive) outerAudio.play();
@@ -165,9 +166,10 @@ async function sendText(text) {
 
   if (isGameOver) {
     if (text.toLowerCase().includes('reiniciar')) {
-      isGameOver = false;
-      responses.innerHTML = '';
-      startGame();
+        isGameOver = false;
+        responses.innerHTML = '';
+        userName = undefined;
+        startGame();
     }
     showLoading(false);
     return;
@@ -334,7 +336,6 @@ function handleGameOver() {
   storage.removeItem('last');
   storage.removeItem('responseDate');
   userDatabaseData = null;
-  userName = undefined;
 }
 
 function cancelContinue() {
