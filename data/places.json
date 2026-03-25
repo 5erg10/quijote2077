@@ -81,7 +81,7 @@
               "object": { "name": "alacena" },
               "requirementStatus": ["poner_armadura"],
               "successResponse": "Una rata salta, te intenta morder, pero gracias a la armadura lo único que consigue es romperse los dientes. Ahora que ya no hay ratas que quieran acabar con tu vida podriamos revisar con calma la alacena por si hubiese algo interesante, en las alacenas suela haber comida.",
-              "failResponse": "La rata salta sobre tu hidalgo rostro perjudicando tus globos oculares, si hubieses llevado algo con lo que protegerte como una armadura esto no habria pasado, pero en fin ... ahora ya no estás en condiciones de continuar con tu hidalga azaña",
+              "failResponse": "Una rata que habia tomado la alacena como su hogar salta sobre tu hidalgo rostro perjudicando tus globos oculares, si hubieses llevado algo con lo que protegerte como <b>una armadura</b> esto no habria pasado, pero en fin ... ahora ya no estás en condiciones de continuar con tu hidalga hazaña.",
               "endReason":"death"
             },
             {   

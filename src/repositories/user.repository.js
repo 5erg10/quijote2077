@@ -3,8 +3,6 @@ const admin = require('firebase-admin');
 const serviceAccount = require('../../credentials/quijote2077-firebase.json');
 const objectOriginLocation = require('../../data/objectByPlacesOrigin.json');
 
-console.log('salta user repository')
-
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
