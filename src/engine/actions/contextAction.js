@@ -71,10 +71,10 @@ const execute = async (intent, userId, user) => {
     }
 
     // Guardar estado
-    const objectKey = matchedAction.object && matchedAction.object.name
+    const objectKey = matchedAction?.object?.name
       ? `_${matchedAction.object.name}`
       : '';
-    const statusKey = `${canonicalVerb}${objectKey}`;
+    const statusKey = `${canonicalVerb}${objectKey}_${placeName}`;
 
     try {
       await statesDao.addStatus(userId, user, statusKey);

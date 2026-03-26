@@ -18,7 +18,7 @@
             {   
               "action": "cruzar",
               "object": { "name": "portal" },
-              "requirementStatus": ["leer_libro"],
+              "requirementStatus": ["leer_libro_biblioteca"],
               "travelTo": "habitación",
               "successResponse": "Cruzas el portal y al otro lado te encuentras en una habitación austera...",
               "failResponse": "El portal no existe todavía. Quizás hay algo en esta biblioteca que debería llamar tu atención..."
@@ -91,7 +91,7 @@
             {   
               "action": "abrir",
               "object": { "name": "alacena" },
-              "requirementStatus": ["poner_armadura"],
+              "requirementStatus": ["poner_armadura_despensa"],
               "successResponse": "Una rata salta, te intenta morder, pero gracias a la armadura lo único que consigue es romperse los dientes. Ahora que ya no hay ratas que quieran acabar con tu vida podriamos revisar con calma la alacena por si hubiese algo interesante, en las alacenas suela haber comida.",
               "failResponse": "Una rata que habia tomado la alacena como su hogar salta sobre tu hidalgo rostro perjudicando tus globos oculares, si hubieses llevado algo con lo que protegerte como <b>una armadura</b> esto no habria pasado, pero en fin ... ahora ya no estás en condiciones de continuar con tu hidalga hazaña.",
               "endReason":"death"
@@ -99,7 +99,7 @@
             {   
               "action": "examinar",
               "object": { "name": "alacena" },
-              "requirementStatus": ["abrir_alacena"],
+              "requirementStatus": ["abrir_alacena_cocina"],
               "successResponse": "Pues no hay comida, si que eres pobre!!, pero sobre una de las repisas hay una llave, yo la cogeria, las llaves siempre sirven para algo.",
               "failResponse": "Convendría abrirla para poder examinarla mejor"
             }
@@ -287,14 +287,14 @@
             { 
               "action": "subir",
               "object": { "name": "pedrusco" },
-              "requirementStatus": ["colocar_pedrusco"],
+              "requirementStatus": ["colocar_pedrusco_muro"],
               "successResponse": "Al subir al pedrusco, ya no parece tan imposible escalar el muro ...",
               "failResponse": "¿Que te quieres subir a qué?"
             },
             { 
               "action": "escalar",
               "object": { "name": "muro" },
-              "requirementStatus": ["subir_pedrusco"],
+              "requirementStatus": ["subir_pedrusco_muro"],
               "successResponse": "Al subir al muro lo que ves el callejòn de la parte de atras de la posada, bastante lugubre, ¿seguro que quieres ir ahi?",
               "failResponse": "El muro es demasiado alto, como te dije, pero tú como gallardo hidalgo que eres decidiste ignorar mis advertencias e intentaste escalarlo. Mala suerte que te resbalaste y mueres al caer desde lo alto. Para la pròxima busca algo que poder colocar en el suelo para subirte y que te sea mas fàcil escalarlo.",
               "endReason":"death"
@@ -304,7 +304,7 @@
         "callejón": { 
           "step": 10, 
           "branch": 1,
-          "requirementStatus": ["escalar_muro"],
+          "requirementStatus": ["escalar_muro_muro"],
           "description": "Al cruzar el muro, el camino se acaba. Tu única opción es dar media vuelta, una pena con el trabajo que te costo llegar hasta aquì.",
           "failResponse": "Te pones de puntillas y apenas alcanzas a ver por encima del muro que bloquea tu paso",
           "media": {
@@ -407,7 +407,7 @@
             { 
               "action": "abrir",
               "object": { "name": "odre" },
-              "requirementStatus": ["golpear_odre"],
+              "requirementStatus": ["golpear_odre_bodega"],
               "successResponse": "El odre ya esta abierto, cuantos más golpes quieres darle so cafre",
               "failResponse": "El corcho está atascado, seguramente por que lleva siglos sin abrirse, necesitarás algo contundente con lo que romperlo"
             },
@@ -421,7 +421,7 @@
             { 
               "action": "beber",
               "object": { "name":"vino", "type":"food", "lifePoints":20 },
-              "requirementStatus": ["golpear_odre"],
+              "requirementStatus": ["abrir_odre_bodega"],
               "successResponse": "Un hidalgo caballero bebiendo a morro, que vergüenza!!, en fin, por lo menos recuperas algo de fuerzas.",
               "failResponse": "Y como piensa beber vino de unos odres cerrados oh mi hidalgo caballero?"
             }
@@ -509,7 +509,7 @@
         "bosque": { 
           "step": 6, 
           "branch": 2,
-          "requirementStatus": ["colocar_escalón"],
+          "requirementStatus": ["colocar_escalón_bosque"],
           "description": "Un oscuro bosque, tan oscuro que apenas alcanzas a ver poco más que el acantilado que acabas de cruzar. Se escuchan lobos al rededor tuya. Yo me daría media vuelta y me iría",
           "failResponse": "No puedes llegar al bosque, antes debes cruzar un acantilado que tiene pinta que no podrás cruzar de un salto",
           "media": {
@@ -624,7 +624,7 @@
           "origin": "venta",
           "step": 11, 
           "branch": 1,
-          "requirementStatus": ["arreglar_cerradura"],
+          "requirementStatus": ["arreglar_cerradura_patio"],
           "description": "Al traspasar la puerta del distribuidor, accedes a un sorprendentemente acogedor patio. En en centro del patio hay pozo decorado con una estatuilla de San jorge. Ya sabes, el santo de los caballeros, ¿que casualidad eh?",
           "failResponse": "Estaría bien poder visitar el patio, pero una puerta rota te lo impide",
           "media": {
@@ -684,7 +684,7 @@
               "action": "cruzar",
               "object": { "name": "cancela" },
               "requirementObject": ["espada", "armadura"],
-              "requirementStatus": ["velar_armas"],
+              "requirementStatus": ["velar_armas_patio"],
               "successResponse": "Cruzas la puerta y es como atravesar la entrada a otro mundo. Prados verdes hasta donde alcanza la vista, regados de pequeños bosques y riachuelos, animados por el bello cantar de las aves más distinguidas... huele a felicidad y opulencia, y como si el destino te sonriese, una bella doncella está intentando arreglar su carruaje averiado junto a sus monjes acompañantes. ¡¡Es la oportunidad ideal para demostrar tu valía ante una bella dama!!",
               "failResponse": "Los soldados te echan a empujones entre sonoras risas. No tienes todo lo necesario para ser un caballero decían",
               "endReason":"end"
