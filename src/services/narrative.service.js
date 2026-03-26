@@ -18,13 +18,20 @@ REGLAS:
 - Usa SIEMPRE el verbo canonico exacto de la lista de acciones disponibles.
 - Si el jugador usa un sinonimo de un verbo, mapea al verbo canonico.
 - Extrae el objeto o lugar mencionado cuando aplique (campo "object" o "place").
+- Cuando el lugar es compuesto, extrae lugar y origen (campo "place" y campo "origin")
 - Si hay varias acciones en la frase, devuelvelas todas en orden.
+- Nunca puede haber una misma accion como por ejemplo "viajar" o "coger", si detectas en el resultado que obtengas una accion repetida, elimina la menos confiable.
+- Puede haber nombres de objetos compuestos, por ejemplo "escudo de armas", en ese caso quedate con el nombre del objeto principal, que seria "escudo".
+- Puede haber nombres de lugares compuestos, como puede ser "habitacion de la posada, en esos casos el lugar es la primera parte, "habitacion", y el segundo el origen "posada"
 - Si no reconoces ninguna accion de la lista, devuelve [{"action":"fallback"}].
 
 Ejemplos:
 texto: "ojeo el libro", acciones: ["leer","viajar"] -> [{"action":"leer","object":"libro"}]
 texto: "voy a la cocina y cojo la llave", acciones: ["viajar","coger"] -> [{"action":"viajar","place":"cocina"},{"action":"coger","object":"llave"}]
-texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","object":"alacena"}]`
+texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","object":"alacena"}]
+texto: "cojo el currusco de pan", acciones: ["coger", "viajar"] -> [{"action": "coger", "object": "currusco"}]
+texto: "Voy a la habitacion de la posada", acciones: ["viajar", "coger", "comer"] -> [{"action": "viajar", "place": "habitacion", "origin": "posada"}]
+texto: "analizo el escudo de armas y me voy a la bodega de la venta", acciones: ["viajar", "coger", "comer", "revisar"] -> [{"action": "revisar", "object": "escudo"},{"action": "viajar", "place": "bodega", "origin": "venta"}]`
       },
       {
         role: 'user',
@@ -50,15 +57,15 @@ texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","ob
 }
 
 const generateNarrative = async ({ llmClientConf, userText, engineResult, user, helpHint }) => {
-  const placeName = Object.keys(user.room)[0];
   const engineMessage = extractEngineMessage(engineResult);
   const imagUrl = engineResult.imageUrl;
 
   const systemPrompt = `Eres el narrador de "Quijote 2077", aventura conversacional en la epoca de El Quijote.
 Estilo: humoristico, ironico, cervantino. nunca mas de 1 parrafo o 100 palabras. Nunca menciones que eres una IA.
 Nunca omitas ninguna informacion contenida en el texto.
+Da prioridad màxima a la informacion contenida en el texto, siempre tiene que quedar clara la informacion de los lugares y objetos que se mencionen.
 PROHIBIDO: no hagas referencia a que haya mas personas en el juego, solo esta el jugador.
-PROHIBIDO: no menciones energia, vida, puntos de vida, distancia, pasos ni datos numericos internos del juego.
+PROHIBIDO: no menciones energia, vida, puntos de vida, distancia, pasos ni datos numericos internos del juego a no ser que se mencione en el texto.
 ${helpHint ? `Incluye esta pista al final de forma natural: ${helpHint}` : ''}`.trim();
 
   const userPrompt = `El jugador escribio: "${userText}"

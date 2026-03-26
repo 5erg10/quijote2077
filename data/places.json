@@ -28,7 +28,8 @@
             "habitación"
           ]
         },
-        "habitación": { 
+        "habitación": {
+          "origin": "casa",
           "step": 1, 
           "branch": 0,
           "description": "Al cruzar, el portal se cierra detras de ti, asi que ya no puedes volver a casa. La unica forma de volver a abrirlo es volver aquì convertido en un autentico caballero. ¿Se me habia olvidado comentate todo esto verdad?. <br><br> Bueno, no te queda mas remedio que explorar y buscar la forma de convertirte en caballero. <br><br> Ahora mismo estas en una habitación austera, como corresponde a la de un hidalgo manchego del siglo XVI. ¡Sí!, ahora eres un hidalgo caballero. <br><br> A traves de la puerta de la habitaciòn se puede ver una escalera que baja al zaguan, diria que no te queda mas remedio que bajar al zaguan e inspeccionar la casa.",
@@ -43,29 +44,40 @@
             "zaguán"
           ]
         },
-        "zaguán": { 
+        "zaguán": {
+          "origin": "casa",
           "step": 2,
           "branch": 0,
-          "description": "Bajas por la escalera, y estas en el zaguán. Esta amplia y ruidosa escalera te facilitará el acceso si quieres volver a la habitación. Desde este zaguán tienes acceso a la cocina, al comedor y al portalón de la casa. Poco más tenian estas casas en aquella época, y más siendo un hidalgo venido a menos.",
+          "description": "Bajas por la escalera, y estas en el zaguán. Esta amplia y ruidosa escalera te facilitará el acceso si quieres volver a la habitación. Desde este zaguán tienes acceso a la cocina, al comedor y a la puerta de la casa. Poco más tenian estas casas en aquella época, y más siendo un hidalgo venido a menos.",
           "media": {
             "images": [
               "images/places/zaguan.png",
               "images/places/zaguan_noche.png"
             ]
           },
-          "actions": [            {   
-          "action": "examinar",
-          "object": { "name": "escalera" },
-          "requirementObject": ["vela"], 
-          "successResponse": "Parece que uno de los escalones esta un poco suelto, ya decia yo que crugia siempre que pasabamos por aqui. Muy agudo al haberte dado cuenta.",
-          "failResponse": "El zagüán es tan amplio como lugubre, no verias aqui ni a un elefante sin un poco de luz."          
-          }
+          "actions": [
+            {   
+              "action": "examinar",
+              "object": { "name": "escalera" },
+              "requirementObject": ["vela"], 
+              "successResponse": "Parece que uno de los escalones esta un poco suelto, ya decia yo que crugia siempre que pasabamos por aqui. Muy agudo al haberte dado cuenta.",
+              "failResponse": "El zagüán es tan amplio como lugubre, no verias aqui ni a un elefante sin un poco de luz."          
+            },
+            { 
+              "action": "abrir",
+              "object": { "name": "puerta" },
+              "requirementObject": ["llave"],
+              "travelTo": "calle",
+              "successResponse": "La puerta se abre con un estruendoso chirrido, se ve que nadie la ha usado en mucho tiempo. Más adelante ya divisas Argamasilla, ¡tu gran y amado pueblo!",
+              "failResponse": "La puerta está cerrada a cal y canto, seguro que en alguna parte anda la llave"
+            }
           ],
           "connectedRooms": [
-            "comedor", "cocina", "portalón"
+            "comedor", "cocina", "calle"
           ]
         },
-        "cocina": { 
+        "cocina": {
+          "origin": "casa",
           "step": 3, 
           "branch": 0,
           "description": "La cocina esta estupendamente descuidada, pero es acogedora. A un lado puedes ver una alacena, quizas dentro podamos encontrar algo de comida, al fondo la despensa y poco más. ¿oyes eso?, oh dios mio, ¿no serán ratas?",
@@ -97,7 +109,8 @@
             "despensa"
           ]
         },
-        "despensa": { 
+        "despensa": {
+          "origin": "casa",
           "step": 4,
           "branch": 0,
           "description": "La ténue luz que penetra por la ventana permite vislumbrar un baúl cerrado cuya superficie esta cubierta por el polvo de los siglos.¿Habrà algo de valor dentro?, lo dudo viendo como esta todo en esta casa pero nunca se sabe ...",
@@ -125,7 +138,8 @@
             "cocina"
           ]
         },
-        "comedor": { 
+        "comedor": {
+          "origin": "casa",
           "step": 3, 
           "branch": 0,
           "description": "El comedor de tu casa. Rústico, sencillo... esta claro que tu familia pasó por mejores momentos. En la pared esta colgado el escudo de armas y una espada bien grande y medio oxidada.",
@@ -151,30 +165,8 @@
             "zaguán"
           ]
         },
-        "portalón": { 
-          "step": 3, 
-          "branch": 0,
-          "description": "El portalón de tu casa. ¿Sabes que en algún momento tendrás que salir por esa puerta si quieres convertirte en caballero verdad?, antes de que lo preguntes te lo pondré facil, antes de salir por una puerta hay que abrirla.",
-          "media": {
-            "images": [
-              "images/places/portalon.png",
-              "images/places/portalon_noche.png"
-            ]
-            },
-          "actions": [
-            { 
-              "action": "abrir",
-              "object": { "name": "puerta" },
-              "requirementObject": ["llave"],
-              "successResponse": "La puerta se abre con un estruendoso chirrido, se ve que nadie la ha usado en mucho tiempo. Más adelante ya divisas Argamasilla, ¡tu gran y amado pueblo!",
-              "failResponse": "La puerta está cerrada a cal y canto, seguro que en alguna parte anda la llave"
-            }
-          ],
-          "connectedRooms": [
-            "zaguán", "argamasilla"
-          ]
-        },
-        "argamasilla": { 
+        "calle": {
+          "origin": "pueblo",
           "step": 4, 
           "branch": 0,
           "description": "Argamasilla de Alba, tu pueblo. Sus solitarias calles y piedras están mudas ante ti. Tu calle te lleva por un lado al arco del pueblo, todo un orgullo de la localidad!, por el otro te adentras en las calles... y frente a ti el muro donde se cuelgan siempre los bandos. Suelen hablar de chismes y bulos, pero admite que te encantan. ¿Que novedades traera el bando de hoy?.",
@@ -195,7 +187,8 @@
             "calles", "arco"
           ]
         },
-        "arco": { 
+        "arco": {
+          "origin": "pueblo",
           "step": 5, 
           "branch": 0,
           "description": "El arco no es gran cosa, para que lo vamos a negar. Aunque supongo que en un pueblo tan pequeño a cualquier cosa se le llama monumento. Más adelante, siguiendo por el camino, puedes llegar a la arboleda, siempre con su sombra acogedora y secreta",
@@ -345,7 +338,8 @@
             "muro", "recepción"
           ]
         },
-        "recepción": { 
+        "recepción": {
+          "origin": "posada",
           "step": 10, 
           "branch": 0,
           "description": "Estás en la recepción de la posada. ¿Cuánta gente habrá pasado aqui la noche?, al fondo ves unas escaleras, de esas que se han arreglado tantas veces que ya ni se parecen a lo que fueron un dia, si es que hubo algún día que tubiesen buen aspecto.",
@@ -360,7 +354,8 @@
             "posada", "escalera"
           ]
         },
-        "escalera": { 
+        "escalera": {
+          "origin": "posada",
           "step": 11, 
           "branch": 0,
           "description": "El descansillo de la escalera cruje que da miedo. Quizás sería mejor ir directamente al rellano que hay arriba antes de que se derrumben, o se quemen, o que se yo.",
@@ -381,7 +376,8 @@
             "recepción", "rellano"
           ]
         },
-        "rellano": { 
+        "rellano": {
+          "origin": "posada",
           "step": 12, 
           "branch": 0,
           "description": "Estás en el primer rellano, el primero y el único para que engañarnos. Dos puertas, a izquierda y derecha, visibles gracias a la luz de la antorcha, te abrirán el paso a la bodega y dormitorio respectivamente. ¿Una bodega al lado de una habitación dices?, sí, no se por qué te extraña",
@@ -396,7 +392,8 @@
             "escalera", "bodega", "dormitorio"
           ]
         },
-        "bodega": { 
+        "bodega": {
+          "origin": "posada",
           "step": 13, 
           "branch": 0,
           "description": "La estancia esta llena de odres, Huele a vino rancio y a queso picado. ¿O era al revés?, en cualquier caso no me vendria mal algo de ese vino, lo llevo necesitando desde que me converti en narrador de esta historia ...",
@@ -433,7 +430,8 @@
             "rellano"
           ]
         },
-        "dormitorio": { 
+        "dormitorio": {
+          "origin": "posada",
           "step": 13, 
           "branch": 1,
           "description": "Bonito dormitorio este. Una cama que hasta parece limpia domina la habitacion.",
@@ -448,10 +446,11 @@
             "rellano"
           ]
         },
-        "calles": { 
+        "calles": {
+          "origin": "pueblo",
           "step": 5, 
           "branch": 1,
-          "description": "Otra calle, calles y más calles, y las tienes que atravesarlas todas para llegar a los maravillosos campos de castilla, protagonistas de infinidad de poemas.",
+          "description": "Otra calle, calles y más calles, y las tienes que atravesar todas para llegar a los maravillosos campos de castilla, protagonistas de infinidad de poemas.",
           "media": {
             "images": [
               "images/places/calles.png",
@@ -538,7 +537,8 @@
             "recibidor", "prados"
           ]
         },
-        "recibidor": { 
+        "recibidor": {
+          "origin": "venta",
           "step": 9, 
           "branch": 1,
           "description": "Ves dos puertas ante ti, una te lleva al salon y por la otra llegas a un pequeño distribuidor con dos puertas más. Puertas, puertas y más puertas si.",
@@ -553,7 +553,8 @@
             "distribuidor", "salón"
           ]
         },
-        "salón": { 
+        "salón": {
+          "origin": "venta",
           "step": 10, 
           "branch": 1,
           "description": "Que salón tan solitario y vacío. Desde luego aqui no saben como darle un toque hogareño a una estancia. Solo hay una gran mesa vacía y un pequeño cesto en una esquina",
@@ -574,7 +575,8 @@
             "recibidor", "distribuidor"
           ]
         },
-        "distribuidor": { 
+        "distribuidor": {
+          "origin": "venta",
           "step": 10, 
           "branch": 1,
           "description": "Este distrubidor te permite acceder a dos estancias, a la izquierda una alcoba, y a la derecha una puerta con una cerradura que esta hecha un cisco, parece como si la hubiesen intentado abrir a mordiscos... es broma... no, no es broma.",
@@ -597,7 +599,8 @@
             "recibidor", "alcoba", "patio"
           ]
         },
-        "alcoba": { 
+        "habitacion": {
+          "origin": "venta",
           "step": 11, 
           "branch": 1,
           "description": "Un dormitorio sin más. Una cama, un suelo... poco más. Para descansar es suficiente supongo",
@@ -617,7 +620,8 @@
             "distribuidor"
           ]
         },
-        "patio": { 
+        "patio": {
+          "origin": "venta",
           "step": 11, 
           "branch": 1,
           "requirementStatus": ["arreglar_cerradura"],
