@@ -1,15 +1,16 @@
 const placesDao = require('../../repositories/place.repository');
 const usersDao = require('../../repositories/user.repository');
 const arrayUtils = require('../../utils/arrayUtils');
-const { normalize } = require('../../utils/stringUtils');
+const { normalize, createPlaceNameComposed } = require('../../utils/stringUtils');
 const gameOperations = require('../gameOperations');
 const countIntents = require('../../utils/countIntents');
 const { isNight } = require('../../utils/time');
 
 const execute = async (intent, userId, user) => {
-    const placeToTravel = intent.place;
     const currentPlace = Object.keys(user.room)[0];
     const placesKnown = user.placesKnown || [];
+    const placeOrigin = intent.origin;
+    const placeToTravel = `${intent.place}${placeOrigin ? `_${placeOrigin}` : ''}`;
 
     let place, connectedRooms;
 
@@ -50,7 +51,7 @@ const execute = async (intent, userId, user) => {
       return {
         action: 'viajar',
         success: false,
-        message: `No puedes ir directamente a ${placeToTravel}. Solo puedes moverte a lugares conectados o que ya hayas visitado.`
+        message: `No puedes ir directamente ${placeToTravel.endsWith('a') ? 'a la' : 'al'} ${createPlaceNameComposed(placeToTravel)}. Solo puedes moverte a lugares conectados o que ya hayas visitado.`
       };
     }
 

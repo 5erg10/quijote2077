@@ -20,13 +20,13 @@
               "action": "cruzar",
               "object": { "name": "portal" },
               "requirementStatus": ["leer_libro_biblioteca"],
-              "travelTo": "habitación",
+              "travelTo": "habitación_casa",
               "successResponse": "Cruzas el portal y al otro lado te encuentras en una habitación austera...",
               "failResponse": "El portal no existe todavía. Quizás hay algo en esta biblioteca que debería llamar tu atención..."
             }
           ],
           "connectedRooms": [
-            "habitación"
+            "habitación_casa"
           ]
         },
         "habitación_casa": {
@@ -42,7 +42,7 @@
           },
           "actions": [],
           "connectedRooms": [
-            "zaguán"
+            "zaguán_casa"
           ]
         },
         "zaguán_casa": {
@@ -74,7 +74,7 @@
             }
           ],
           "connectedRooms": [
-            "comedor", "cocina", "calle"
+            "comedor_casa", "cocina_casa", "puerta_casa"
           ]
         },
         "cocina_casa": {
@@ -106,8 +106,8 @@
             }
           ],
           "connectedRooms": [
-            "zaguán",
-            "despensa"
+            "zaguán_casa",
+            "despensa_casa"
           ]
         },
         "despensa_casa": {
@@ -136,7 +136,7 @@
             }
           ],
           "connectedRooms": [
-            "cocina"
+            "cocina_casa"
           ]
         },
         "comedor_casa": {
@@ -163,7 +163,7 @@
             }
           ],
           "connectedRooms": [
-            "zaguán"
+            "zaguán_casa"
           ]
         },
         "puerta_casa": {
@@ -186,7 +186,7 @@
             }
           ],
           "connectedRooms": [
-            "calles", "arco"
+            "calles_pueblo", "arco_pueblo"
           ]
         },
         "arco": {
@@ -202,7 +202,7 @@
             },
           "actions": [],
           "connectedRooms": [
-            "argamasilla", "arboleda"
+            "puerta_casa", "arboleda"
           ]
         },
         "arboleda": { 
@@ -223,7 +223,7 @@
             }
           ],
           "connectedRooms": [
-            "manzano", "arco"
+            "manzano", "arco_pueblo"
           ]
         },
         "manzano": { 
@@ -266,6 +266,26 @@
           ],
           "connectedRooms": [
             "posada", "arboleda"
+          ]
+        },
+        "posada": { 
+          "step": 9, 
+          "branch": 0,
+          "description": "Te encuentras ante la imponente puerta de una suntuosa posada... mentira, la posada luce de dudosa categoría cuanto menos y la puerta se cae a cachos, es de esas antigüas puertas ajenas que no se abren si no llamas. <br><br>A la izquierda, cruzando un camino invadido por la maleza, se ve un muro limítrofe de la posada. Es un lugar discreto y apartado... ya me entiendes. puedes acercarte al muro a echar un vistazo, o puedes ir a la recepcion de la posada para ver que se cuece por ahi.",
+          "media": {
+            "images": [
+              "images/places/posada.png"
+              ]
+            },
+          "actions": [
+            { 
+              "action": "llamar",
+              "object": { "name": "puerta" },
+              "successResponse": "El posadero abre la puerta entre gruñidos. Se da media vuelta mientras se rasca el trasero. Dudas si entrar a lo que parece la recepción."
+            }
+          ],
+          "connectedRooms": [
+            "muro", "recepción_posada"
           ]
         },
         "muro": { 
@@ -320,26 +340,6 @@
             "posada"
           ]
         },
-        "posada": { 
-          "step": 9, 
-          "branch": 0,
-          "description": "Te encuentras ante la imponente puerta de una suntuosa posada... mentira, la posada luce de dudosa categoría cuanto menos y la puerta se cae a cachos, es de esas antigüas puertas ajenas que no se abren si no llamas. <br><br>A la izquierda, cruzando un camino invadido por la maleza, se ve un muro limítrofe de la posada. Es un lugar discreto y apartado... ya me entiendes. puedes acercarte al muro a echar un vistazo, o puedes ir a la recepcion de la posada para ver que se cuece por ahi.",
-          "media": {
-            "images": [
-              "images/places/posada.png"
-              ]
-            },
-          "actions": [
-            { 
-              "action": "llamar",
-              "object": { "name": "puerta" },
-              "successResponse": "El posadero abre la puerta entre gruñidos. Se da media vuelta mientras se rasca el trasero. Dudas si entrar a lo que parece la recepción."
-            }
-          ],
-          "connectedRooms": [
-            "muro", "recepción"
-          ]
-        },
         "recepción_posada": {
           "origin": "posada",
           "step": 10, 
@@ -353,7 +353,7 @@
             },
           "actions": [],
           "connectedRooms": [
-            "posada", "escalera"
+            "posada", "escalera_posada"
           ]
         },
         "escalera_posada": {
@@ -375,7 +375,7 @@
             }
           ],
           "connectedRooms": [
-            "recepción", "rellano"
+            "recepción_posada", "rellano_posada"
           ]
         },
         "rellano_posada": {
@@ -391,7 +391,7 @@
             },
           "actions": [],
           "connectedRooms": [
-            "escalera", "bodega", "dormitorio"
+            "escalera_posada", "bodega_posada", "habitacion_posada"
           ]
         },
         "bodega_posada": {
@@ -429,7 +429,7 @@
             }
           ],
           "connectedRooms": [
-            "rellano"
+            "rellano_posada"
           ]
         },
         "habitacion_posada": {
@@ -445,7 +445,7 @@
             },
           "actions": [],
           "connectedRooms": [
-            "rellano"
+            "rellano_posada"
           ]
         },
         "calles": {
@@ -461,7 +461,7 @@
             },
           "actions": [],
           "connectedRooms": [
-            "argamasilla", "campos"
+            "puerta_casa", "campos"
           ]
         },
         "campos": { 
@@ -476,7 +476,7 @@
             },
           "actions": [],
           "connectedRooms": [
-            "calles", "venta", "acantilado"
+            "calles_pueblo", "venta", "acantilado"
           ]
         },
         "acantilado": { 
@@ -536,7 +536,7 @@
             },
           "actions": [],
           "connectedRooms": [
-            "recibidor", "prados"
+            "recibidor_venta", "prados"
           ]
         },
         "recibidor_venta": {
@@ -552,7 +552,7 @@
             },
           "actions": [],
           "connectedRooms": [
-            "distribuidor", "salón"
+            "distribuidor_venta", "salón_venta"
           ]
         },
         "comedor_venta": {
@@ -574,7 +574,7 @@
             }
           ],
           "connectedRooms": [
-            "recibidor", "distribuidor"
+            "recibidor_venta", "distribuidor_venta"
           ]
         },
         "distribuidor_venta": {
@@ -598,7 +598,7 @@
             }
           ],
           "connectedRooms": [
-            "recibidor", "alcoba", "patio"
+            "recibidor_venta", "alcoba_venta", "patio_venta"
           ]
         },
         "habitacion_venta": {
@@ -619,7 +619,7 @@
             }
           ],
           "connectedRooms": [
-            "distribuidor"
+            "distribuidor_venta"
           ]
         },
         "patio_venta": {
@@ -645,7 +645,7 @@
             }
           ],
           "connectedRooms": [
-            "distribuidor"
+            "distribuidor_venta"
           ]
         },
         "prados": { 
@@ -686,7 +686,7 @@
               "action": "cruzar",
               "object": { "name": "cancela" },
               "requirementObject": ["espada", "armadura"],
-              "requirementStatus": ["velar_armas_patio"],
+              "requirementStatus": ["velar_armas_patio_venta"],
               "successResponse": "Cruzas la puerta y es como atravesar la entrada a otro mundo. Prados verdes hasta donde alcanza la vista, regados de pequeños bosques y riachuelos, animados por el bello cantar de las aves más distinguidas... huele a felicidad y opulencia, y como si el destino te sonriese, una bella doncella está intentando arreglar su carruaje averiado junto a sus monjes acompañantes. ¡¡Es la oportunidad ideal para demostrar tu valía ante una bella dama!!",
               "failResponse": "Los soldados te echan a empujones entre sonoras risas. No tienes todo lo necesario para ser un caballero decían",
               "endReason":"end"

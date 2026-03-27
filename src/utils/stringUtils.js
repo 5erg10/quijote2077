@@ -2,7 +2,7 @@
  * Normaliza un string eliminando tildes/diacríticos y pasando a minúsculas.
  * Permite comparar "zaguan" == "zaguán", "Habitacion" == "habitación", etc.
  */
-function normalize(str) {
+const normalize = (str) => {
   if (!str) return '';
   return str
     .toLowerCase()
@@ -10,4 +10,10 @@ function normalize(str) {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
-module.exports = { normalize };
+const createPlaceNameComposed = (placeName) => {
+  if (!placeName.includes('_')) return placeName;
+  const [nombre, origen] = placeName.split('_');
+  return `${nombre} ${origen.endsWith('a') ? 'de la' : 'del'} ${origen}`;
+}
+
+module.exports = { normalize, createPlaceNameComposed };

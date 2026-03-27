@@ -3,13 +3,13 @@
  * usando comparación normalizada (sin tildes, minúsculas).
  */
 
-const stringUtils = require('../utils/stringUtils');
+const { normalize } = require('../utils/stringUtils');
 
 const isSubset = (arr, target) => {
   if (arr == undefined) return true;
   if (arr && target == undefined) return false;
-  const normalizedTarget = target.map(stringUtils.normalize);
-  return arr.every(v => normalizedTarget.includes(stringUtils.normalize(v)));
+  const normalizedTarget = target.map(normalize);
+  return arr.every(v => normalizedTarget.includes(normalize(v)));
 };
 
 /**
@@ -17,8 +17,8 @@ const isSubset = (arr, target) => {
  */
 function includesNormalized(arr, value) {
   if (!arr || !value) return false;
-  const normalizedValue = stringUtils.normalize(value);
-  return arr.some(item => stringUtils.normalize(item) === normalizedValue);
+  const normalizedValue = normalize(value);
+  return arr.some(item => normalize(item) === normalizedValue);
 }
 
 module.exports = { isSubset, includesNormalized };
