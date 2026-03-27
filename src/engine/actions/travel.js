@@ -7,24 +7,24 @@ const countIntents = require('../../utils/countIntents');
 const { isNight } = require('../../utils/time');
 
 const execute = async (intent, userId, user) => {
-    const selectedPlace = intent.place;
-    const placeName = Object.keys(user.room)[0];
+    const placeToTravel = intent.place;
+    const currentPlace = Object.keys(user.room)[0];
     const placesKnown = user.placesKnown || [];
 
     let place, connectedRooms;
 
-    if (!selectedPlace) {
+    if (!placeToTravel) {
       await countIntents.count(userId);
       return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
     }
 
-    if (normalize(placeName) === normalize(selectedPlace)) {
+    if (normalize(currentPlace) === normalize(placeToTravel)) {
       await countIntents.count(userId);
       return { action: 'viajar', success: false, message: '¡Ya estás en este lugar!' };
     }
 
     try {
-      place = await placesDao.getPlaceById(selectedPlace, user.room);
+      place = await placesDao.getPlaceById(placeToTravel, user.room);
     } catch (e) {
       await countIntents.count(userId);
       return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
@@ -36,21 +36,21 @@ const execute = async (intent, userId, user) => {
     }
 
     try {
-      connectedRooms = placesDao.getConnectedRooms(placeName);
+      connectedRooms = placesDao.getConnectedRooms(currentPlace);
     } catch (e) {
       connectedRooms = [];
     }
 
     // Comparar normalizando tildes en ambos sentidos
-    const isConnected = arrayUtils.includesNormalized(connectedRooms, selectedPlace);
-    const isKnown = arrayUtils.includesNormalized(placesKnown, selectedPlace);
+    const isConnected = arrayUtils.includesNormalized(connectedRooms, placeToTravel);
+    const isKnown = arrayUtils.includesNormalized(placesKnown, placeToTravel);
 
     if (!isConnected && !isKnown) {
       await countIntents.count(userId);
       return {
         action: 'viajar',
         success: false,
-        message: `No puedes ir directamente a ${selectedPlace}. Solo puedes moverte a lugares conectados o que ya hayas visitado.`
+        message: `No puedes ir directamente a ${placeToTravel}. Solo puedes moverte a lugares conectados o que ya hayas visitado.`
       };
     }
 
@@ -61,7 +61,7 @@ const execute = async (intent, userId, user) => {
     }
 
     // Comprobar energía
-    const distance = calculateDistance(user.room[placeName], place);
+    const distance = calculateDistance(user.room[currentPlace], place);
     const newHungry = user.hungry - distance;
 
     if (newHungry <= 0) {
@@ -74,17 +74,17 @@ const execute = async (intent, userId, user) => {
     }
 
     // Actualizar estado
-    const newRoom = { [selectedPlace]: place };
+    const newRoom = { [placeToTravel]: place };
     let updatedPlaces = [...placesKnown];
-    if (!arrayUtils.includesNormalized(updatedPlaces, selectedPlace)) {
-      updatedPlaces.push(selectedPlace);
+    if (!arrayUtils.includesNormalized(updatedPlaces, placeToTravel)) {
+      updatedPlaces.push(placeToTravel);
     }
 
     Object.assign(user, { room: newRoom, hungry: newHungry, placesKnown: updatedPlaces });
     await usersDao.updateUser(userId, user);
 
     const objectsInPlace = Object.values(user.objectsList || {})
-      .filter(o => normalize(o.currentPlace) === normalize(selectedPlace))
+      .filter(o => normalize(o.currentPlace) === normalize(placeToTravel))
       .map(o => (o.jointToSuccess ? o.ordinaryDescription : o.originDescription))
       .filter(Boolean)
       .join(' ');
@@ -95,7 +95,7 @@ const execute = async (intent, userId, user) => {
     return {
       action: 'viajar',
       success: true,
-      place: selectedPlace,
+      place: placeToTravel,
       placeDescription: place.description,
       objectsInPlace,
       imageUrl,

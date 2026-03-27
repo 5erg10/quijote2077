@@ -37,6 +37,7 @@ async function handleGameplay(id, text, user) {
   const place = await placesDao.getPlaceById(placeName).catch(() => null);
 
   const intents = await callWithFallback(client => parseIntents(text, place, client));
+  
   console.log('Intents:', JSON.stringify(intents));
 
   const engineResults = await gameEngine.execute(intents, id, user);
