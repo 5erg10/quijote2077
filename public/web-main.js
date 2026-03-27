@@ -103,6 +103,10 @@ function documentReady() {
 }
 
 function startGame() {
+  if(getUID()) {
+    toogleElementOpacity(warningMessage, false);
+    return;
+  }
   toogleElementOpacity(splashScreen, true);
   addQuixoteMessageToChat('Hola aventurero! No sé si eres un valiente o un inconsciente al entrar aqui, pero en fin... ¿Quieres embarcarte en esta aventura? Si me dices tu nombre lo tomare como un si.');
   setFocus();
@@ -177,7 +181,10 @@ async function sendText(text) {
 
   const result = await requestUserTextResponse(text);
 
-  if (result) processQuijoteChat(result);
+  if (result) {
+    processQuijoteChat(result);
+    saveLastResponse(text, 'me');
+  }
 }
 
 function processQuijoteChat(response) {
@@ -186,6 +193,7 @@ function processQuijoteChat(response) {
     const responseText = msg.text || '';
     updateMusicFromText(responseText);
     addQuixoteMessageToChat(responseText);
+    saveLastResponse(responseText, 'quijote');
   });
 
   if (response.gameOver) handleGameOver();
@@ -194,9 +202,6 @@ function processQuijoteChat(response) {
     if (getUID() && !response.gameOver) getUserData();
     setFocus();
   }, 200);
-
-  const lastMsg = messages[messages.length - 1];
-  if (lastMsg) saveLastResponse(lastMsg.text || '');
   
   showLoading(false);
 }
@@ -333,7 +338,7 @@ function handleGameOver() {
   pauseMusic();
   storage.removeItem('UID');
   storage.removeItem('currentPlace');
-  storage.removeItem('last');
+  storage.removeItem('lastResponses');
   storage.removeItem('responseDate');
   userDatabaseData = null;
 }
@@ -345,24 +350,18 @@ function cancelContinue() {
 function startFromWarning() {
   storage.removeItem('UID');
   storage.removeItem('currentPlace');
-  storage.removeItem('last');
+  storage.removeItem('lastResponses');
   storage.removeItem('responseDate');
   toogleElementOpacity(warningMessage, true);
-  restartGame();
-}
-
-function restartGame() {
-  if (!getUID()) {
-    startGame();
-  } else {
-    toogleElementOpacity(warningMessage, false);
-  }
+  startGame();
 }
 
 async function continueGame() {
-  getUserData();
+  await getUserData();
   loadLastResponse();
-  startGame();
+  userName = userDatabaseData?.name;
+  toogleElementOpacity(splashScreen, true);
+  if (audioActive) outerAudio.play();
 }
 
 function getUID() {
@@ -371,9 +370,14 @@ function getUID() {
 
 async function getUserData() {
   try {
+    console.log('get uid: ', getUID())
     const userRequest = await fetch(`/user?uuid=${getUID()}`);
-    if (userRequest.status === 204) return;
+    if (userRequest.status === 204) {    
+      startFromWarning();
+      return;
+    }
     userDatabaseData = await userRequest.json();
+    console.log('getuser data: ', userDatabaseData);
     if (userDatabaseData && userDatabaseData.energy !== undefined) {
       energyInfillText.innerHTML = `Energia ${userDatabaseData.energy}/100`;
       weightInfillText.innerHTML = `Peso ${100 - (userDatabaseData.maxWeight || 0)}/100`;
@@ -427,14 +431,20 @@ function onOffAudio() {
   }
 }
 
-function saveLastResponse(text) {
-  storage.setItem('last', text);
+function saveLastResponse(text, author) {
+  const responsesOnStorage = storage.getItem('lastResponses');
+  let responsesSaved = responsesOnStorage ? JSON.parse(responsesOnStorage) : [];
+  if ( responsesSaved.length == 10 ) responsesSaved = responsesSaved.shift();
+  responsesSaved.push({text, author});
+  storage.setItem('lastResponses', JSON.stringify(responsesSaved));
   storage.setItem('responseDate', Date.now());
 }
 
 function loadLastResponse() {
-  const last = storage.getItem('last');
-  if (last) addQuixoteMessageToChat(last);
+  const lastResponses = storage.getItem('lastResponses') ?? [];
+  JSON.parse(lastResponses).forEach( response => 
+    response.author == 'me' ? addUserMessageToChat(response.text) : addQuixoteMessageToChat(response.text)
+  );
 }
 
 function quixoteChat(text) {
