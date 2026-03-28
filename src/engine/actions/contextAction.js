@@ -11,13 +11,8 @@ const travelAction = require('./travel');
 
 const execute = async (intent, userId, user) => {
     const objectName = intent.object;
-    const placeName = Object.keys(user.room)[0];
+    const currentPlace = user.currentRoom;
     const canonicalVerb = intent.action;
-    const place = await placesDao.getPlaceById(placeName);
-
-    if (!place) {
-      return { action: intent.action, success: false, message: 'No puedo hacer eso aquí.' };
-    }
 
     if (canonicalVerb === 'fallback') {
       await countIntents.count(userId);
@@ -25,7 +20,7 @@ const execute = async (intent, userId, user) => {
     }
 
     // Buscar acción por verbo + objeto (match exacto), si no solo por verbo
-    const matchedAction = (place.actions || []).find(a => a.action === canonicalVerb && (!!objectName ? normalize(objectName).includes(normalize(a.object?.name)) : true));
+    const matchedAction = (currentPlace.actions || []).find(a => a.action === canonicalVerb && (!!objectName ? normalize(objectName).includes(normalize(a.object?.name)) : true));
 
     if (!matchedAction) {
       await countIntents.count(userId);
@@ -57,6 +52,19 @@ const execute = async (intent, userId, user) => {
       return { action: canonicalVerb, success: false, message: matchedAction.failResponse };
     }
 
+    // Guardar estado
+    const objectKey = matchedAction?.object?.name
+      ? `_${matchedAction.object.name}`
+      : '';
+
+    const statusKey = `${canonicalVerb}${objectKey}_${currentPlace.name}`;
+
+    try {
+      await statesDao.addStatus(userId, user, statusKey);
+    } catch (e) {
+      return { action: canonicalVerb, success: false, message: 'Ya has hecho eso.' };
+    }
+
     // --- EJECUTAR ---
 
     // Si la acción tiene travelTo, delegamos al motor de viaje en lugar de
@@ -68,18 +76,6 @@ const execute = async (intent, userId, user) => {
         userId,
         user
       );
-    }
-
-    // Guardar estado
-    const objectKey = matchedAction?.object?.name
-      ? `_${matchedAction.object.name}`
-      : '';
-    const statusKey = `${canonicalVerb}${objectKey}_${placeName}`;
-
-    try {
-      await statesDao.addStatus(userId, user, statusKey);
-    } catch (e) {
-      return { action: canonicalVerb, success: false, message: 'Ya has hecho eso.' };
     }
 
     return {

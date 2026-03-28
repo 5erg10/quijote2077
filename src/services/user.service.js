@@ -25,7 +25,7 @@ const getUserState = async (uuid) => {
         energy: userData.hungry,
         objects: objectList,
         placesKnown: userData.placesKnown,
-        currentRoom: userData.room ? Object.keys(userData.room) : [],
+        currentRoom: userData.currentRoom,
         name: userData.userName
     };
 };

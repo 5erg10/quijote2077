@@ -1,4 +1,4 @@
-const placesDao = require('../../repositories/place.repository');
+const { convertPlaceNameToCanonical, getPlaceById, checkTravelIsPosible, calculateDistanceBetweenPlaces } = require('../../repositories/place.repository');
 const usersDao = require('../../repositories/user.repository');
 const arrayUtils = require('../../utils/arrayUtils');
 const { normalize, createPlaceNameComposed } = require('../../utils/stringUtils');
@@ -7,46 +7,32 @@ const countIntents = require('../../utils/countIntents');
 const { isNight } = require('../../utils/time');
 
 const execute = async (intent, userId, user) => {
-    const currentPlace = Object.keys(user.room)[0];
-    const placesKnown = user.placesKnown || [];
-    const placeOrigin = intent.origin;
-    const placeToTravel = `${intent.place}${placeOrigin ? `_${placeOrigin}` : ''}`;
 
-    let place, connectedRooms;
-
-    if (!placeToTravel) {
+    if (!intent.place) {
       await countIntents.count(userId);
-      return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
+      return { action: 'viajar', success: false, message: 'No entendi el nombre del lugar al que quieres ir, me lo puedes repetir?' };
     }
 
-    if (normalize(currentPlace) === normalize(placeToTravel)) {
+    const currentPlace = user.currentRoom;
+    const placesKnown = user.placesKnown || [];
+    const placeToTravel = `${convertPlaceNameToCanonical(intent.place)}${intent.origin ? `_${intent.origin}` : ''}`;
+
+    if (normalize(currentPlace.id) === normalize(placeToTravel)) {
       await countIntents.count(userId);
       return { action: 'viajar', success: false, message: '¡Ya estás en este lugar!' };
     }
 
-    try {
-      place = await placesDao.getPlaceById(placeToTravel, user.room);
-    } catch (e) {
-      await countIntents.count(userId);
-      return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
-    }
+    // Busco y devuelvo de la lista de places los datos del lugar al que quiere viajar
+    const place = await getPlaceById(placeToTravel, currentPlace);
 
     if (!place) {
       await countIntents.count(userId);
       return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
     }
 
-    try {
-      connectedRooms = placesDao.getConnectedRooms(currentPlace);
-    } catch (e) {
-      connectedRooms = [];
-    }
+    const placeToTravelIsAvailable = await checkTravelIsPosible(place, user);
 
-    // Comparar normalizando tildes en ambos sentidos
-    const isConnected = arrayUtils.includesNormalized(connectedRooms, placeToTravel);
-    const isKnown = arrayUtils.includesNormalized(placesKnown, placeToTravel);
-
-    if (!isConnected && !isKnown) {
+    if (!placeToTravelIsAvailable) {
       await countIntents.count(userId);
       return {
         action: 'viajar',
@@ -62,7 +48,7 @@ const execute = async (intent, userId, user) => {
     }
 
     // Comprobar energía
-    const distance = calculateDistance(user.room[currentPlace], place);
+    const distance = calculateDistanceBetweenPlaces(currentPlace, place);
     const newHungry = user.hungry - distance;
 
     if (newHungry <= 0) {
@@ -75,13 +61,12 @@ const execute = async (intent, userId, user) => {
     }
 
     // Actualizar estado
-    const newRoom = { [placeToTravel]: place };
     let updatedPlaces = [...placesKnown];
-    if (!arrayUtils.includesNormalized(updatedPlaces, placeToTravel)) {
-      updatedPlaces.push(placeToTravel);
+    if (!arrayUtils.includesNormalized(updatedPlaces, place.id)) {
+      updatedPlaces.push(place.id);
     }
 
-    Object.assign(user, { room: newRoom, hungry: newHungry, placesKnown: updatedPlaces });
+    Object.assign(user, { currentRoom: place, hungry: newHungry, placesKnown: updatedPlaces });
     await usersDao.updateUser(userId, user);
 
     const objectsInPlace = Object.values(user.objectsList || {})
@@ -104,11 +89,6 @@ const execute = async (intent, userId, user) => {
       newHungry,
       longTrip: distance > 4
     };
-}
-
-const calculateDistance = (origin = {}, destiny = {}) => {
-  return (Math.abs((origin.branch || 0) - (destiny.branch || 0)) * 2) +
-    (Math.abs((origin.step || 0) - (destiny.step || 0)) * 2);
 }
 
 module.exports = { execute };

@@ -1,8 +1,8 @@
 const { getValidActionsForPlace, resolveCanonicalVerb } = require('../utils/actionContext');
 
-const parseIntents = async (userText, place, llmClientConf) => {
+const parseIntents = async (userText, currentPlaceName, llmClientConf) => {
 
-  const availableActions = getValidActionsForPlace(place);
+  const availableActions = getValidActionsForPlace(currentPlaceName);
 
   const response = await llmClientConf.client.chat.completions.create({
     model: llmClientConf.model,

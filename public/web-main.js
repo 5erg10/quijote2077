@@ -151,7 +151,6 @@ async function initGame() {
     closeCharacterMenu();
     const res = await fetch(`/api/initGame?userId=${storage.getItem('UID')}`);
     const data = await res.json();
-    console.log('init mnessage: ', data)
     if (data) processQuijoteChat(data);
   } catch (e) {
     console.error('request error:', e);
@@ -182,18 +181,19 @@ async function sendText(text) {
   const result = await requestUserTextResponse(text);
 
   if (result) {
-    processQuijoteChat(result);
-    saveLastResponse(text, 'me');
+    processQuijoteChat(result, text);
   }
 }
 
-function processQuijoteChat(response) {
+function processQuijoteChat(response, userText) {
   const messages = response.messages || [];
   messages.forEach(msg => {
     const responseText = msg.text || '';
     updateMusicFromText(responseText);
     addQuixoteMessageToChat(responseText);
-    saveLastResponse(responseText, 'quijote');
+    if (response.success) {
+      saveLastResponse([{ text: userText, author: 'me' }, { text: responseText, author: 'quijote'}]);
+    }
   });
 
   if (response.gameOver) handleGameOver();
@@ -226,6 +226,7 @@ async function requestUserTextResponse(text) {
     });
     const data = await res.json();
     return {
+      success: data.success,
       messages: data.messages || [],
       gameOver: data.gameOver || false
     };
@@ -287,10 +288,11 @@ function renderCharacterMenu() {
   if (places.length === 0) {
     placesList.innerHTML = '<li><span class="characterMenu__emptyMsg">-- ninguno aún --</span></li>';
   } else {
-    const current = (userDatabaseData.currentRoom && userDatabaseData.currentRoom[0]) || '';
+    const current = userDatabaseData?.currentRoom.id || '';
     places.forEach(place => {
       const li = document.createElement('li');
-      li.textContent = `${place === current ? 'Estas en ' : ''}${place.charAt(0).toUpperCase() + place.slice(1)}`;
+      const nameWithoutSpecialCharacters = splitComplexName(place);
+      li.textContent = `${place === current ? 'Estas en ' : ''}${nameWithoutSpecialCharacters}`;
       if (place === current) li.classList.add('currentPlace');
       li.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -303,7 +305,7 @@ function renderCharacterMenu() {
 
 function showPlaceDetail(placeName) {
   const popup = document.getElementById('placeDetailPopup');
-  document.getElementById('placeDetailPopup__name').textContent = placeName.toUpperCase();
+  document.getElementById('placeDetailPopup__name').textContent = splitComplexName(placeName);
   const placeData = placesDescriptions[placeName];
   const rawDesc = placeData && placeData.description
     ? placeData.description.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
@@ -370,14 +372,12 @@ function getUID() {
 
 async function getUserData() {
   try {
-    console.log('get uid: ', getUID())
     const userRequest = await fetch(`/user?uuid=${getUID()}`);
     if (userRequest.status === 204) {    
       startFromWarning();
       return;
     }
     userDatabaseData = await userRequest.json();
-    console.log('getuser data: ', userDatabaseData);
     if (userDatabaseData && userDatabaseData.energy !== undefined) {
       energyInfillText.innerHTML = `Energia ${userDatabaseData.energy}/100`;
       weightInfillText.innerHTML = `Peso ${100 - (userDatabaseData.maxWeight || 0)}/100`;
@@ -431,13 +431,16 @@ function onOffAudio() {
   }
 }
 
-function saveLastResponse(text, author) {
-  const responsesOnStorage = storage.getItem('lastResponses');
-  let responsesSaved = responsesOnStorage ? JSON.parse(responsesOnStorage) : [];
-  if ( responsesSaved.length == 10 ) responsesSaved = responsesSaved.shift();
-  responsesSaved.push({text, author});
-  storage.setItem('lastResponses', JSON.stringify(responsesSaved));
-  storage.setItem('responseDate', Date.now());
+function saveLastResponse(texts) {
+  return new Promise((resolve) => {
+    const responsesOnStorage = storage.getItem('lastResponses');
+    let responsesSaved = responsesOnStorage ? JSON.parse(responsesOnStorage) : [];
+    if ( responsesSaved?.length == 10 ) responsesSaved.splice(0, 2);
+    responsesSaved = [ ...responsesSaved, ... texts ];
+    storage.setItem('lastResponses', JSON.stringify(responsesSaved));
+    storage.setItem('responseDate', Date.now());
+    return resolve(true);
+  })
 }
 
 function loadLastResponse() {
@@ -473,6 +476,12 @@ function userChat(text) {
   chat.appendChild(p);
   chat.appendChild(avatar);
   return chat;
+}
+
+function splitComplexName(name) {
+    if (!name.includes('_')) return name;
+    const [nombre, origen] = name.split('_');
+    return `${nombre} ${origen.endsWith('a') ? 'de la' : 'del'} ${origen}`;
 }
 
 function setFocus() {

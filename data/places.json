@@ -1,5 +1,7 @@
 {
         "biblioteca": {
+          "id": "biblioteca",
+          "name": "biblioteca",
           "step": 0, 
           "branch": 0,
           "origin": "casa",
@@ -30,6 +32,8 @@
           ]
         },
         "habitación_casa": {
+          "id": "habitación_casa",
+          "name": "habitaciòn",
           "origin": "casa",
           "step": 1, 
           "branch": 0,
@@ -46,6 +50,8 @@
           ]
         },
         "zaguán_casa": {
+          "id": "zaguán_casa",
+          "name": "zaguàn",
           "origin": "casa",
           "step": 2,
           "branch": 0,
@@ -68,7 +74,7 @@
               "action": "abrir",
               "object": { "name": "puerta" },
               "requirementObject": ["llave"],
-              "travelTo": "calle",
+              "travelTo": "puerta_casa",
               "successResponse": "La puerta se abre con un estruendoso chirrido, se ve que nadie la ha usado en mucho tiempo. Más adelante ya divisas Argamasilla, ¡tu gran y amado pueblo!",
               "failResponse": "La puerta está cerrada a cal y canto, seguro que en alguna parte anda la llave"
             }
@@ -78,6 +84,8 @@
           ]
         },
         "cocina_casa": {
+          "id": "cocina_casa",
+          "name": "cocina",
           "origin": "casa",
           "step": 3, 
           "branch": 0,
@@ -111,6 +119,8 @@
           ]
         },
         "despensa_casa": {
+          "id": "despensa_casa",
+          "name": "despensa",
           "origin": "casa",
           "step": 4,
           "branch": 0,
@@ -140,6 +150,8 @@
           ]
         },
         "comedor_casa": {
+          "id": "comedor_casa",
+          "name": "comedor",
           "origin": "casa",
           "step": 3, 
           "branch": 0,
@@ -167,10 +179,12 @@
           ]
         },
         "puerta_casa": {
+          "id": "puerta_casa",
+          "name": "puerta",
           "origin": "casa",
           "step": 4, 
           "branch": 0,
-          "requirementStatus": ["abrir_puerta_casa"],
+          "requirementStatus": ["abrir_puerta_zaguàn"],
           "description": "Argamasilla de Alba, tu pueblo. Sus solitarias calles y piedras están mudas ante ti. Tu calle te lleva por un lado al arco del pueblo, todo un orgullo de la localidad!, por el otro te adentras en las calles... y frente a ti el muro donde se cuelgan siempre los bandos. Suelen hablar de chismes y bulos, pero admite que te encantan. ¿Que novedades traera el bando de hoy?.",
           "media": {
             "images": [
@@ -190,6 +204,8 @@
           ]
         },
         "arco": {
+          "id": "arco",
+          "name": "arco",
           "origin": "pueblo",
           "step": 5, 
           "branch": 0,
@@ -205,7 +221,9 @@
             "puerta_casa", "arboleda"
           ]
         },
-        "arboleda": { 
+        "arboleda": {
+          "id": "arboleda",
+          "name": "arboleda",
           "step": 6, 
           "branch": 0,
           "description": "¿Arboleda?, ¿selva?, las mayores sorpresas pueden esperarte en estos lugares, por lo menos el suelo es mullido y fertil con plantas que parecen suculentas. Detrás de ti dejas el arco de entrada al pueblo mientras que más adelante en el camino ves emerger el manzano, conocido en todo el pueblo.",
@@ -226,7 +244,9 @@
             "manzano", "arco_pueblo"
           ]
         },
-        "manzano": { 
+        "manzano": {
+          "id": "manzano",
+          "name": "manzano",
           "step": 7, 
           "branch": 0,
           "description": "Algo insólito en estos parajes, ¡un manzano!, quizas por su rareza sea tan famoso en el pueblo. ¡Y que manzanas tan sabrosas proporciona!, estaria bien hacerse con una, pero siempre puedes volver hacia la arboleda de camino al pueblo o continuar hacia el pinar que se encuentra más adelante, tu mismo.",
@@ -247,7 +267,9 @@
             "arboleda", "pinar"
           ]
         },
-        "pinar": { 
+        "pinar": {
+          "id": "pinar",
+          "name": "pinar",
           "step": 8, 
           "branch": 0,
           "description": "Pasado el gran manzano llegas a este pinar. Estás contento porque, de momento, tu aventura se te está antojando un agradable paseo. Grandes bosques y arboledas, olor a pinos, un sol gentil. Podrias quedarte aqui todo el dia pero más adelante te espera una posada que parece ser el destino de este camino.",
@@ -268,7 +290,9 @@
             "posada", "arboleda"
           ]
         },
-        "posada": { 
+        "posada": {
+          "id": "posada",
+          "name": "posada",
           "step": 9, 
           "branch": 0,
           "description": "Te encuentras ante la imponente puerta de una suntuosa posada... mentira, la posada luce de dudosa categoría cuanto menos y la puerta se cae a cachos, es de esas antigüas puertas ajenas que no se abren si no llamas. <br><br>A la izquierda, cruzando un camino invadido por la maleza, se ve un muro limítrofe de la posada. Es un lugar discreto y apartado... ya me entiendes. puedes acercarte al muro a echar un vistazo, o puedes ir a la recepcion de la posada para ver que se cuece por ahi.",
@@ -288,7 +312,9 @@
             "muro", "recepción_posada"
           ]
         },
-        "muro": { 
+        "muro": {
+          "id": "muro",
+          "name": "muro",
           "step": 9, 
           "branch": 1,
           "description": "Estás en un camino bloqueado por un enorme muro de piedra, la unica opcion de seguir el camino es pasar el muro, podrias intentar escalarlo, pero parece bastante alto.",
@@ -323,7 +349,9 @@
             }
           ]
         },
-        "callejón": { 
+        "callejón": {
+          "id": "callejón",
+          "name": "callejòn",
           "step": 10, 
           "branch": 1,
           "requirementStatus": ["escalar_muro_muro"],
@@ -341,6 +369,8 @@
           ]
         },
         "recepción_posada": {
+          "id": "recepción_posada",
+          "name": "recepciòn",
           "origin": "posada",
           "step": 10, 
           "branch": 0,
@@ -357,6 +387,8 @@
           ]
         },
         "escalera_posada": {
+          "id": "escalera_posada",
+          "name": "escalera",
           "origin": "posada",
           "step": 11, 
           "branch": 0,
@@ -379,6 +411,8 @@
           ]
         },
         "rellano_posada": {
+          "id": "rellano_posada",
+          "name": "rellano",
           "origin": "posada",
           "step": 12, 
           "branch": 0,
@@ -395,6 +429,8 @@
           ]
         },
         "bodega_posada": {
+          "id": "bodega_posada",
+          "name": "bodega",
           "origin": "posada",
           "step": 13, 
           "branch": 0,
@@ -433,6 +469,8 @@
           ]
         },
         "habitacion_posada": {
+          "id": "habitacion_posada",
+          "name": "habitaciòn",
           "origin": "posada",
           "step": 13, 
           "branch": 1,
@@ -449,6 +487,8 @@
           ]
         },
         "calles": {
+          "id": "calles",
+          "name": "calles",
           "origin": "pueblo",
           "step": 5, 
           "branch": 1,
@@ -464,7 +504,9 @@
             "puerta_casa", "campos"
           ]
         },
-        "campos": { 
+        "campos": {
+          "id": "campos",
+          "name": "campos",
           "step": 6, 
           "branch": 1,
           "description": "Ya dejaste las calles atrás y ante ti se extienden los bellos campos de la mancha. Cómo me gusta ese olor a trigo que inunda el aire. Más adelante en el camino ves la puerta destartalada de una venta, pero un camino oscuro llama tu atención a la izquierda. En un cartel ya casi deshecho por el paso del tiempo adivinas a leer 'peligro de acantilado, no pasar'.",
@@ -479,7 +521,9 @@
             "calles_pueblo", "venta", "acantilado"
           ]
         },
-        "acantilado": { 
+        "acantilado": {
+          "id": "acantilado",
+          "name": "acantilado",
           "step": 6, 
           "branch": 2,
           "description": "Un diminuto acantilado está frente ti. Quizás podrías cruzarlo de un salto, pero parece mucha distancia incluso para un valiente hidalgo. Creo que sería mejor darse media vuelta o buscar algo que usar de pruente para cruzar, ¿un tablòn por ejemplo?",
@@ -508,7 +552,9 @@
             "campos", "bosque"
           ]
         },
-        "bosque": { 
+        "bosque": {
+          "id": "bosque",
+          "name": "bosque",
           "step": 6, 
           "branch": 2,
           "requirementStatus": ["colocar_escalón_bosque"],
@@ -526,6 +572,8 @@
           ]
         },
         "venta": { 
+          "id": "venta",
+          "name": "venta",
           "step": 8, 
           "branch": 1,
           "description": "Te encuentras de bruces con la puerta de la venta, esta abierta asi que nada te impide ir al recibidor. Se que esta feo entrar sin preguntar pero oye, si esta abierto... si en lugar de entrar sigues el muro llegas los prados, llenitos de cultivos de trigo.",
@@ -540,6 +588,8 @@
           ]
         },
         "recibidor_venta": {
+          "id": "recibidor_venta",
+          "name": "recibidor",
           "origin": "venta",
           "step": 9, 
           "branch": 1,
@@ -556,6 +606,8 @@
           ]
         },
         "comedor_venta": {
+          "id": "comedor_venta",
+          "name": "comedor",
           "origin": "venta",
           "step": 10, 
           "branch": 1,
@@ -578,6 +630,8 @@
           ]
         },
         "distribuidor_venta": {
+          "id": "distribuidor_venta",
+          "name": "distribuidor",
           "origin": "venta",
           "step": 10, 
           "branch": 1,
@@ -602,6 +656,8 @@
           ]
         },
         "habitacion_venta": {
+          "id": "habitacion_venta",
+          "name": "habitaciòn",
           "origin": "venta",
           "step": 11, 
           "branch": 1,
@@ -623,6 +679,8 @@
           ]
         },
         "patio_venta": {
+          "id": "patio_venta",
+          "name": "patio",
           "origin": "venta",
           "step": 11, 
           "branch": 1,
@@ -648,7 +706,9 @@
             "distribuidor_venta"
           ]
         },
-        "prados": { 
+        "prados": {
+          "id": "prados",
+          "name": "prados",
           "step": 6, 
           "branch": 2,
           "description": "Unos extensos prados, que solo destacan por un nutrido rebaño de ovejas, que pastan apacibles pero bloquean el maldito paso hacia la cancela que da acceso a los dominios de la reina.",
@@ -671,7 +731,9 @@
             "venta", "cancela"
           ]
         },
-        "cancela": { 
+        "cancela": {
+          "id": "cancela",
+          "name": "cancela",
           "step": 7, 
           "branch": 2,
           "description": "Una gran cancela custodiada por dos soldados. Más allá se extienden los dominios del gran reino de castilla, donde valientes hidalgos ponen a prueba su destreza y conocen a sus amadas doncellas. Yo intentaría cruzarla",

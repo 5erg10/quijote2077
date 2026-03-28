@@ -29,14 +29,14 @@ async function launchWelcome(user) {
 }
 
 async function handleGameplay(id, text, user) {
+
   if (!text || !text.trim()) {
-    return { messages: [{ text: '¿Qué quieres hacer, hidalgo?', intent: 'idle' }] };
+    return { success: false, messages: [{ text: '¿Qué quieres hacer, hidalgo?', intent: 'idle' }] };
   }
 
-  const placeName = Object.keys(user.room)[0];
-  const place = await placesDao.getPlaceById(placeName).catch(() => null);
+  const currentPlaceName = user.currentRoom.id;
 
-  const intents = await callWithFallback(client => parseIntents(text, place, client));
+  const intents = await callWithFallback(client => parseIntents(text, currentPlaceName, client));
   
   console.log('Intents:', JSON.stringify(intents));
 
@@ -81,7 +81,7 @@ async function handleGameplay(id, text, user) {
   }
 
   const hasGameOver = messages.some(m => m.gameOver);
-  return { messages, gameOver: hasGameOver || false };
+  return { success: true, messages, gameOver: hasGameOver || false };
 }
 
 module.exports = { launchWelcome, handleGameplay };

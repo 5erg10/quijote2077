@@ -2,6 +2,7 @@ const admin = require('firebase-admin');
 
 const serviceAccount = require('../../credentials/quijote2077-firebase.json');
 const objectOriginLocation = require('../../data/objectByPlacesOrigin.json');
+const places = require('../../data/places.json')
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -26,7 +27,7 @@ const getUsers = () => {
 const addUser = (userAccount, username, level, coordinates) => {
   const capacityMap = { facil: 9999999, medio: 100, dificil: 50 };
   return admin.database().ref(`users/${userAccount}`).set({
-    room: { biblioteca: { step: 0, branch: 0 } },
+    currentRoom: places['biblioteca'],
     placesKnown: ['biblioteca'],
     objects: [],
     states: [],

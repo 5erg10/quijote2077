@@ -26,8 +26,8 @@ function getHelp(user, intentName) {
 
 function genericHelp(user) {
   const formatter = new Intl.ListFormat('es', { style: 'long', type: 'conjunction' });
-  const room = (Object.keys(user.room) || [])[0];
-  const actionsDone = user.room.actions || [];
+  const room = user.currentRoom.id;
+  const actionsDone = user.currentRoom.actions || [];
   const actions = placesDao.getPlaceActions(room);
   const connectedRooms = placesDao.getConnectedRooms(room);
 

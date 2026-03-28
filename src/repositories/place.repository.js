@@ -1,46 +1,50 @@
 const placesList = require('../../data/places.json');
 const { includesNormalized } = require('../utils/arrayUtils');
+const { normalize } = require('../utils/stringUtils');
 const stringUtils = require('../utils/stringUtils');
 
-const synonimMap = [
-  [ 'alcoba', 'habitación', 'dormitorio' ]
-];
-
-const synonims = [];
-
-Object.values(synonimMap)
-  .forEach(roomNames =>
-    roomNames.forEach(name => synonims.push(name)));
+const synonymMap = {
+  "habitacion": [ 'alcoba', 'habitación', 'dormitorio' ],
+  "comedor": [ "salon", "comedor" ]
+};
 
 function getPlaces() {
   return placesList;
 }
 
+const convertPlaceNameToCanonical = (placeName) => {
+  let normalisedPlaceName = normalize(placeName);
+  let placeNameCanonicalConverted;
+  Object.entries(synonymMap).forEach(([canonicalPlaceName, synonyms]) => {
+    if (!!synonyms.find(synonym => normalize(synonym) == normalisedPlaceName)) placeNameCanonicalConverted = canonicalPlaceName;
+  });
+  return placeNameCanonicalConverted || normalisedPlaceName;
+}
+
 /**
  * Busca un lugar por ID normalizando tildes y mayúsculas.
  * Así "zaguan" encuentra "zaguán" y viceversa.
+ * Si hay varias opciones, devuelve la estancia mas cercana a donde estas
  */
-function getPlaceById(placeId, room = {}) {
-  if (!placeId) throw new Error('Se requiere identificador de lugar');
+const getPlaceById = (placeId, room = {}) => {
+  return new Promise((resolve, reject) => {
 
-  const roomValues = Object.values(room) || [];
-  const currentPlace = roomValues[0] || {};
+    if(!placeId) return reject('place not found');
 
-  // Resolver el nombre real del lugar (puede ser sinónimo o tener variante)
-  const resolvedId = getNearestPlace(placeId, currentPlace);
-  const place = placesList[resolvedId];
+    const currentUserRoomBranchValues = { branch: room.branch, step: room.step };
 
-  if (place) return Promise.resolve(place);
+    const allPlacesOptions = Object.keys(placesList).reduce((acc, placeName) => {
+      if(normalize(placeName).includes(placeId)) acc.push({ ...placesList[placeName], id: placeName });
+      return acc;
+    }, []);
 
-  // Fallback: buscar por normalización en todas las claves
-  const normalizedInput = stringUtils.normalize(placeId);
-  const matchingKey = Object.keys(placesList).find(
-    key => stringUtils.normalize(key) === normalizedInput
-  );
+    if(allPlacesOptions.length == 1) return resolve(allPlacesOptions[0]);
 
-  return matchingKey
-    ? Promise.resolve(placesList[matchingKey])
-    : Promise.reject('place not found');
+    const nearestRoom = getNearestPlace(allPlacesOptions, currentUserRoomBranchValues);
+
+    return resolve(nearestRoom);
+
+  });
 }
 
 function getPlaceNames() {
@@ -66,48 +70,37 @@ function getPlaceActions(place) {
 }
 
 /**
- * Devuelve los connectedRooms del lugar, buscando también
- * por nombre normalizado para tolerar tildes.
+ * Devuelve si es posible viajar a una zona
+ * Solo es posible si a donde quiere viajar esta conectado directamente a 
+ * la zona actual o es una zona en la que ya haya estado
  */
-function getConnectedRooms(placeName) {
-  // Búsqueda exacta primero
-  if (placesList[placeName]) {
-    return placesList[placeName].connectedRooms || [];
-  }
-  // Fallback normalizado
-  const normalizedInput = stringUtils.normalize(placeName);
-  const matchingKey = Object.keys(placesList).find(
-    key => stringUtils.normalize(key) === normalizedInput
-  );
-  return matchingKey ? (placesList[matchingKey].connectedRooms || []) : [];
+function checkTravelIsPosible(place, userData) {
+  const roomsConectedToCurenPlace = userData?.currentRoom.connectedRooms;
+  const placesKnown = userData?.placesKnown;
+  return roomsConectedToCurenPlace.includes(place.id) || placesKnown.includes(place.id);
 }
 
 function onlyUnique(values) {
   return Array.from(new Set(values));
 }
 
-function getNearestPlace(placeId, room = {}) {
-  const { branch, step } = room;
+function getNearestPlace(placesOptions, currentRoomBranchsData = {}) {
+  return placesOptions.reduce((place, option) => {
+    if(!place.name) {
+      place = option;
+    }
+    else {
+      const distance1 = calculateDistanceBetweenPlaces(currentRoomBranchsData, place);
+      const distance2 = calculateDistanceBetweenPlaces(currentRoomBranchsData, option)
+      if (distance1 > distance2) place = option;
+    }
+    return place;
+  }, {});
+}
 
-  if (includesNormalized(synonims, placeId)) {
-    const choices = synonimMap
-      .find(arr => includesNormalized(arr, placeId))
-      .map(name => ({ name, ...placesList[name] }));
-
-    let bestOption = choices.reduce((curr, select) => {
-      if (
-        curr.branch === branch &&
-        Math.abs(curr.step - step) < Math.abs(select.step - step)
-      ) {
-        return curr;
-      }
-      return select;
-    }, { branch: 999, step: 999 }) || {};
-
-    return bestOption && bestOption.name ? bestOption.name : placeId;
-  }
-
-  return placeId;
+const calculateDistanceBetweenPlaces = (origin = {}, destiny = {}) => {
+  return (Math.abs((origin.branch || 0) - (destiny.branch || 0)) * 2) +
+    (Math.abs((origin.step || 0) - (destiny.step || 0)) * 2);
 }
 
 module.exports = {
@@ -116,6 +109,8 @@ module.exports = {
   getPlaceNames,
   getItems,
   getPlaceActions,
-  getConnectedRooms,
-  getNearestPlace
+  checkTravelIsPosible,
+  getNearestPlace,
+  convertPlaceNameToCanonical,
+  calculateDistanceBetweenPlaces
 };

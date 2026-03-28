@@ -98,7 +98,7 @@ function addObject(userId, user, objectName) {
   let toTake = false;
   const allowedState = checkRequirementStatusAllowed(user, objectName);
   const isOverweight = (user.difficulty.maxCapacity - user.objectsList[objectName].weight) < 0;
-  const objectAvailableOnCurrentPlace = user.objectsList[objectName].currentPlace == Object.keys(user.room)[0];
+  const objectAvailableOnCurrentPlace = Object.values(user.objectsList).filter(obj => obj.currentPlace == user.currentRoom.id);
   const isIncluded = objectsTaken ? objectsTaken.map(item => item.name).includes(objectName) : false;
 
   if (allowedState) {

@@ -3,13 +3,14 @@ const countIntents = require('../../utils/countIntents');
 
 async function execute(intent, userId, user) {
   const objectName = intent.object;
-  const placeName = Object.keys(user.room)[0];
+  const placeName = user.currentRoom.id;
 
   if (!objectName) {
     return { action: 'tirar', success: false, message: '\u00bfQué quieres tirar?' };
   }
 
   const hasObject = (user.objects || []).some(o => o.name === objectName);
+  
   if (!hasObject) {
     await countIntents.count(userId);
     return { action: 'tirar', success: false, message: `No llevas ningún ${objectName} encima.` };

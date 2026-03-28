@@ -5,6 +5,7 @@
  * Esta tabla mapea N sinónimos → 1 verbo canónico.
  */
 const stringUtils = require('../utils/stringUtils');
+const placesData = require('../../data/places.json');
 
 const SYNONYMS_BY_CANONICAL = {
   // --- Verbos de exploración/observación ---
@@ -37,8 +38,11 @@ const SYNONYMS_BY_CANONICAL = {
 };
 
 function getValidActionsForPlace(place) {
-  const placeVerbs = place && place.actions
-    ? [...new Set(place.actions.map(a => a.action))]
+
+  const currentPlaceData = placesData[place]
+
+  const placeVerbs = currentPlaceData?.actions
+    ? [...new Set(currentPlaceData.actions.map(a => a.action))]
     : [];
   const systemVerbs = ['viajar', 'coger', 'tirar', 'comer', 'inventario', 'ayuda', 'afirmar', 'negar', 'fallback'];
   return [...new Set([...placeVerbs, ...systemVerbs])];
