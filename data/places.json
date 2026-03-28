@@ -203,8 +203,8 @@
             "calles_pueblo", "arco_pueblo"
           ]
         },
-        "arco": {
-          "id": "arco",
+        "arco_pueblo": {
+          "id": "arco_pueblo",
           "name": "arco",
           "origin": "pueblo",
           "step": 5, 
@@ -290,15 +290,16 @@
             "posada", "arboleda"
           ]
         },
-        "posada": {
-          "id": "posada",
+        "puerta_posada": {
+          "id": "puerta_posada",
           "name": "posada",
           "step": 9, 
           "branch": 0,
           "description": "Te encuentras ante la imponente puerta de una suntuosa posada... mentira, la posada luce de dudosa categoría cuanto menos y la puerta se cae a cachos, es de esas antigüas puertas ajenas que no se abren si no llamas. <br><br>A la izquierda, cruzando un camino invadido por la maleza, se ve un muro limítrofe de la posada. Es un lugar discreto y apartado... ya me entiendes. puedes acercarte al muro a echar un vistazo, o puedes ir a la recepcion de la posada para ver que se cuece por ahi.",
           "media": {
             "images": [
-              "images/places/posada.png"
+              "images/places/posada.png",
+              "images/places/posada_noche.png"
               ]
             },
           "actions": [
@@ -386,7 +387,7 @@
             "posada", "escalera_posada"
           ]
         },
-        "escalera_posada": {
+        "escaleras_posada": {
           "id": "escalera_posada",
           "name": "escalera",
           "origin": "posada",
@@ -486,8 +487,8 @@
             "rellano_posada"
           ]
         },
-        "calles": {
-          "id": "calles",
+        "calles_pueblo": {
+          "id": "calles_pueblo",
           "name": "calles",
           "origin": "pueblo",
           "step": 5, 
@@ -579,7 +580,8 @@
           "description": "Te encuentras de bruces con la puerta de la venta, esta abierta asi que nada te impide ir al recibidor. Se que esta feo entrar sin preguntar pero oye, si esta abierto... si en lugar de entrar sigues el muro llegas los prados, llenitos de cultivos de trigo.",
           "media": {
             "images": [
-              "images/places/venta.png"
+              "images/places/venta.png",
+              "images/places/venta_noche.png"
               ]
             },
           "actions": [],

@@ -33,6 +33,10 @@ const getPlaceById = (placeId, room = {}) => {
 
     const currentUserRoomBranchValues = { branch: room.branch, step: room.step };
 
+    const specificPlaceFinded = Object.keys(placesList).find(placeName => normalize(placeName) == normalize(placeId));
+
+    if(!!specificPlaceFinded) return resolve(placesList[specificPlaceFinded]);
+
     const allPlacesOptions = Object.keys(placesList).reduce((acc, placeName) => {
       if(normalize(placeName).includes(placeId)) acc.push({ ...placesList[placeName], id: placeName });
       return acc;

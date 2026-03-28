@@ -25,9 +25,9 @@ const execute = async (intent, userId, user) => {
     // Busco y devuelvo de la lista de places los datos del lugar al que quiere viajar
     const place = await getPlaceById(placeToTravel, currentPlace);
 
-    if (!place) {
+    if (!place?.name) {
       await countIntents.count(userId);
-      return { action: 'viajar', success: false, message: 'Nadie ha oído hablar de ese lugar nunca!' };
+      return { action: 'viajar', success: false, message: `Nadie ha oído hablar de ${placeToTravel} nunca!` };
     }
 
     const placeToTravelIsAvailable = await checkTravelIsPosible(place, user);
@@ -69,11 +69,12 @@ const execute = async (intent, userId, user) => {
     Object.assign(user, { currentRoom: place, hungry: newHungry, placesKnown: updatedPlaces });
     await usersDao.updateUser(userId, user);
 
+    // obtengo los objetos que haya en la habitacion para mostrarlos en la descripcion de la room
     const objectsInPlace = Object.values(user.objectsList || {})
-      .filter(o => normalize(o.currentPlace) === normalize(placeToTravel))
+      .filter(o => normalize(o.currentPlace) === normalize(place.id))
       .map(o => (o.jointToSuccess ? o.ordinaryDescription : o.originDescription))
       .filter(Boolean)
-      .join(' ');
+      .join(' <br><br>');
 
     const images = (place.media && place.media.images) || [];
     const imageUrl = images.length > 1 && isNight(user) ? images[1] : images[0];
@@ -82,7 +83,7 @@ const execute = async (intent, userId, user) => {
       action: 'viajar',
       success: true,
       place: placeToTravel,
-      placeDescription: place.description,
+      placeDescription: `${place.description}${!!objectsInPlace ? `<br><br>${objectsInPlace}` : ''}`,
       objectsInPlace,
       imageUrl,
       distance,

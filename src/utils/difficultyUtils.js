@@ -2,6 +2,7 @@ const placesDao = require('../repositories/place.repository');
 const placeNames = placesDao.getPlaceNames();
 const items = placesDao.getItems();
 const replaces = onlyUnique(placeNames.concat(items));
+const { normalize } = require('../utils/stringUtils');
 
 // Añade negritas en las partes del texto que coincidan con lugares de la app para facilitar el juego
 function textByDifficulty(text, user) {
@@ -27,9 +28,9 @@ function getHelp(user, intentName) {
 function genericHelp(user) {
   const formatter = new Intl.ListFormat('es', { style: 'long', type: 'conjunction' });
   const room = user.currentRoom.id;
-  const actionsDone = user.currentRoom.actions || [];
-  const actions = placesDao.getPlaceActions(room);
-  const connectedRooms = placesDao.getConnectedRooms(room);
+  const actionsDone = user.currentRoom.states.filter(state => normalize(state).includes(normalize(user.currentRoom.name))) || [];
+  const actions = user.currentRoom.actions;
+  const connectedRooms = user.currentRoom.connectedRooms;
 
   let response = `📝Aquí tienes algo de ayuda: \n\n - Estás en ${room}. `;
 
