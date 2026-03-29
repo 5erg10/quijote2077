@@ -1,7 +1,9 @@
 const objectsDao = require('../../repositories/object.repository');
 const countIntents = require('../../utils/countIntents');
+const { normalize } = require('../../utils/stringUtils');
 
-async function execute(intent, userId, user) {
+const execute = async (intent, userId, user) => {
+
   const objectName = intent.object;
   const placeName = user.currentRoom.id;
 
@@ -9,17 +11,18 @@ async function execute(intent, userId, user) {
     return { action: 'tirar', success: false, message: '\u00bfQué quieres tirar?' };
   }
 
-  const hasObject = (user.objects || []).some(o => o.name === objectName);
+  const hasObject = (user.objects || []).some(o => normalize(o.name) === normalize(objectName));
   
   if (!hasObject) {
     await countIntents.count(userId);
     return { action: 'tirar', success: false, message: `No llevas ningún ${objectName} encima.` };
   }
 
+  const objectInObjectsList = user.objectsList[normalize(objectName)];
+
   // Actualizar currentPlace del objeto al lugar actual
-  if (user.objectsList[objectName]) {
-    user.objectsList[objectName].currentPlace = placeName;
-    user.objectsList[objectName].jointToSuccess = false;
+  if (!!objectInObjectsList) {
+    objectInObjectsList.currentPlace = placeName;
   }
 
   await objectsDao.deleteObjectByUser(userId, user, objectName);

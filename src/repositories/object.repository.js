@@ -1,4 +1,5 @@
 const usersDao = require('./user.repository');
+const { normalize } = require('../utils/stringUtils');
 
 function checkRequirementStatusAllowed(user, objectName) {
   let statusOk = true;
@@ -76,10 +77,10 @@ function deleteObjectByUser(userId, user, objectName) {
       throw new Error('Se requiere objeto a borrar');
   }
 
-  let object = user.objects.find(item => item.name === objectName);
+  let object = user.objects.find(item => normalize(item.name) === normalize(objectName));
   if (object) {
     let difficulty = { level: user.difficulty.level, maxCapacity: user.difficulty.maxCapacity + object.weight };
-    Object.assign( user, { difficulty, objects: user.objects.filter(item => item.name !== objectName)});
+    Object.assign( user, { difficulty, objects: user.objects.filter(item => normalize(item.name) !== normalize(objectName))});
   }
   return usersDao.updateUser(userId, user);
 }

@@ -95,7 +95,7 @@ function getNearestPlace(placesOptions, currentRoom) {
     }
     placesWithDistance.push({distance: calculateDistanceBetweenPlaces(currentRoom, place), room: place});
   }
-  return placesWithDistance.sort((a,b) => a.distance - b.distance)[0].room;
+  return placesWithDistance?.sort((a,b) => a.distance - b.distance)[0]?.room;
 }
 
 const calculateDistanceBetweenPlaces = (origin = {}, destiny = {}) => {

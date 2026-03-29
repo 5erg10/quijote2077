@@ -46,7 +46,7 @@ function genericHelp(user) {
       const objectsString = formatter.format(onlyUnique(actions.map(el => `<b>${el.object?.name || ''}</b>`)));
       response += objectsString;
     } else {
-      response += actions[0].object && actions[0].object.name;
+      response += `<b>${actions[0]?.object?.name || ''}</b>`;
     }
 
     response += '.';

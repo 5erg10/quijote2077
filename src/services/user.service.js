@@ -9,12 +9,7 @@ const getUserState = async (uuid) => {
         return null;
     }
 
-    const objectList = userData.objectsList
-        ? Object.values(userData.objectsList).reduce((acc, object) => {
-            if (object.jointToSuccess) acc.push(object);
-            return acc;
-        }, [])
-        : [];
+    const objectList = userData.objects || [];
 
     const currentWeight = objectList.reduce((acc, object) => acc + (object.weight || 0), 0);
 

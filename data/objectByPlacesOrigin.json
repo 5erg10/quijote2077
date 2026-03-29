@@ -107,7 +107,7 @@
     "unFindResponse": "a veces ves curruscos que no existen?",
     "objectTakenYet": "Ya cogiste uno, ¿crees que los curruscos reaparecen de la nada?"
   },
-  "níscalo": {
+  "niscalo": {
     "name": "níscalo",
     "originPLace": "arboleda",
     "currentPlace": "arboleda",
@@ -116,7 +116,7 @@
     "weight": 2,
     "jointToSuccess": false,
     "originDescription": "",
-    "ordinaryDescription": "",
+    "ordinaryDescription": "Hay un niscalo tirado en el suelo, no se como ha llegado ahí, sera que lo has dejado tu, pero no es un lugar para dejar comida tirada.",
     "requirementStatus": ["examinar_suelo_arboleda"],
     "successResponse": "Perfecto, tener comida siempre te salva de algún que otro apuro",
     "failResponse": "¿Un níscalo?,¿donde lo has visto?",

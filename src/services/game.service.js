@@ -60,10 +60,12 @@ async function handleGameplay(id, text, user) {
       break;
     }
 
-    const objectsIncurrentPlace = engineResult.success ? Object.values(user.objectsList).filter(object => normalize(object.currentPlace) == normalize(engineResult.place)) : [];
-    objectsIncurrentPlace.forEach(obj => {
-      currentMessage += !obj.jointToSuccess ? `<br><br>${obj.originDescription}` : `<br><br>${obj.ordinaryDescription}`;
-    });
+    // if(!engineResult.objectsInPlace) {
+    //   const objectsIncurrentPlace = engineResult.success ? Object.values(user.objectsList).filter(object => normalize(object.currentPlace) == normalize(engineResult.place)) : [];
+    //   objectsIncurrentPlace.forEach(obj => {
+    //     currentMessage += !obj.jointToSuccess ? `<br><br>${obj.originDescription}` : `<br><br>${obj.ordinaryDescription}`;
+    //   });
+    // }
 
     const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, engineResult.action);
 
