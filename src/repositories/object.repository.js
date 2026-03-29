@@ -4,18 +4,22 @@ const { normalize } = require('../utils/stringUtils');
 function checkRequirementStatusAllowed(user, objectName) {
   let statusOk = true;
   let objectNeededOk = true;
-  const objectHasRequiredStatus = user.objectsList[objectName] && user.objectsList[objectName].requirementStatus;
-  const objectHasRequirementObject = user.objectsList[objectName] && user.objectsList[objectName].requirementObject;
+  const object = user.objectsList[objectName];
+  if(!object) {
+    return false;
+  }
+  const objectHasRequiredStatus = object?.requirementStatus.map(status => normalize(status)) || [];
+  const objectHasRequirementObject = object?.requirementObject;
   if (objectHasRequiredStatus) {
     if(user.states) {
       let requirementStatusCont = 0;
       user.states.map(status => {
         //some objects has more than 1 status required to success
-        if (user.objectsList[objectName].requirementStatus.includes(status)) {
+        if (objectHasRequiredStatus.includes(normalize(status))) {
           requirementStatusCont += 1;
         };
       });
-      const statusLength = user.objectsList[objectName].numOfRequirementsNeeded || user.objectsList[objectName].requirementStatus.length;
+      const statusLength = object.numOfRequirementsNeeded || object.requirementStatus.length;
       statusOk = requirementStatusCont >= statusLength
     } else {
       statusOk = false;
@@ -26,11 +30,11 @@ function checkRequirementStatusAllowed(user, objectName) {
       let requirementObjectsCont = 0;
       user.objects.map(currentObject => {
          //some objects has more than 1 object required to success
-         if (user.objectsList[objectName].requirementObject.includes(currentObject)) {
+         if (object.requirementObject.includes(currentObject)) {
           requirementObjectsCont += 1;
          };
       });
-      objectNeededOk = requirementObjectsCont >=  user.objectsList[objectName].requirementObject;
+      objectNeededOk = requirementObjectsCont >=  object.requirementObject;
     } else {
       objectNeededOk = false;
     }
