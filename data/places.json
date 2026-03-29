@@ -44,7 +44,12 @@
               "images/places/habitacion_noche.png"
             ]
           },
-          "actions": [],
+          "actions": [
+            { 
+              "action": "descansar",
+              "successResponse": "Perfecto, ahora podrás seguir tu camino brioso"
+            }
+          ],
           "connectedRooms": [
             "zaguán_casa"
           ]
@@ -249,7 +254,7 @@
           "name": "manzano",
           "step": 7, 
           "branch": 0,
-          "description": "Algo insólito en estos parajes, ¡un manzano!, quizas por su rareza sea tan famoso en el pueblo. ¡Y que manzanas tan sabrosas proporciona!, estaria bien hacerse con una, pero siempre puedes volver hacia la arboleda de camino al pueblo o continuar hacia el pinar que se encuentra más adelante, tu mismo.",
+          "description": "Algo insólito en estos parajes, ¡un manzano!, quizas por su rareza sea tan famoso en el pueblo. ¡Y que manzanas tan sabrosas proporciona!, estaria bien hacerse con una, pero siempre puedes volver hacia la arboleda de camino al pueblo o continuar hacia la posada que veo mas allá, tu mismo.",
           "media": {
             "images": [
               "images/places/manzano.png",
@@ -264,51 +269,22 @@
             }
           ],
           "connectedRooms": [
-            "arboleda", "pinar"
+            "arboleda", "posada"
           ]
         },
-        "pinar": {
-          "id": "pinar",
-          "name": "pinar",
-          "step": 8, 
-          "branch": 0,
-          "description": "Pasado el gran manzano llegas a este pinar. Estás contento porque, de momento, tu aventura se te está antojando un agradable paseo. Grandes bosques y arboledas, olor a pinos, un sol gentil. Podrias quedarte aqui todo el dia pero más adelante te espera una posada que parece ser el destino de este camino.",
-          "media": {
-            "images": [
-              "images/places/pinar.png",
-              "images/places/pinar_noche.png"
-              ]
-            },
-          "actions": [
-            { 
-              "action": "examinar",
-              "object": { "name": "suelo" },
-              "successResponse": "El suelo está cubierto de hermosas flores, ¿amanitas Phalloides quizás?" 
-            }
-          ],
-          "connectedRooms": [
-            "posada", "arboleda"
-          ]
-        },
-        "puerta_posada": {
-          "id": "puerta_posada",
+        "posada": {
+          "id": "posada",
           "name": "posada",
           "step": 9, 
           "branch": 0,
-          "description": "Te encuentras ante la imponente puerta de una suntuosa posada... mentira, la posada luce de dudosa categoría cuanto menos y la puerta se cae a cachos, es de esas antigüas puertas ajenas que no se abren si no llamas. <br><br>A la izquierda, cruzando un camino invadido por la maleza, se ve un muro limítrofe de la posada. Es un lugar discreto y apartado... ya me entiendes. puedes acercarte al muro a echar un vistazo, o puedes ir a la recepcion de la posada para ver que se cuece por ahi.",
+          "description": "Te encuentras ante la imponente puerta de una suntuosa posada... mentira, la posada luce de dudosa categoría cuanto menos y la puerta se cae a cachos, dentro estara la recapcion. <br><br>A la izquierda, cruzando un camino invadido por la maleza, se ve un muro limítrofe de la posada. Es un lugar discreto y apartado... ya me entiendes. puedes acercarte al muro a echar un vistazo, o puedes ir a la recepcion de la posada para ver que se cuece por ahi.",
           "media": {
             "images": [
               "images/places/posada.png",
               "images/places/posada_noche.png"
-              ]
-            },
-          "actions": [
-            { 
-              "action": "llamar",
-              "object": { "name": "puerta" },
-              "successResponse": "El posadero abre la puerta entre gruñidos. Se da media vuelta mientras se rasca el trasero. Dudas si entrar a lo que parece la recepción."
-            }
-          ],
+            ]
+          },
+          "actions": [],
           "connectedRooms": [
             "muro", "recepción_posada"
           ]
@@ -375,7 +351,7 @@
           "origin": "posada",
           "step": 10, 
           "branch": 0,
-          "description": "Estás en la recepción de la posada. ¿Cuánta gente habrá pasado aqui la noche?, al fondo ves unas escaleras, de esas que se han arreglado tantas veces que ya ni se parecen a lo que fueron un dia, si es que hubo algún día que tubiesen buen aspecto.",
+          "description": "Estás en la recepción de la posada. ¿Cuánta gente habrá pasado aqui la noche?, al fondo ves unas escaleras, de esas que se han arreglado tantas veces que ya ni se parecen a lo que fueron un dia, si es que hubo algún día que tubiesen buen aspecto... En fin, a la ziquiera hay una pequeña puerta que por el olor te debe llevar a una bodega.",
           "media": {
             "images": [
               "images/places/recepcion.png",
@@ -384,7 +360,7 @@
             },
           "actions": [],
           "connectedRooms": [
-            "posada", "escalera_posada"
+            "posada", "escaleras_posada", "bodega_posada"
           ]
         },
         "escaleras_posada": {
@@ -393,7 +369,7 @@
           "origin": "posada",
           "step": 11, 
           "branch": 0,
-          "description": "El descansillo de la escalera cruje que da miedo. Quizás sería mejor ir directamente al rellano que hay arriba antes de que se derrumben, o se quemen, o que se yo.",
+          "description": "La escalera cruje que da miedo. Subiendo llegas a la habitacioón de la posada, pero sube rapido no vaya a ser que se desmorone bajo tus pies, o se caiga ese cadelabro y se queme todo, o que se yo ...",
           "media": {
             "images": [
               "images/places/escaleras.png",
@@ -404,29 +380,11 @@
             { 
               "action": "examinar",
               "object": { "name": "candelabro" },
-              "successResponse": "Una de las velas parece suelta"
+              "successResponse": "Una de las velas parece suelta, las velas suelen estar pegadas al candelabro para que no las roben, ya sabes, pero UNA esta suelta."
             }
           ],
           "connectedRooms": [
-            "recepción_posada", "rellano_posada"
-          ]
-        },
-        "rellano_posada": {
-          "id": "rellano_posada",
-          "name": "rellano",
-          "origin": "posada",
-          "step": 12, 
-          "branch": 0,
-          "description": "Estás en el primer rellano, el primero y el único para que engañarnos. Dos puertas, a izquierda y derecha, visibles gracias a la luz de la antorcha, te abrirán el paso a la bodega y dormitorio respectivamente. ¿Una bodega al lado de una habitación dices?, sí, no se por qué te extraña",
-          "media": {
-            "images": [
-              "images/places/posada_rellano.png",
-              "images/places/posada_rellano_noche.png"
-              ]
-            },
-          "actions": [],
-          "connectedRooms": [
-            "escalera_posada", "bodega_posada", "habitacion_posada"
+            "habitacion_posada"
           ]
         },
         "bodega_posada": {
@@ -466,7 +424,7 @@
             }
           ],
           "connectedRooms": [
-            "rellano_posada"
+            "recepción_posada"
           ]
         },
         "habitacion_posada": {
@@ -474,7 +432,7 @@
           "name": "habitaciòn",
           "origin": "posada",
           "step": 13, 
-          "branch": 1,
+          "branch": 0,
           "description": "Bonito dormitorio este. Una cama que hasta parece limpia domina la habitacion.",
           "media": {
             "images": [
@@ -482,7 +440,12 @@
               "images/places/posada_dormitorio_noche.png"
               ]
             },
-          "actions": [],
+          "actions": [
+            { 
+              "action": "descansar",
+              "successResponse": "Perfecto, ahora podrás seguir tu camino brioso"
+            }
+          ],
           "connectedRooms": [
             "rellano_posada"
           ]
@@ -577,16 +540,24 @@
           "name": "venta",
           "step": 8, 
           "branch": 1,
-          "description": "Te encuentras de bruces con la puerta de la venta, esta abierta asi que nada te impide ir al recibidor. Se que esta feo entrar sin preguntar pero oye, si esta abierto... si en lugar de entrar sigues el muro llegas los prados, llenitos de cultivos de trigo.",
+          "description": "No esta mal, necesita una buena mano de pintura pero en su dia debio de ser muy bonita. En fin, a traves de la puerta se ve el recibidor, podriamos entrar para preguntar. Si no, a un lado estan los establos y una puerta que debe de llevar al patio trasero. Si rodeamos la venta más allá se ven unos prados",
           "media": {
             "images": [
               "images/places/venta.png",
               "images/places/venta_noche.png"
               ]
             },
-          "actions": [],
+          "actions": [
+            { 
+              "action": "arreglar",
+              "object": { "name": "cerradura" },
+              "requirementObject": ["alambre"],
+              "successResponse": "Gracias a tus habilidades como antiguo lazarillo, consigues arreglar la cerradura usando solo un alambre. Si no fuese por que quieres ser una valiente hidalgo para encandilar a una bella damisela, podrias ser ladrón, plantéatelo. Ahora puedes abrirla y acceder a un confortable patio",
+              "failResponse": "¿Y con qué quieres arreglarla?, ¿con una mirada seductora?, deberías buscar algo fino y alargado que quepa por la cerradura para urgar en ella y ver si se arregla."
+            }
+          ],
           "connectedRooms": [
-            "recibidor_venta", "prados"
+            "recibidor_venta", "prados", "establos_venta", "patio_venta"
           ]
         },
         "recibidor_venta": {
@@ -595,7 +566,7 @@
           "origin": "venta",
           "step": 9, 
           "branch": 1,
-          "description": "Ves dos puertas ante ti, una te lleva al salon y por la otra llegas a un pequeño distribuidor con dos puertas más. Puertas, puertas y más puertas si.",
+          "description": "Vaya, no hay nadie para atendernos. Viendo el estado de todo no me extraña que no haya nadie al cargo, arriba hay una habitacion por lo menos...",
           "media": {
             "images": [
               "images/places/recibidor.png",
@@ -604,57 +575,32 @@
             },
           "actions": [],
           "connectedRooms": [
-            "distribuidor_venta", "salón_venta"
+            "habitacion_venta"
           ]
         },
-        "comedor_venta": {
-          "id": "comedor_venta",
-          "name": "comedor",
+        "establos_venta": {
+          "id": "establo_venta",
+          "name": "establo",
           "origin": "venta",
           "step": 10, 
           "branch": 1,
-          "description": "Que salón tan solitario y vacío. Desde luego aqui no saben como darle un toque hogareño a una estancia. Solo hay una gran mesa vacía y un pequeño cesto en una esquina",
+          "description": "El viejo establo, en otros tiempos era un hervidero de caballos que entraban y salian. Hace tiempo que ningun caballo disfruta de su hospitalidad, pero todas las herramientas y herrajes siguen en su sitio, o desperdigados aqui y allá. Al fondo hay un cesto de mimbre que parece que usaban para guardar cosas.",
           "media": {
             "images": [
-              "images/places/Salon-venta.png",
-              "images/places/Salon-venta_noche.png"
+              "images/places/establo.png",
+              "images/places/establo_noche.png"
             ]
             },
           "actions": [
             { 
               "action": "examinar",
               "object": { "name": "cesto" },
-              "successResponse": "Dentro del cesto solo hay chatarra."
+              "successResponse": "Dentro del cesto hay muchas cosas guardadas sin sentido ni orden alguno, hay un martillo, un trozo de alambre.... de todo.",
+              "failResponse": ""
             }
           ],
           "connectedRooms": [
-            "recibidor_venta", "distribuidor_venta"
-          ]
-        },
-        "distribuidor_venta": {
-          "id": "distribuidor_venta",
-          "name": "distribuidor",
-          "origin": "venta",
-          "step": 10, 
-          "branch": 1,
-          "description": "Este distrubidor te permite acceder a dos estancias, a la izquierda una alcoba, y a la derecha una puerta con una cerradura que esta hecha un cisco, parece como si la hubiesen intentado abrir a mordiscos... es broma... no, no es broma.",
-          "media": {
-            "images": [
-              "images/places/distribuidor.png",
-              "images/places/distribuidor_noche.png"
-            ]
-            },
-          "actions": [
-            { 
-              "action": "arreglar",
-              "object": { "name": "cerradura" },
-              "requirementObject": ["alambre"],
-              "successResponse": "Gracias a tus habilidades como antiguo lazarillo, consigues arreglar la cerradura usando solo un alambre. Si no fuese por que quieres ser una valiente hidalgo para encandilar a una bella damisela, podrias ser ladrón, plantéatelo. Ahora puedes abrirla y acceder a un confortable patio",
-              "failResponse": "¿Y con qué quieres arreglarla?, ¿con una mirada seductora?, deberías buscar algo que quepa por la cerradura para poder arreglarla"
-            }
-          ],
-          "connectedRooms": [
-            "recibidor_venta", "alcoba_venta", "patio_venta"
+            "venta"
           ]
         },
         "habitacion_venta": {
@@ -677,7 +623,7 @@
             }
           ],
           "connectedRooms": [
-            "distribuidor_venta"
+            "recibidor_venta"
           ]
         },
         "patio_venta": {
@@ -686,9 +632,9 @@
           "origin": "venta",
           "step": 11, 
           "branch": 1,
-          "requirementStatus": ["arreglar_cerradura_patio"],
+          "requirementStatus": ["arreglar_cerradura_venta"],
           "description": "Al traspasar la puerta del distribuidor, accedes a un sorprendentemente acogedor patio. En en centro del patio hay pozo decorado con una estatuilla de San jorge. Ya sabes, el santo de los caballeros, ¿que casualidad eh?",
-          "failResponse": "Estaría bien poder visitar el patio, pero una puerta rota te lo impide",
+          "failResponse": "Estaría bien poder visitar el patio, pero la cerradura de la cancela esta como atascada. quizas podamos arreglarla.",
           "media": {
             "images": [
               "images/places/Patio-venta.png",
@@ -705,7 +651,7 @@
             }
           ],
           "connectedRooms": [
-            "distribuidor_venta"
+            "venta"
           ]
         },
         "prados": {

@@ -1,5 +1,5 @@
-const placesDao = require('../../repositories/place.repository');
-const statesDao = require('../../repositories/state.repository');
+const { addStatus } = require('../../repositories/state.repository');
+const { updateUser } = require('../../repositories/user.repository');
 const arrayUtils = require('../../utils/arrayUtils');
 const { normalize } = require('../../utils/stringUtils')
 const gameOperations = require('../gameOperations');
@@ -21,10 +21,21 @@ const execute = async (intent, userId, user) => {
 
     // Buscar acción por verbo + objeto (match exacto), si no solo por verbo
     const matchedAction = (currentPlace.actions || []).find(a => a.action === canonicalVerb && (!!objectName ? normalize(objectName).includes(normalize(a.object?.name)) : true));
-
+    
     if (!matchedAction) {
       await countIntents.count(userId);
-      return { action: canonicalVerb, success: false, message: 'Eso no se puede hacer aquí.' };
+      return { action: canonicalVerb, success: false, message: `No se puede ${canonicalVerb} aquí.` };
+    }
+    
+    if (matchedAction.action == "descansar") {
+      await updateUser(userId, { ...user, hungry: 100 });
+      return {
+      action: canonicalVerb,
+      success: true,
+      lifePoints: 100,
+      newHungry: 100,
+      message: matchedAction.successResponse,
+    };
     }
 
     // --- VERIFICAR REQUISITOS ---
@@ -60,7 +71,7 @@ const execute = async (intent, userId, user) => {
     const statusKey = `${canonicalVerb}${objectKey}_${currentPlace.name}`;
 
     try {
-      await statesDao.addStatus(userId, user, statusKey);
+      await addStatus(userId, user, statusKey);
     } catch (e) {
       return { action: canonicalVerb, success: false, message: 'Ya has hecho eso.' };
     }

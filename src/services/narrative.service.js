@@ -24,12 +24,14 @@ REGLAS:
 - Puede haber nombres de objetos compuestos, por ejemplo "escudo de armas", en ese caso quedate con el nombre del objeto principal, que seria "escudo".
 - Puede haber nombres de lugares compuestos, como puede ser "habitacion de la posada, en esos casos el lugar es la primera parte, "habitacion", y el segundo el origen "posada"
 - Si no reconoces ninguna accion de la lista, devuelve [{"action":"fallback"}].
+- si en una frase reconoces varias acciones y un solo objeto, cada accion aplica al mismo objeto
 
 Ejemplos:
 texto: "ojeo el libro", acciones: ["leer","viajar"] -> [{"action":"leer","object":"libro"}]
 texto: "voy a la cocina y cojo la llave", acciones: ["viajar","coger"] -> [{"action":"viajar","place":"cocina"},{"action":"coger","object":"llave"}]
 texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","object":"alacena"}]
 texto: "cojo el currusco de pan", acciones: ["coger", "viajar"] -> [{"action": "coger", "object": "currusco"}]
+texto: "cojo la armadura y me la pongo", acciones: ["coger", "revisar", "poner", "tirar"] -> [{"action": "coger", "object": "armadura"},{"action": "poner","object":"armadura"}] 
 texto: "Voy a la habitacion de la posada", acciones: ["viajar", "coger", "comer"] -> [{"action": "viajar", "place": "habitacion", "origin": "posada"}]
 texto: "analizo el escudo de armas y me voy a la bodega de la venta", acciones: ["viajar", "coger", "comer", "revisar"] -> [{"action": "revisar", "object": "escudo"},{"action": "viajar", "place": "bodega", "origin": "venta"}]`
       },

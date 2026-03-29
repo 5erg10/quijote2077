@@ -28,7 +28,7 @@ function getHelp(user, intentName) {
 function genericHelp(user) {
   const formatter = new Intl.ListFormat('es', { style: 'long', type: 'conjunction' });
   const room = user.currentRoom.id;
-  const actionsDone = user.currentRoom.states.filter(state => normalize(state).includes(normalize(user.currentRoom.name))) || [];
+  const actionsDone = user.states.filter(state => normalize(state).includes(normalize(user.currentRoom.name))) || [];
   const actions = user.currentRoom.actions;
   const connectedRooms = user.currentRoom.connectedRooms;
 

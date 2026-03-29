@@ -26,12 +26,10 @@ const convertPlaceNameToCanonical = (placeName) => {
  * Así "zaguan" encuentra "zaguán" y viceversa.
  * Si hay varias opciones, devuelve la estancia mas cercana a donde estas
  */
-const getPlaceById = (placeId, room = {}) => {
+const getPlaceById = (placeId, currentRoom = {}) => {
   return new Promise((resolve, reject) => {
 
     if(!placeId) return reject('place not found');
-
-    const currentUserRoomBranchValues = { branch: room.branch, step: room.step };
 
     const specificPlaceFinded = Object.keys(placesList).find(placeName => normalize(placeName) == normalize(placeId));
 
@@ -44,7 +42,7 @@ const getPlaceById = (placeId, room = {}) => {
 
     if(allPlacesOptions.length == 1) return resolve(allPlacesOptions[0]);
 
-    const nearestRoom = getNearestPlace(allPlacesOptions, currentUserRoomBranchValues);
+    const nearestRoom = getNearestPlace(allPlacesOptions, currentRoom);
 
     return resolve(nearestRoom);
 
@@ -59,7 +57,7 @@ function getItems() {
   const keys = Object.keys(placesList);
   const items = {};
   keys.forEach(key => {
-    placesList[key].actions.forEach(item => {
+    placesList[key].actions?.forEach(item => {
       if (item.object && item.object.name) {
         items[item.object.name] = 1;
       }
@@ -88,18 +86,16 @@ function onlyUnique(values) {
   return Array.from(new Set(values));
 }
 
-function getNearestPlace(placesOptions, currentRoomBranchsData = {}) {
-  return placesOptions.reduce((place, option) => {
-    if(!place.name) {
-      place = option;
+function getNearestPlace(placesOptions, currentRoom) {
+  let placesWithDistance = [];
+  for (const place of placesOptions) {
+    if(place.origin == currentRoom.origin) { 
+      placesWithDistance = [{distance: 0, room: place}];
+      break;
     }
-    else {
-      const distance1 = calculateDistanceBetweenPlaces(currentRoomBranchsData, place);
-      const distance2 = calculateDistanceBetweenPlaces(currentRoomBranchsData, option)
-      if (distance1 > distance2) place = option;
-    }
-    return place;
-  }, {});
+    placesWithDistance.push({distance: calculateDistanceBetweenPlaces(currentRoom, place), room: place});
+  }
+  return placesWithDistance.sort((a,b) => a.distance - b.distance)[0].room;
 }
 
 const calculateDistanceBetweenPlaces = (origin = {}, destiny = {}) => {
