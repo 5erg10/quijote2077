@@ -56,7 +56,7 @@ const execute = async (intent, userId, user) => {
         'Te encuentras muy débil para seguir caminando. Tu vista se nubla y caes desmayado en el suelo.',
         'hungry'
       );
-      await gameOperations.applyReset(userId, user.userName, 'hungry');
+      await gameOperations.applyReset(userId, user, 'hungry');
       return resetResult;
     }
 

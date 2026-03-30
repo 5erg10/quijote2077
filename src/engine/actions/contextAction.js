@@ -49,14 +49,14 @@ const execute = async (intent, userId, user) => {
     // Si el éxito tiene endReason end (final del juego)
     if (requirementsOk && matchedAction.endReason == 'end') {
       const resetResult = gameOperations.buildResetResult(matchedAction.successResponse, matchedAction.endReason);
-      await gameOperations.applyReset(userId, user.userName, matchedAction.endReason);
+      await gameOperations.applyReset(userId, user, matchedAction.endReason);
       return resetResult;
     }
 
     if (!requirementsOk) {
       if (matchedAction.endReason == 'death') {
         const resetResult = gameOperations.buildResetResult(matchedAction.failResponse, matchedAction.endReason);
-        await gameOperations.applyReset(userId, user.userName, matchedAction.endReason);
+        await gameOperations.applyReset(userId, user, matchedAction.endReason);
         return resetResult;
       }
       await countIntents.count(userId);

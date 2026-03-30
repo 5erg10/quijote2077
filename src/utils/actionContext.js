@@ -23,7 +23,7 @@ const SYNONYMS_BY_CANONICAL = {
   velar:     ['velar', 'vigilar', 'guardar', 'hacer guardia'],
   descansar: ['descansar', 'dormir', 'reposar', 'tumbarse', 'echarse', 'sestear', 'descansor', 'echar una siesta'],
   // --- Acciones de sistema (siempre disponibles) ---
-  viajar:    ['ir a', 'caminar a', 'dirigirse a', 'moverse a', 'marchar a', 'ir hacia', 'desplazarse a', 'entrar en', 'salir hacia', 'bajar a', 'subir a', 'acceder a'],
+  viajar:    ['ir a', 'caminar a', 'dirigirse a', 'moverse a', 'marchar a', 'ir hacia', 'desplazarse a', 'entrar en', 'salir hacia', 'bajar a', 'subir a', 'acceder a', 'cruzar'],
   coger:     ['coger', 'agarrar', 'tomar', 'recoger', 'llevarse', 'alzar', 'levantar', 'hacerse con'],
   tirar:     ['tirar', 'soltar', 'dejar', 'abandonar', 'deshacerse de', 'arrojar'],
   comer:     ['comer', 'zampar', 'devorar', 'ingerir', 'masticar', 'comerse'],

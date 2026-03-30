@@ -559,8 +559,8 @@ button:focus {
 .placeDetailPopup {
   position: absolute;
   top: 90px;
-  left: 360px;
-  width: 300px;
+  right: 20px;
+  width: 400px;
   background-color: #000;
   border: 1px solid #fff890;
   z-index: 101;

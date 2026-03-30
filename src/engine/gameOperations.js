@@ -8,14 +8,13 @@ function buildResetResult(message, reason) {
     reason,
     message,
     imageUrl: reason === 'death' || reason === 'hungry' ? 'images/places/blackDeath.jpg' : null,
-    restartMessage: reason !== 'end' ? '<br><br>Si deseas iniciar una nueva partida, escribe <b>reiniciar</b>' : '<br><br>CONTINUARÁ...'
+    restartMessage: reason !== 'end' ? '<br><br>Si deseas iniciar una nueva partida, escribe <b>reiniciar</b>' : '<br><br>CONTINUARÁ...<br><br>Si deseas iniciar una nueva partida, escribe <b>reiniciar</b>'
   };
 }
 
-async function applyReset(userId, userName, reason) {
+async function applyReset(userId, user, reason) {
   if (reason === 'end') {
-    const coordinates = { lat: 39.5137458, lng: -3.0046506 };
-    await usersDao.addUser(userId, userName, coordinates);
+    await usersDao.addUser(userId, user.userName, user.difficulty.level, user.coordinates);
   } else {
     await usersDao.removeUser(userId);
   }
