@@ -39,7 +39,7 @@ function genericHelp(user) {
     response += `\n - Desde aquí puedes ir a ${roomsString}.`;
   }
 
-  if (actionsDone.length < actions.length) {
+  if (actionsDone?.length < actions?.length) {
     response += '\n - Quizás puedas hacer algo con: ';
 
     if (actions.length > 1) {

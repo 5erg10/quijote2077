@@ -8,9 +8,9 @@ function checkRequirementStatusAllowed(user, objectName) {
   if(!object) {
     return false;
   }
-  const objectHasRequiredStatus = object?.requirementStatus.map(status => normalize(status)) || [];
-  const objectHasRequirementObject = object?.requirementObject;
-  if (objectHasRequiredStatus) {
+  const objectHasRequiredStatus = object?.requirementStatus?.map(status => normalize(status)) || [];
+  const objectHasRequirementObject = object?.requirementObject?.map(obj => normalize(obj)) || [];;
+  if (objectHasRequiredStatus?.length) {
     if(user.states) {
       let requirementStatusCont = 0;
       user.states.map(status => {
@@ -19,22 +19,22 @@ function checkRequirementStatusAllowed(user, objectName) {
           requirementStatusCont += 1;
         };
       });
-      const statusLength = object.numOfRequirementsNeeded || object.requirementStatus.length;
+      const statusLength = object.numOfRequirementsNeeded || object.requirementStatus?.length;
       statusOk = requirementStatusCont >= statusLength
     } else {
       statusOk = false;
     }
   }
-  if (objectHasRequirementObject) {
+  if (objectHasRequirementObject?.length) {
     if(user.objects) {
       let requirementObjectsCont = 0;
       user.objects.map(currentObject => {
          //some objects has more than 1 object required to success
-         if (object.requirementObject.includes(currentObject)) {
+         if (object.requirementObject.includes(normalize(currentObject))) {
           requirementObjectsCont += 1;
          };
       });
-      objectNeededOk = requirementObjectsCont >=  object.requirementObject;
+      objectNeededOk = requirementObjectsCont >=  object.requirementObject?.length;
     } else {
       objectNeededOk = false;
     }
@@ -138,7 +138,6 @@ function addObject(userId, user, objectName) {
   } else {
     return Promise.reject(errorLog);
   }
-
 }
 
 module.exports = { getObjectByObjectId, getObjectsByUserId, deleteObjectByUser, addObject };

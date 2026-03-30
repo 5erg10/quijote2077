@@ -595,7 +595,7 @@
             { 
               "action": "examinar",
               "object": { "name": "cesto" },
-              "successResponse": "Dentro del cesto hay muchas cosas guardadas sin sentido ni orden alguno, hay un martillo, un trozo de alambre.... de todo.",
+              "successResponse": "Dentro del cesto hay muchas cosas guardadas sin sentido ni orden alguno, lo único que identifico en el martillo .... todo lo demas no lo habia visto en mi vida.",
               "failResponse": ""
             }
           ],
@@ -684,7 +684,7 @@
           "name": "cancela",
           "step": 7, 
           "branch": 2,
-          "description": "Una gran cancela custodiada por dos soldados. Más allá se extienden los dominios del gran reino de castilla, donde valientes hidalgos ponen a prueba su destreza y conocen a sus amadas doncellas. Yo intentaría cruzarla",
+          "description": "Una gran cancela custodiada por un soldado. Más allá se extienden los dominios del gran reino de castilla, donde valientes hidalgos ponen a prueba su destreza y conocen a sus amadas doncellas. Yo intentaría cruzarla",
           "media": {
             "images": [
               "images/places/cancela.png",
@@ -696,9 +696,9 @@
               "action": "cruzar",
               "object": { "name": "cancela" },
               "requirementObject": ["espada", "armadura"],
-              "requirementStatus": ["velar_armas_patio_venta"],
+              "requirementStatus": ["velar_armas_patio"],
               "successResponse": "Cruzas la puerta y es como atravesar la entrada a otro mundo. Prados verdes hasta donde alcanza la vista, regados de pequeños bosques y riachuelos, animados por el bello cantar de las aves más distinguidas... huele a felicidad y opulencia, y como si el destino te sonriese, una bella doncella está intentando arreglar su carruaje averiado junto a sus monjes acompañantes. ¡¡Es la oportunidad ideal para demostrar tu valía ante una bella dama!!",
-              "failResponse": "Los soldados te echan a empujones entre sonoras risas. No tienes todo lo necesario para ser un caballero decían",
+              "failResponse": "El soldado te echa a empujones entre sonoras risas. No tienes todo lo necesario para ser un caballero dicen.",
               "endReason":"end"
             }
           ],
