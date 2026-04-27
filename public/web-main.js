@@ -2,7 +2,8 @@ const storage = window.localStorage;
 
 let textarea, responses, splashScreen, continueButton, warningMessage, currentPlace,
   currentTrack, outerAudio, audioController, weightStatBar, energyStatBar, weightInfillText,
-  energyInfillText, statsBox, userDatabaseData, userName, loadingLabel;
+  energyInfillText, statsBox, weightStatBarMenu, energyStatBarMenu, weightInfillTextMenu,
+  energyInfillTextMenu, userDatabaseData, userName, loadingLabel;
 
 let audioActive = false;
 let inputContent = '';
@@ -61,7 +62,10 @@ function documentReady() {
   loadingLabel = document.querySelector('#inputLoading');
   loadingLabel.style.display = 'none';
   statsBox = document.querySelector('#statsBox');
-  statsBox.style.display = 'none';
+  weightStatBarMenu = document.querySelector('#weightStatBarMenu');
+  energyStatBarMenu = document.querySelector('#energyStatBarMenu');
+  weightInfillTextMenu = document.querySelector('#weightInfillTextMenu');
+  energyInfillTextMenu = document.querySelector('#energyInfillTextMenu');
   document.addEventListener('click', setFocus);
   if (!getUID()) continueButton.disabled = true;
   audioController.addEventListener('click', onOffAudio);
@@ -336,7 +340,7 @@ function updateMusicFromText(text) {
 
 function handleGameOver() {
   isGameOver = true;
-  statsBox.style.display = 'none';
+  statsBox.classList.remove('visible');
   pauseMusic();
   storage.removeItem('UID');
   storage.removeItem('currentPlace');
@@ -379,11 +383,17 @@ async function getUserData() {
     }
     userDatabaseData = await userRequest.json();
     if (userDatabaseData && userDatabaseData.energy !== undefined) {
-      energyInfillText.innerHTML = `Energia ${userDatabaseData.energy}/100`;
-      weightInfillText.innerHTML = `Peso ${100 - (userDatabaseData.maxWeight || 0)}/100`;
-      energyStatBar.style.width = `${userDatabaseData.energy}%`;
-      weightStatBar.style.width = `${100 - (userDatabaseData.maxWeight || 0)}%`;
-      statsBox.style.display = 'flex';
+      const energy = userDatabaseData.energy;
+      const weight = 100 - (userDatabaseData.maxWeight || 0);
+      energyInfillText.innerHTML = `Energia ${energy}/100`;
+      weightInfillText.innerHTML = `Peso ${weight}/100`;
+      energyStatBar.style.width = `${energy}%`;
+      weightStatBar.style.width = `${weight}%`;
+      statsBox.classList.add('visible');
+      energyInfillTextMenu.innerHTML = `Energia ${energy}/100`;
+      weightInfillTextMenu.innerHTML = `Peso ${weight}/100`;
+      energyStatBarMenu.style.width = `${energy}%`;
+      weightStatBarMenu.style.width = `${weight}%`;
     }
   } catch (e) {
     console.error('getUserData error:', e);

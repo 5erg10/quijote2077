@@ -144,6 +144,7 @@ p {
   margin: 10px;
   min-height: 50px;
   padding: 1rem 2rem 2rem 2rem;
+  position: relative;
   width: 75%;
 }
 
@@ -177,6 +178,7 @@ p {
   margin: 10px;
   min-height: 50px;
   padding: 1rem 2rem 2rem 2rem;
+  position: relative;
   text-align: left;
   width: 75%;
 }
@@ -238,11 +240,26 @@ input:focus {
 }
 
 .statsBox {
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
+}
+
+.statsBox.visible {
+  display: flex;
+}
+
+.statsBox--menu {
+  display: none;
+  width: 100%;
+  padding: 6px 0;
+  gap: 0.5rem;
+}
+
+.statsBox--menu .statBar {
+  width: 100%;
 }
 
 .statBar {
@@ -584,36 +601,220 @@ button:focus {
   padding: 12px 14px;
 }
 
+/* =============================================
+   RESPONSIVE — PORTRAIT MOBILE (≤ 600px)
+============================================= */
 @media only screen and (max-width: 600px) {
-  #chatbox {
-    height: 100%;
-    width: 100%;
+  body {
+    font-size: 10px;
   }
 
-  .inputBox {
-    height: 50px;
-    padding: 0 15px;
-    width: 100%;
+  .chatbox {
+    grid-template-rows: 60px auto 40px;
+  }
+
+  .headerContainer {
+    height: 60px;
+    gap: 1rem;
+    padding: 0 4%;
+  }
+
+  .characterMenuIcon,
+  .audioControllerButton {
+    width: 44px;
+    height: 44px;
   }
 
   #chatContainer {
     width: 100%;
-    height: 75%;
   }
 
-  .easyModePlaces {
-    width: 40%;
+  /* ---- Layout de mensajes: avatar arriba, burbuja ancho completo ---- */
+  .quixoteChat {
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 8px 4px;
+    padding: 4px 8px;
   }
 
+  .quixoteAvatar {
+    margin-bottom: 2px;
+  }
+
+  .quixoteText {
+    width: 100%;
+    margin: 12px 0 0 0;
+    padding: 1rem;
+  }
+
+  /* Triángulo quixote: apunta hacia arriba, hacia el avatar (izquierda) */
+  .quixoteText::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 19px;
+    border-left: 11px solid transparent;
+    border-right: 11px solid transparent;
+    border-bottom: 11px solid white;
+  }
+
+  .quixoteText::after {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 21px;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-bottom: 9px solid black;
+  }
+
+  .userChat {
+    flex-direction: column;
+    align-items: flex-end;
+    margin: 8px 4px;
+    padding: 4px 8px;
+  }
+
+  .userAvatar {
+    margin-bottom: 2px;
+    order: -1;
+  }
+
+  .userText {
+    width: 100%;
+    margin: 12px 0 0 0;
+    padding: 1rem;
+  }
+
+  /* Triángulo usuario: apunta hacia arriba, hacia el avatar (derecha) */
+  .userText::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    right: 19px;
+    border-left: 11px solid transparent;
+    border-right: 11px solid transparent;
+    border-bottom: 11px solid #22ecf3;
+  }
+
+  .userText::after {
+    content: '';
+    position: absolute;
+    top: -9px;
+    right: 21px;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-bottom: 9px solid black;
+  }
+
+  .quixoteText img {
+    margin: 3% 5%;
+    width: 90%;
+  }
+
+  /* Footer: stats ocultas, input a ancho completo */
+  .footerContainer {
+    grid-template-columns: 1fr;
+    padding: 0 4%;
+  }
+
+  /* Las stats del footer se ocultan en móvil aunque tengan .visible */
+  #statsBox {
+    display: none;
+  }
+
+  /* Las stats del menú se muestran en móvil */
+  .statsBox--menu {
+    display: flex;
+    flex-direction: column;
+  }
+
+  input {
+    font-size: 11px;
+  }
+
+  .mainDifficultSelector {
+    gap: 0.8rem;
+  }
+
+  .mainDifficultSelector div {
+    padding: 0.4rem 0.6rem;
+    font-size: 9px;
+  }
+
+  /* Character menu y popup: ancho completo */
   .characterMenu {
     width: calc(100vw - 40px);
     left: 20px;
+    right: auto;
   }
 
   .placeDetailPopup {
-    left: 20px;
-    top: auto;
-    bottom: 110px;
     width: calc(100vw - 40px);
+    left: 20px;
+    right: auto;
+    top: auto;
+    bottom: 80px;
+  }
+
+  /* Warning: centrado correcto */
+  #warningMessage {
+    width: calc(100vw - 60px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Splash screen: cover centrado */
+  .backgroundSplashScreen {
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+}
+
+/* =============================================
+   RESPONSIVE — LANDSCAPE MÓVIL (altura ≤ 500px)
+============================================= */
+@media only screen and (orientation: landscape) and (max-height: 500px) {
+  .chatbox {
+    grid-template-rows: 50px auto 60px;
+  }
+
+  .headerContainer {
+    height: 50px;
+    gap: 1rem;
+    padding: 0 3%;
+  }
+
+  .characterMenuIcon,
+  .audioControllerButton {
+    width: 36px;
+    height: 36px;
+  }
+
+  .footerContainer {
+    padding: 0 3%;
+  }
+
+  /* Stats del footer: ocultas también en landscape móvil */
+  #statsBox {
+    display: none;
+  }
+
+  .statsBox--menu {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .characterMenu {
+    max-height: calc(100vh - 60px);
+  }
+
+  .placeDetailPopup {
+    top: 55px;
+    bottom: auto;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
   }
 }
