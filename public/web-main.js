@@ -67,7 +67,7 @@ function documentReady() {
   weightInfillTextMenu = document.querySelector('#weightInfillTextMenu');
   energyInfillTextMenu = document.querySelector('#energyInfillTextMenu');
   document.addEventListener('click', setFocus);
-  if (!getUID()) continueButton.disabled = true;
+  if (!getUID() || !storage.getItem('lastResponses')) continueButton.disabled = true;
   audioController.addEventListener('click', onOffAudio);
   loadPlacesDescriptions();
 
@@ -88,17 +88,7 @@ function documentReady() {
   });
 
   textarea.addEventListener('keyup', (event) => {
-      const inputText = textarea.value.trim();
-      if (event.keyCode === 13 && !!inputText) {
-        showLoading(true);
-        if (!userName) {
-          userName = inputText;
-          showDifficultySelector();
-          return;
-        }
-        addUserMessageToChat(inputText);
-        sendText(inputText);
-      }
+      if (event.keyCode === 13) handleSend();
   });
 
   document.addEventListener('keydown', (e) => {
@@ -454,8 +444,9 @@ function saveLastResponse(texts) {
 }
 
 function loadLastResponse() {
-  const lastResponses = storage.getItem('lastResponses') ?? [];
-  JSON.parse(lastResponses).forEach( response => 
+  const lastResponses = storage.getItem('lastResponses');
+  if (!lastResponses) return;
+  JSON.parse(lastResponses).forEach(response =>
     response.author == 'me' ? addUserMessageToChat(response.text) : addQuixoteMessageToChat(response.text)
   );
 }
@@ -492,6 +483,26 @@ function splitComplexName(name) {
     if (!name.includes('_')) return name;
     const [nombre, origen] = name.split('_');
     return `${nombre} ${origen.endsWith('a') ? 'de la' : 'del'} ${origen}`;
+}
+
+function handleSend() {
+  const inputText = textarea.value.trim();
+  if (!inputText) return;
+  showLoading(true);
+  dismissKeyboard();
+  if (!userName) {
+    userName = inputText;
+    showDifficultySelector();
+    return;
+  }
+  addUserMessageToChat(inputText);
+  sendText(inputText);
+}
+
+function dismissKeyboard() {
+  if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+    textarea.blur();
+  }
 }
 
 function setFocus() {
