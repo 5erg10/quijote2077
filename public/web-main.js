@@ -495,6 +495,7 @@ function splitComplexName(name) {
 }
 
 function setFocus() {
+  if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
   textarea.focus();
 }
 
