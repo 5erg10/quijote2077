@@ -30,10 +30,12 @@ body {
   color: white;
   display: flex;
   height: 100vh;
+  height: 100dvh;
   justify-content: center;
   font-family: "PressStart2P";
   font-size: 12px;
   width: 100%;
+  overflow: hidden;
 }
 
 p {
@@ -45,7 +47,7 @@ p {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 100px auto 100px;
+  grid-template-rows: 100px 1fr 100px;
 }
 
 .characterMenuIcon {
@@ -116,7 +118,7 @@ p {
 }
 
 #chatContainer {
-  height: 100%;
+  min-height: 0;
   margin: 0 auto;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -370,19 +372,22 @@ button:focus {
 }
 
 #splashScreen {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: fixed;
+  inset: 0;
   background-color: #000000;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .backgroundSplashScreen {
+  width: 100%;
   height: 100%;
+  object-fit: contain;
   position: absolute;
-  right: 0;
   top: 0;
+  left: 0;
 }
 .actionButtons {
   width: 100%;
@@ -610,7 +615,7 @@ button:focus {
   }
 
   .chatbox {
-    grid-template-rows: 60px auto 40px;
+    grid-template-rows: 60px 1fr 40px;
   }
 
   .headerContainer {
@@ -765,11 +770,9 @@ button:focus {
     transform: translate(-50%, -50%);
   }
 
-  /* Splash screen: cover centrado */
+  /* Splash screen: imagen completa en móvil */
   .backgroundSplashScreen {
-    width: 100%;
-    object-fit: cover;
-    object-position: center;
+    object-fit: contain;
   }
 }
 
@@ -778,7 +781,7 @@ button:focus {
 ============================================= */
 @media only screen and (orientation: landscape) and (max-height: 500px) {
   .chatbox {
-    grid-template-rows: 50px auto 60px;
+    grid-template-rows: 50px 1fr 60px;
   }
 
   .headerContainer {
