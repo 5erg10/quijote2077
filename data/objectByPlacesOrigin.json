@@ -1,6 +1,6 @@
 {
-  "escalón" : {
-    "name": "escalón",
+  "tablon" : {
+    "name": "tablon",
     "originPLace": "zaguán_casa",
     "currentPlace": "zaguán_casa",
     "weight": 5,
@@ -8,15 +8,15 @@
     "jointToSuccess": false,
     "originDescription": "Uno de los tablones de la escalera cruje a tu paso mientras bajas, si, ese tablòn del escalón que nunca arreglaste.",
     "ordinaryDescription": "El tablón que tan poco esfuerzo te costó desmontar de la escalera esta en el suelo.",
-    "requirementStatus": ["examinar_escalera_zaguán"],
+    "requirementObject": ["vela"],
     "numOfRequirementsNeeded": 1,
     "successResponse": "Es inquietante lo facilmente que se desprende el escalón, pensar que por aqui pasamos todos los dias me hace sentirme mucho más seguro.",
-    "failResponse": "que quieres coger el que?, yo no veo nada que se pueda coger aqui, es mas, no veo nada de nada",
+    "failResponse": "Esta atascado en algún sitio, pero esta demasiado oscuro para poder solucionarlo, habra que vovler con un poco de luz.",
     "unFindResponse": "Que quieres coger que?",
     "objectTakenYet": "Ya tienes un tablón, ¿para que quieres otro?"
   },
   "libro" : {
-    "name": "escalón",
+    "name": "libro",
     "originPLace": "biblioteca",
     "currentPlace": "biblioteca",
     "weight": 0,
@@ -32,7 +32,7 @@
     "objectTakenYet": "Ya tienes un tablón, ¿para que quieres otro?"
   },
   "escudo" : {
-    "name": "escalón",
+    "name": "escudo",
     "originPLace": "comedor_casa",
     "currentPlace": "comedor_casa",
     "weight": 0,
@@ -84,8 +84,6 @@
     "weight": 15,
     "type": "util",
     "jointToSuccess": false,
-    "requirementStatus": ["examinar_pared_comedor", "examinar_escudo_comedor"],
-    "numOfRequirementsNeeded": 1,
     "originDescription": "",
     "ordinaryDescription": "Dejaste esta espada tirada en el suelo.",
     "successResponse": "¡¡valiente hidalgo serías sin tener una!!, una cosa menos.",

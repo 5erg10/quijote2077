@@ -167,18 +167,7 @@
               "images/places/comedor_noche.png"
               ]
             },
-          "actions": [
-            { 
-              "action": "examinar",
-              "object": { "name": "escudo" },
-              "successResponse": "Una espada esta colocada detras del escudo. ¿Has oido?, una espada!" 
-            },
-            { 
-              "action": "examinar",
-              "object": { "name": "pared" },
-              "successResponse": "detras del escudo se ve una espada. ¿Has oido?, una espada!" 
-            }
-          ],
+          "actions": [],
           "connectedRooms": [
             "zaguán_casa"
           ]
@@ -324,6 +313,9 @@
               "failResponse": "El muro es demasiado alto, como te dije, pero tú como gallardo hidalgo que eres decidiste ignorar mis advertencias e intentaste escalarlo. Mala suerte que te resbalaste y mueres al caer desde lo alto. Para la pròxima busca algo que poder colocar en el suelo para subirte y que te sea mas fàcil escalarlo.",
               "endReason":"death"
             }
+          ],
+          "connectedRooms": [
+            "posada"
           ]
         },
         "callejón": {
@@ -342,7 +334,7 @@
             },
           "actions": [],
           "connectedRooms": [
-            "posada"
+            "muro"
           ]
         },
         "recepción_posada": {
@@ -369,7 +361,7 @@
           "origin": "posada",
           "step": 11, 
           "branch": 0,
-          "description": "La escalera cruje que da miedo. Subiendo llegas a la habitacioón de la posada, pero sube rapido no vaya a ser que se desmorone bajo tus pies, o se caiga ese cadelabro y se queme todo, o que se yo ...",
+          "description": "La escalera cruje que da miedo. Subiendo llegas a la habitacioón de la posada, pero sube rapido no vaya a ser que se desmorone bajo tus pies ...",
           "media": {
             "images": [
               "images/places/escaleras.png",
@@ -380,7 +372,7 @@
             { 
               "action": "examinar",
               "object": { "name": "candelabro" },
-              "successResponse": "Una de las velas parece suelta, las velas suelen estar pegadas al candelabro para que no las roben, ya sabes, pero UNA esta suelta."
+              "successResponse": "Una de las velas parece suelta, las velas suelen estar pegadas al candelabro para que no las roben, ya sabes, pero UNA esta suelta..."
             }
           ],
           "connectedRooms": [
@@ -406,7 +398,7 @@
               "object": { "name": "odre" },
               "requirementStatus": ["golpear_odre_bodega"],
               "successResponse": "El odre ya esta abierto, cuantos más golpes quieres darle so cafre",
-              "failResponse": "El corcho está atascado, seguramente por que lleva siglos sin abrirse, necesitarás algo contundente con lo que romperlo"
+              "failResponse": "El corcho está atascado, seguramente por que lleva siglos sin abrirse, necesitarás algo contundente con lo que golpearlo. A poder ser algo que no te importe que se pueda romper."
             },
             { 
               "action": "golpear",
