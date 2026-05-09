@@ -79,6 +79,8 @@ const execute = async (intent, userId, user) => {
     const images = (place.media && place.media.images) || [];
     const imageUrl = images.length > 1 && isNight(user) ? images[1] : images[0];
 
+    countIntents.resetUserIntents(userId);
+
     return {
       action: 'viajar',
       success: true,

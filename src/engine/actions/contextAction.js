@@ -24,7 +24,7 @@ const execute = async (intent, userId, user) => {
     
     if (!matchedAction) {
       await countIntents.count(userId);
-      return { action: canonicalVerb, success: false, message: `No se puede ${canonicalVerb} aquí.` };
+      return { action: canonicalVerb, success: false, message: `No hay nada que ${canonicalVerb} aquí.` };
     }
     
     if (matchedAction.action == "descansar") {
@@ -88,6 +88,8 @@ const execute = async (intent, userId, user) => {
         user
       );
     }
+
+    countIntents.resetUserIntents(userId);
 
     return {
       action: canonicalVerb,

@@ -11,6 +11,16 @@ function count(userId) {
   });
 }
 
+function resetUserIntents(userId) {
+  if (!userId) return null;
+  usersDao.getUserById(userId).then(user => {
+    if (user) {
+      user.intents = 0;
+      return usersDao.updateUser(userId, user);
+    }
+  });
+}
+
 async function checkIfNeedHelp(userId, user, intentName) {
   if (!user) return null;
   const intents = user.intents || 0;
@@ -24,4 +34,4 @@ async function checkIfNeedHelp(userId, user, intentName) {
   return null;
 }
 
-module.exports = { count, checkIfNeedHelp };
+module.exports = { count, resetUserIntents, checkIfNeedHelp };
