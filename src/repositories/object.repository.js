@@ -30,7 +30,7 @@ function checkRequirementStatusAllowed(user, objectName) {
       let requirementObjectsCont = 0;
       user.objects.map(currentObject => {
          //some objects has more than 1 object required to success
-         if (object.requirementObject.includes(normalize(currentObject))) {
+         if (object.requirementObject.includes(normalize(currentObject.name))) {
           requirementObjectsCont += 1;
          };
       });
