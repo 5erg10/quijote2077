@@ -40,11 +40,13 @@ async function handleGameplay(id, text, user) {
   
   console.log('Intents:', JSON.stringify(intents));
 
-  const engineResults = await gameEngine.execute(intents, id, user);
+  let engineResults = await gameEngine.execute(intents, id, user);
 
   const freshUser = await usersDao.getUserById(id);
 
   const messages = [];
+
+  if (engineResults.length > 1 && engineResults.find(res => res.success)) engineResults = engineResults.filter(res => res.success);
 
   for (const engineResult of engineResults) {
     
@@ -59,13 +61,6 @@ async function handleGameplay(id, text, user) {
       messages.push({ text: gameOverText, intent: 'gameOver', gameOver: true });
       break;
     }
-
-    // if(!engineResult.objectsInPlace) {
-    //   const objectsIncurrentPlace = engineResult.success ? Object.values(user.objectsList).filter(object => normalize(object.currentPlace) == normalize(engineResult.place)) : [];
-    //   objectsIncurrentPlace.forEach(obj => {
-    //     currentMessage += !obj.jointToSuccess ? `<br><br>${obj.originDescription}` : `<br><br>${obj.ordinaryDescription}`;
-    //   });
-    // }
 
     const helpHint = await countIntents.checkIfNeedHelp(id, freshUser, engineResult.action);
 

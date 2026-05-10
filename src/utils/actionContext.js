@@ -9,7 +9,7 @@ const placesData = require('../../data/places.json');
 
 const SYNONYMS_BY_CANONICAL = {
   // --- Verbos de exploración/observación ---
-  examinar:  ['mirar', 'observar', 'inspeccionar', 'estudiar', 'contemplar', 'ver', 'ojear', 'revisar', 'comprobar', 'fijarse', 'echar un vistazo'],
+  examinar:  ['mirar', 'observar', 'inspeccionar', 'estudiar', 'contemplar', 'ver', 'ojear', 'revisar', 'comprobar', 'fijarse', 'echar un vistazo', 'estudiar'],
   leer:      ['leer', 'ojear', 'hojear', 'descifrar', 'deletrear'],
   // --- Verbos de manipulación de objetos ---
   abrir:     ['abrir', 'destapar', 'descerrajar', 'forzar', 'desbloquear', 'destrancar'],
