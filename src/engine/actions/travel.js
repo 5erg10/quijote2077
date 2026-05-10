@@ -66,7 +66,7 @@ const execute = async (intent, userId, user) => {
       updatedPlaces.push(place.id);
     }
 
-    Object.assign(user, { currentRoom: place, hungry: newHungry, placesKnown: updatedPlaces });
+    Object.assign(user, { currentRoom: place, hungry: newHungry, placesKnown: updatedPlaces, intents: 0 });
     await usersDao.updateUser(userId, user);
 
     // obtengo los objetos que haya en la habitacion para mostrarlos en la descripcion de la room
@@ -78,8 +78,6 @@ const execute = async (intent, userId, user) => {
 
     const images = (place.media && place.media.images) || [];
     const imageUrl = images.length > 1 && isNight(user) ? images[1] : images[0];
-
-    countIntents.resetUserIntents(userId);
 
     return {
       action: 'viajar',

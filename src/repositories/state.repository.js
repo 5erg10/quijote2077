@@ -67,7 +67,7 @@ function addStatus(userId, user, status) {
   }
 
   if(toTake) {
-    Object.assign( user, { states: states});
+    Object.assign( user, { states: states, intents: 0 });
     return usersDao.updateUser(userId, user);
   } else {
     return Promise.reject('Status repeated');

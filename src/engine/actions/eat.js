@@ -34,9 +34,7 @@ async function execute(intent, userId, user) {
   }
 
   await objectsDao.deleteObjectByUser(userId, user, objectName);
-  await usersDao.updateUser(userId, { ...user, hungry: newHungry });
-
-  countIntents.resetUserIntents(userId);
+  await usersDao.updateUser(userId, { ...user, hungry: newHungry, intents: 0 });
 
   return {
     action: 'comer',

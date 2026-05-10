@@ -28,7 +28,7 @@ const execute = async (intent, userId, user) => {
     }
     
     if (matchedAction.action == "descansar") {
-      await updateUser(userId, { ...user, hungry: 100 });
+      await updateUser(userId, { ...user, hungry: 100, intents: 0 });
       return {
       action: canonicalVerb,
       success: true,
@@ -88,8 +88,6 @@ const execute = async (intent, userId, user) => {
         user
       );
     }
-
-    countIntents.resetUserIntents(userId);
 
     return {
       action: canonicalVerb,

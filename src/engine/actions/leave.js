@@ -27,8 +27,6 @@ const execute = async (intent, userId, user) => {
 
   await objectsDao.deleteObjectByUser(userId, user, objectName);
 
-  countIntents.resetUserIntents(userId);
-
   return {
     action: 'tirar',
     success: true,

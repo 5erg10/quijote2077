@@ -14,7 +14,6 @@ async function execute(intent, userId, user) {
 
   try {
     await objectsDao.addObject(userId, user, parsedObjectName);
-    countIntents.resetUserIntents(userId);
     return {
       action: 'coger',
       success: true,

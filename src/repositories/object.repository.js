@@ -84,7 +84,7 @@ function deleteObjectByUser(userId, user, objectName) {
   let object = user.objects.find(item => normalize(item.name) === normalize(objectName));
   if (object) {
     let difficulty = { level: user.difficulty.level, maxCapacity: user.difficulty.maxCapacity + object.weight };
-    Object.assign( user, { difficulty, objects: user.objects.filter(item => normalize(item.name) !== normalize(objectName))});
+    Object.assign( user, { difficulty, objects: user.objects.filter(item => normalize(item.name) !== normalize(objectName)), intents: 0});
   }
   return usersDao.updateUser(userId, user);
 }
@@ -133,7 +133,7 @@ function addObject(userId, user, objectName) {
 
   if(toTake) {
     let difficulty = { level: user.difficulty.level, maxCapacity: user.difficulty.maxCapacity - user.objectsList[objectName].weight };
-    Object.assign( user, { difficulty: difficulty, objects: objectsTaken });
+    Object.assign( user, { difficulty: difficulty, objects: objectsTaken, intents: 0 });
     return usersDao.updateUser(userId, user);
   } else {
     return Promise.reject(errorLog);
