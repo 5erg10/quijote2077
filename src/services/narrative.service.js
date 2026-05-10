@@ -4,6 +4,11 @@ const parseIntents = async (userText, currentPlaceName, llmClientConf) => {
 
   const availableActions = getValidActionsForPlace(currentPlaceName);
 
+  const models = await llmClientConf.client.models.list();
+
+  console.log('llm client: ', llmClientConf.client.baseURL);
+  console.log('models: ', models);
+
   const response = await llmClientConf.client.chat.completions.create({
     model: llmClientConf.model,
     messages: [
@@ -27,6 +32,7 @@ REGLAS:
 
 Ejemplos:
 texto: "ojeo el libro", acciones: ["leer","viajar"] -> [{"action":"leer","object":"libro"}]
+texto: "voy a la cabaña", acciones: ["leer", "viajar"] -> [{"ation": "viajar", "place": "cabaña"}]
 texto: "voy a la cocina y cojo la llave", acciones: ["viajar","coger"] -> [{"action":"viajar","place":"cocina"},{"action":"coger","object":"llave"}]
 texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","object":"alacena"}]
 texto: "cojo el currusco de pan", acciones: ["coger", "viajar"] -> [{"action": "coger", "object": "currusco"}]
