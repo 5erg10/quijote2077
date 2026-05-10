@@ -482,7 +482,7 @@
           "name": "acantilado",
           "step": 6, 
           "branch": 2,
-          "description": "Un diminuto acantilado está frente ti. Quizás podrías cruzarlo de un salto, pero parece mucha distancia incluso para un valiente hidalgo. Creo que sería mejor darse media vuelta o buscar algo que usar de pruente para cruzar, ¿un tablòn por ejemplo?",
+          "description": "Un diminuto acantilado está frente ti y mas alla en el interior del bosque se adivina una cabaña. Quizás podrías cruzarlo de un salto, pero parece mucha distancia incluso para un valiente hidalgo. Creo que sería mejor darse media vuelta o buscar algo que usar de pruente para cruzar.",
           "media": {
             "images": [
               "images/places/acantilado.png",
@@ -491,10 +491,10 @@
             },
           "actions": [
             { 
-              "action": "colocar",
-              "object": { "name": "escalón" },
-              "requirementObject": ["escalón"],
-              "successResponse": "Dejas el tablón y este hace de puente. Madre mía ademas de hidalgo eres ingeniero!!, Ahora puedes llegar al bosque que hay en frente sin problemas. Si es que alguien querria ir a ese oscuro bosque para algo.",
+              "action": "poner",
+              "object": { "name": "tablon" },
+              "requirementObject": ["tablon"],
+              "successResponse": "Dejas el tablón y este hace de puente. Madre mía ademas de hidalgo eres ingeniero!!, Ahora puedes llegar a la cabaña que esta escondida dentro del bosque. Si es que alguien querria ir a esa cabaña ...",
               "failResponse": "¿Que quieres colocar un escalón?, ¿Qué escalón?, ¡ay madre!, ahora me dirás que los molinos son gigantes..."
             },
             { 
@@ -505,26 +505,44 @@
             }
           ],
           "connectedRooms": [
-            "campos", "bosque"
+            "campos", "cabaña"
           ]
         },
-        "bosque": {
-          "id": "bosque",
-          "name": "bosque",
+        "cabaña": {
+          "id": "cabaña",
+          "name": "cabaña",
           "step": 6, 
           "branch": 2,
-          "requirementStatus": ["colocar_escalón_bosque"],
-          "description": "Un oscuro bosque, tan oscuro que apenas alcanzas a ver poco más que el acantilado que acabas de cruzar. Se escuchan lobos al rededor tuya. Yo me daría media vuelta y me iría",
-          "failResponse": "No puedes llegar al bosque, antes debes cruzar un acantilado que tiene pinta que no podrás cruzar de un salto",
+          "requirementStatus": ["poner_tablon_acantilado"],
+          "description": "Una cabaña oscura y tenebrosa, da un poco de miedo, sobre todo por los lobos que se escuchan alrededor. Debió ser una cabaña de cazadores pero a dia de hoy esta abandonada como parece obvio. No me gustaria estar aqui fuera mas tiempo del necesario, o entramos al interior de la cabaña o volvemos al acantilado, pero no nos quedemos aqui parados por favor ...",
+          "failResponse": "No puedes llegar a la cabaña, antes debes cruzar un acantilado que tiene pinta que no podrás cruzar de un salto",
           "media": {
             "images": [
-              "images/places/bosque_oscuro.png",
-              "images/places/bosque_oscuro_noche.png"
+              "images/places/cabania.png",
+              "images/places/cabania_noche.png"
               ]
             },
           "actions": [],
           "connectedRooms": [
-            "acantilado"
+            "acantilado", "interior_cabaña"
+          ]
+        },
+        "interior_cabaña": {
+          "id": "interior_cabaña",
+          "name": "interior",
+          "step": 6, 
+          "branch": 3,
+          "description": "Desde dentro no es mucho mas tranquilizador que el exterior, pero por lo menos estamos mas protegidos de los lobos... un poco solo.",
+          "failResponse": "No podemos entrar, la puerta esta atascada.",
+          "media": {
+            "images": [
+              "images/places/cabania_interior.png",
+              "images/places/cabania_interior_noche.png"
+              ]
+            },
+          "actions": [],
+          "connectedRooms": [
+            "cabaña"
           ]
         },
         "venta": { 

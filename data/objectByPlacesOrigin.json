@@ -86,7 +86,7 @@
     "jointToSuccess": false,
     "originDescription": "",
     "ordinaryDescription": "Dejaste esta espada tirada en el suelo.",
-    "successResponse": "¡¡valiente hidalgo serías sin tener una!!, una cosa menos.",
+    "successResponse": "¡¡valiente hidalgo serías sin tener una espada!!, una cosa menos.",
     "unFindResponse": "ejem... aqui no hay ninguna espada",
     "objectTakenYet": "¿No sabes usar la espada que tienes y quieres otra?, mejor no.",
     "failResponse": "¿Donde has visto una espada?, ¿donde?"
