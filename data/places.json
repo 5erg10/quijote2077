@@ -160,7 +160,7 @@
           "origin": "casa",
           "step": 3, 
           "branch": 0,
-          "description": "El comedor de tu casa. Rústico, sencillo... esta claro que tu familia pasó por mejores momentos. En la pared esta colgado el escudo de armas y una espada bien grande y medio oxidada.",
+          "description": "El comedor de tu casa. Rústico, sencillo... esta claro que tu familia pasó por mejores momentos. En la pared esta colgado el escudo de armas, como las casas nobles importantes pero sin serlo ...",
           "media": {
             "images": [
               "images/places/comedor.png",
@@ -532,7 +532,7 @@
           "name": "interior",
           "step": 6, 
           "branch": 3,
-          "description": "Desde dentro no es mucho mas tranquilizador que el exterior, pero por lo menos estamos mas protegidos de los lobos... un poco solo.",
+          "description": "Esta todo mangas por hombro, diria que no hay absolutamente nada que este en su sitio, a pesar de eso es mucho mas tranquilizador que el exterior, por lo menos estamos protegidos de los lobos... un poco solo.",
           "failResponse": "No podemos entrar, la puerta esta atascada.",
           "media": {
             "images": [
