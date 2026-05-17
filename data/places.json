@@ -160,7 +160,7 @@
           "origin": "casa",
           "step": 3, 
           "branch": 0,
-          "description": "El comedor de tu casa. Rústico, sencillo... esta claro que tu familia pasó por mejores momentos. En la pared esta colgado el escudo de armas, como las casas nobles importantes pero sin serlo ...",
+          "description": "El comedor de tu casa. Rústico, sencillo... esta claro que tu familia pasó por mejores momentos.",
           "media": {
             "images": [
               "images/places/comedor.png",
@@ -292,30 +292,25 @@
             },
           "actions": [
             { 
-              "action": "colocar",
+              "action": "poner",
               "object": { "name": "pedrusco" },
               "requirementObject": ["pedrusco"],
               "successResponse": "Colocas el pedruco en la base del muro, ingenioso!!",
               "failResponse": "¿Que pedrusco?"
             },
             { 
-              "action": "subir",
-              "object": { "name": "pedrusco" },
-              "requirementStatus": ["colocar_pedrusco_muro"],
-              "successResponse": "Al subir al pedrusco, ya no parece tan imposible escalar el muro ...",
-              "failResponse": "¿Que te quieres subir a qué?"
-            },
-            { 
               "action": "escalar",
               "object": { "name": "muro" },
-              "requirementStatus": ["subir_pedrusco_muro"],
-              "successResponse": "Al subir al muro lo que ves el callejòn de la parte de atras de la posada, bastante lugubre, ¿seguro que quieres ir ahi?",
+              "requirementStatus": ["poner_pedrusco_muro"],
+              "travelTo": "callejón",
+              "successResponse": "Utilizas el pedrusco como escalón para poder alcanzar la parte de arriba del muro. Al subir al muro lo que ves el callejòn de la parte de atras de la posada, bastante lugubre, ¿seguro que quieres ir ahi?",
               "failResponse": "El muro es demasiado alto, como te dije, pero tú como gallardo hidalgo que eres decidiste ignorar mis advertencias e intentaste escalarlo. Mala suerte que te resbalaste y mueres al caer desde lo alto. Para la pròxima busca algo que poder colocar en el suelo para subirte y que te sea mas fàcil escalarlo.",
               "endReason":"death"
             }
           ],
           "connectedRooms": [
-            "posada"
+            "posada",
+            "callejón"
           ]
         },
         "callejón": {
@@ -324,7 +319,7 @@
           "step": 10, 
           "branch": 1,
           "requirementStatus": ["escalar_muro_muro"],
-          "description": "Al cruzar el muro, el camino se acaba. Tu única opción es dar media vuelta, una pena con el trabajo que te costo llegar hasta aquì.",
+          "description": "Vaya que sorpresa, esperaba algo más, al cruzar el muro nos hemos topado solo con el callejón trasero de la posada, lleno de bartulos y decepciones.",
           "failResponse": "Te pones de puntillas y apenas alcanzas a ver por encima del muro que bloquea tu paso",
           "media": {
             "images": [
@@ -396,16 +391,9 @@
             { 
               "action": "abrir",
               "object": { "name": "odre" },
-              "requirementStatus": ["golpear_odre_bodega"],
-              "successResponse": "El odre ya esta abierto, cuantos más golpes quieres darle so cafre",
-              "failResponse": "El corcho está atascado, seguramente por que lleva siglos sin abrirse, necesitarás algo contundente con lo que golpearlo. A poder ser algo que no te importe que se pueda romper."
-            },
-            { 
-              "action": "golpear",
-              "object": { "name": "odre" },
               "requirementObject": ["martillo"],
-              "successResponse": "Golpeas un odre y comienza a verter un vino de dudosa calidad",
-              "failResponse": "No tienes nada que se pueda considerar contundente, y no, una espada no se considera contundente, quieres abrir un agujero, no matarlo."
+              "successResponse": "El corcho salta junto con la boquilla del odre... una pena pero por lo menos ya podemos coger un pcoo de ese excelente vino.",
+              "failResponse": "El corcho está atascado, seguramente por que lleva siglos sin abrirse, necesitarás algo contundente con lo que golpearlo. A poder ser algo que no te importe que se pueda romper."
             },
             { 
               "action": "beber",
@@ -655,9 +643,9 @@
             { 
               "action": "velar",
               "object": { "name": "armas" },
-              "requirementObject": ["armadura"],
+              "requirementObject": ["armadura", "espada", "escudo", "vino"],
               "successResponse": "¡Perfecto!, ¡ahora ya sí que eres todo un caballero!, haces cosas raras de vez en cuando pero... un caballero al fin y al cabo",
-              "failResponse": "¿Cómo vas a velar las armas si niquiera tienes una armadura?, eso es de primero de valeroso hidalgo"
+              "failResponse": "Para poder velar las armas necesitas dos cosas, por un lado todo lo que un caballero necesita para serlo, y por otro lado una ofrenda digna para san jorge."
             }
           ],
           "connectedRooms": [
