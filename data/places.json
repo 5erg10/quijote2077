@@ -294,7 +294,7 @@
           "name": "muro",
           "step": 9, 
           "branch": 1,
-          "description": "Estás en un camino bloqueado por un enorme muro de piedra, la unica opcion de seguir el camino es pasar el muro, podrias intentar escalarlo, pero parece bastante alto.",
+          "description": "Estás en un camino bloqueado por un enorme muro de piedra, la unica opcion de seguir el camino es pasar el muro, podrias intentar escalarlo, pero parece bastante alto, yo buscaria algo que poder colocar en la base para poder alcanzar la parte superior del muro y escalarlo sin morir en el intento.",
           "media": {
             "images": [
               "images/places/muro.png",
@@ -308,7 +308,7 @@
               "requirementObject": [
                 {"name": "pedrusco", "failResponse": "¿Que pedrusco?, no veo ningún pedrusco por aquí, ¿no crees que deberias buscar algo con lo que subir al muro antes de intentar ponerlo?"}
               ],
-              "successResponse": "Colocas el pedruco en la base del muro, ingenioso!!"
+              "successResponse": "Vas a usar el predrusco como escaño para alcanzar la parte superior del muro y escalarlo, ingenioso!!"
             },
             { 
               "action": "escalar",
@@ -317,7 +317,7 @@
                 {"name": "poner_pedrusco_muro", "failResponse": "El muro es demasiado alto, como te dije, pero tú como gallardo hidalgo que eres decidiste ignorar mis advertencias e intentaste escalarlo. Mala suerte que te resbalaste y mueres al caer desde lo alto. Para la pròxima busca algo que poder colocar en el suelo para subirte y que te sea mas fàcil escalarlo."}
               ],
               "travelTo": "callejón",
-              "successResponse": "Utilizas el pedrusco como escalón para poder alcanzar la parte de arriba del muro. Al subir al muro lo que ves el callejòn de la parte de atras de la posada, bastante lugubre, ¿seguro que quieres ir ahi?",
+              "successResponse": "Al subir al muro lo que ves el callejòn de la parte de atras de la posada, bastante lugubre, ¿seguro que quieres ir ahi?",
               "endReason":"death"
             }
           ],
@@ -408,16 +408,15 @@
               "requirementObject": [
                 {"name": "martillo", "failResponse": "Necesitas algo contundente con lo que abrirlo, por que el corcho esta muy atascado, y a poder ser que no sea tu espada, no queremos que se melle el poco filo que le queda ..."}
               ],
-              "successResponse": "El corcho salta junto con la boquilla del odre... una pena pero por lo menos ya podemos coger un poco de ese excelente vino."
+              "successResponse": "Le das un golpe con el martillo y el corcho salta junto con la boquilla del odre... una pena pero por lo menos ya podemos coger un poco de ese excelente vino."
             },
             { 
               "action": "beber",
               "object": { "name":"vino", "type":"food", "lifePoints":20 },
               "requirementStatus": [
-                {"name": "abrir_odre_bodega", "failResponse": "Necesitas abrir el odre antes de poder beber el vino."}
+                {"name": "abrir_odre_bodega", "failResponse": "Y como piensa beber vino de unos odres cerrados oh mi hidalgo caballero?"}
               ],
-              "successResponse": "Un hidalgo caballero bebiendo a morro, que vergüenza!!, en fin, por lo menos recuperas algo de fuerzas.",
-              "failResponse": "Y como piensa beber vino de unos odres cerrados oh mi hidalgo caballero?"
+              "successResponse": "Un hidalgo caballero bebiendo a morro, que vergüenza!!, en fin, por lo menos recuperas algo de fuerzas."
             },
             { 
               "action": "llenar",
@@ -733,14 +732,14 @@
               "action": "cruzar",
               "object": { "name": "cancela" },
               "requirementObject": [
-                {"name": "espada", "failResponse": "Necesitas una espada para cruzar la cancela."},
-                {"name": "armadura", "failResponse": "Necesitas una armadura para cruzar la cancela."},
-                {"name": "escudo", "failResponse": "Necesitas un escudo para cruzar la cancela."}
+                {"name": "espada", "failResponse": "Solo los caballeros de verdad pueden cruzar la cancela, y para ser un caballero de verdad necesitas tener una espada, eso como minimo ..."},
+                {"name": "armadura", "failResponse": "Solo los caballeros de verdad pueden cruzar la cancela, y para ser un caballero de verdad necesitas tener una armadura, eso como minimo ..."},
+                {"name": "escudo", "failResponse": "Solo los caballeros de verdad pueden cruzar la cancela, y para ser un caballero de verdad necesitas tener un escudo, eso como minimo ..."}
               ],
               "requirementStatus": [
-                {"name": "velar_armas_patio", "failResponse": "No puedes cruzar la cancela sin velar las armas."}
+                {"name": "velar_armas_patio", "failResponse": "Aunque tengas todo lo necesario para ser un caballero, necesitaras siempre la bendicion de san jorge para serlo de verdad, velar las armas ante el santo patron de los caballeros es una condicion indispensable para ser uno."}
               ],
-              "successResponse": "Cruzas la puerta y es como atravesar la entrada a otro mundo. Prados verdes hasta donde alcanza la vista, regados de pequeños bosques y riachuelos, animados por el bello cantar de las aves más distinguidas... huele a felicidad y opulencia, y como si el destino te sonriese, una bella doncella está intentando arreglar su carruaje averiado junto a sus monjes acompañantes. ¡¡Es la oportunidad ideal para demostrar tu valía ante una bella dama!!",
+              "successResponse": "Cruzas la puerta y es como atravesar la entrada a otro mundo. Prados verdes hasta donde alcanza la vista, regados de pequeños bosques y riachuelos, animados por el bello cantar de las aves más distinguidas... huele a felicidad y opulencia, y como si el destino te sonriese, una bella doncella está intentando arreglar su carruaje averiado junto a sus monjes acompañantes. ¡¡Es la oportunidad ideal para demostrar tu valía ante una bella dama!!, Lamentablemente, cuando estabas apunto de alcanzar la gloria te desvaneces y apareces de vuelta en casa de tu tia Agatha, una lastima, ya te estaba empezando a gustar eso de ser un hidalgo caballero verdad?.",
               "endReason":"end"
             }
           ],
