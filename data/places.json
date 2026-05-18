@@ -21,10 +21,11 @@
             {   
               "action": "cruzar",
               "object": { "name": "portal" },
-              "requirementStatus": ["leer_libro_biblioteca"],
+              "requirementStatus": [
+                {"name": "leer_libro_biblioteca", "failResponse": "¿Qué portal? No veo ningún portal, lo que si veo es un libro sobre la mesa que parece estar llamándote la atención, ¿no crees que deberías echarle un vistazo?"}
+              ],
               "travelTo": "habitación_casa",
-              "successResponse": "Cruzas el portal y al otro lado te encuentras en una habitación austera...",
-              "failResponse": "El portal no existe todavía. Quizás hay algo en esta biblioteca que debería llamar tu atención..."
+              "successResponse": "Cruzas el portal y al otro lado te encuentras en una habitación austera..."
             }
           ],
           "connectedRooms": [
@@ -37,6 +38,9 @@
           "origin": "casa",
           "step": 1, 
           "branch": 0,
+          "requirementStatus": [
+            {"name": "leer_libro_biblioteca", "failResponse": "¿Qué habitación? No veo ningúna habitación, lo que si veo es un libro sobre la mesa que parece estar llamándote la atención, ¿no crees que deberías echarle un vistazo?"}
+          ],
           "description": "Al cruzar, el portal se cierra detras de ti, asi que ya no puedes volver a casa. La unica forma de volver a abrirlo es volver aquì convertido en un autentico caballero. ¿Se me habia olvidado comentate todo esto verdad?. <br><br> Bueno, no te queda mas remedio que explorar y buscar la forma de convertirte en caballero. <br><br> Ahora mismo estas en una habitación austera, como corresponde a la de un hidalgo manchego del siglo XVI. ¡Sí!, ahora eres un hidalgo caballero. <br><br> A traves de la puerta de la habitaciòn se puede ver una escalera que baja al zaguan, diria que no te queda mas remedio que bajar al zaguan e inspeccionar la casa.",
           "media": {
             "images": [
@@ -71,17 +75,19 @@
             {   
               "action": "examinar",
               "object": { "name": "escalera" },
-              "requirementObject": ["vela"], 
-              "successResponse": "Parece que uno de los escalones esta un poco suelto, ya decia yo que crugia siempre que pasabamos por aqui. Muy agudo al haberte dado cuenta.",
-              "failResponse": "El zagüán es tan amplio como lugubre, no verias aqui ni a un elefante sin un poco de luz."          
+              "requirementObject": [
+                {"name": "vela", "failResponse": "El zagüán es tan amplio como lugubre, no verias aqui ni a un elefante sin un poco de luz."}
+              ],
+              "successResponse": "Parece que uno de los escalones esta un poco suelto, ya decia yo que crugia siempre que pasabamos por aqui. Muy agudo al haberte dado cuenta."
             },
             { 
               "action": "abrir",
               "object": { "name": "puerta" },
-              "requirementObject": ["llave"],
+              "requirementObject": [
+                {"name": "llave", "failResponse": "La puerta está cerrada a cal y canto, seguro que en alguna parte anda la llave"}
+              ],
               "travelTo": "puerta_casa",
-              "successResponse": "La puerta se abre con un estruendoso chirrido, se ve que nadie la ha usado en mucho tiempo. Más adelante ya divisas Argamasilla, ¡tu gran y amado pueblo!",
-              "failResponse": "La puerta está cerrada a cal y canto, seguro que en alguna parte anda la llave"
+              "successResponse": "La puerta se abre con un estruendoso chirrido, se ve que nadie la ha usado en mucho tiempo. Más adelante ya divisas Argamasilla, ¡tu gran y amado pueblo!"
             }
           ],
           "connectedRooms": [
@@ -105,17 +111,19 @@
             {   
               "action": "abrir",
               "object": { "name": "alacena" },
-              "requirementStatus": ["poner_armadura_despensa"],
+              "requirementStatus": [
+                {"name": "poner_armadura_despensa", "failResponse": "Una rata que habia tomado la alacena como su hogar salta sobre tu hidalgo rostro perjudicando tus globos oculares, si hubieses llevado algo con lo que protegerte como <b>una armadura</b> esto no habria pasado, pero en fin ... ahora ya no estás en condiciones de continuar con tu hidalga hazaña."}
+              ],
               "successResponse": "Una rata salta, te intenta morder, pero gracias a la armadura lo único que consigue es romperse los dientes. Ahora que ya no hay ratas que quieran acabar con tu vida podriamos revisar con calma la alacena por si hubiese algo interesante, en las alacenas suela haber comida.",
-              "failResponse": "Una rata que habia tomado la alacena como su hogar salta sobre tu hidalgo rostro perjudicando tus globos oculares, si hubieses llevado algo con lo que protegerte como <b>una armadura</b> esto no habria pasado, pero en fin ... ahora ya no estás en condiciones de continuar con tu hidalga hazaña.",
               "endReason":"death"
             },
             {   
               "action": "examinar",
               "object": { "name": "alacena" },
-              "requirementStatus": ["abrir_alacena_cocina"],
-              "successResponse": "Pues no hay comida, si que eres pobre!!, pero sobre una de las repisas hay una llave, yo la cogeria, las llaves siempre sirven para algo.",
-              "failResponse": "Convendría abrirla para poder examinarla mejor"
+              "requirementStatus": [
+                {"name": "abrir_alacena_cocina", "failResponse": "¿No crees que deberias abrir la alacena antes de examinarla?"}
+              ],
+              "successResponse": "Pues no hay comida, si que eres pobre!!, pero sobre una de las repisas hay una llave, yo la cogeria, las llaves siempre sirven para algo."
             }
           ],
           "connectedRooms": [
@@ -145,9 +153,10 @@
             { 
               "action": "poner",
               "object": { "name": "armadura" },
-              "requirementObject": ["armadura"], 
-              "successResponse": "Muy bien, una armadura es mucho mas útil puesta que guardada en el zurrón, y ademas te queda como un guante!!, así pareces más hidalgo caballero. Una cosa más que tachar de tu lista de cosas de caballero.",
-              "failResponse": "¿Intentas ponerte algo que ni siquiera tienes?, me temo lo peor de tu aventura..."
+              "requirementObject": [
+                {"name": "armadura", "failResponse": "¿Intentas ponerte algo que ni siquiera tienes?, me temo lo peor de tu aventura..."}
+              ], 
+              "successResponse": "Muy bien, una armadura es mucho mas útil puesta que guardada en el zurrón, y ademas te queda como un guante!!, así pareces más hidalgo caballero. Una cosa más que tachar de tu lista de cosas de caballero."
             }
           ],
           "connectedRooms": [
@@ -178,7 +187,9 @@
           "origin": "casa",
           "step": 4, 
           "branch": 0,
-          "requirementStatus": ["abrir_puerta_zaguàn"],
+          "requirementStatus": [
+            {"name": "abrir_puerta_zaguàn", "failResponse": "¿No crees que deberias abrir la puerta antes de salir?"}
+          ],
           "description": "Argamasilla de Alba, tu pueblo. Sus solitarias calles y piedras están mudas ante ti. Tu calle te lleva por un lado al arco del pueblo, todo un orgullo de la localidad!, por el otro te adentras en las calles... y frente a ti el muro donde se cuelgan siempre los bandos. Suelen hablar de chismes y bulos, pero admite que te encantan. ¿Que novedades traera el bando de hoy?.",
           "media": {
             "images": [
@@ -294,17 +305,19 @@
             { 
               "action": "poner",
               "object": { "name": "pedrusco" },
-              "requirementObject": ["pedrusco"],
-              "successResponse": "Colocas el pedruco en la base del muro, ingenioso!!",
-              "failResponse": "¿Que pedrusco?"
+              "requirementObject": [
+                {"name": "pedrusco", "failResponse": "¿Que pedrusco?, no veo ningún pedrusco por aquí, ¿no crees que deberias buscar algo con lo que subir al muro antes de intentar ponerlo?"}
+              ],
+              "successResponse": "Colocas el pedruco en la base del muro, ingenioso!!"
             },
             { 
               "action": "escalar",
               "object": { "name": "muro" },
-              "requirementStatus": ["poner_pedrusco_muro"],
+              "requirementStatus": [
+                {"name": "poner_pedrusco_muro", "failResponse": "El muro es demasiado alto, como te dije, pero tú como gallardo hidalgo que eres decidiste ignorar mis advertencias e intentaste escalarlo. Mala suerte que te resbalaste y mueres al caer desde lo alto. Para la pròxima busca algo que poder colocar en el suelo para subirte y que te sea mas fàcil escalarlo."}
+              ],
               "travelTo": "callejón",
               "successResponse": "Utilizas el pedrusco como escalón para poder alcanzar la parte de arriba del muro. Al subir al muro lo que ves el callejòn de la parte de atras de la posada, bastante lugubre, ¿seguro que quieres ir ahi?",
-              "failResponse": "El muro es demasiado alto, como te dije, pero tú como gallardo hidalgo que eres decidiste ignorar mis advertencias e intentaste escalarlo. Mala suerte que te resbalaste y mueres al caer desde lo alto. Para la pròxima busca algo que poder colocar en el suelo para subirte y que te sea mas fàcil escalarlo.",
               "endReason":"death"
             }
           ],
@@ -318,9 +331,10 @@
           "name": "callejòn",
           "step": 10, 
           "branch": 1,
-          "requirementStatus": ["escalar_muro_muro"],
+          "requirementStatus": [
+            {"name": "escalar_muro_muro", "failResponse": "Te pones de puntillas y apenas alcanzas a ver por encima del muro que bloquea tu paso."}
+          ],
           "description": "Vaya que sorpresa, esperaba algo más, al cruzar el muro nos hemos topado solo con el callejón trasero de la posada, lleno de bartulos y decepciones.",
-          "failResponse": "Te pones de puntillas y apenas alcanzas a ver por encima del muro que bloquea tu paso",
           "media": {
             "images": [
               "images/places/callejon.png",
@@ -391,16 +405,30 @@
             { 
               "action": "abrir",
               "object": { "name": "odre" },
-              "requirementObject": ["martillo"],
-              "successResponse": "El corcho salta junto con la boquilla del odre... una pena pero por lo menos ya podemos coger un pcoo de ese excelente vino.",
-              "failResponse": "El corcho está atascado, seguramente por que lleva siglos sin abrirse, necesitarás algo contundente con lo que golpearlo. A poder ser algo que no te importe que se pueda romper."
+              "requirementObject": [
+                {"name": "martillo", "failResponse": "Necesitas algo contundente con lo que abrirlo, por que el corcho esta muy atascado, y a poder ser que no sea tu espada, no queremos que se melle el poco filo que le queda ..."}
+              ],
+              "successResponse": "El corcho salta junto con la boquilla del odre... una pena pero por lo menos ya podemos coger un poco de ese excelente vino."
             },
             { 
               "action": "beber",
               "object": { "name":"vino", "type":"food", "lifePoints":20 },
-              "requirementStatus": ["abrir_odre_bodega"],
+              "requirementStatus": [
+                {"name": "abrir_odre_bodega", "failResponse": "Necesitas abrir el odre antes de poder beber el vino."}
+              ],
               "successResponse": "Un hidalgo caballero bebiendo a morro, que vergüenza!!, en fin, por lo menos recuperas algo de fuerzas.",
               "failResponse": "Y como piensa beber vino de unos odres cerrados oh mi hidalgo caballero?"
+            },
+            { 
+              "action": "llenar",
+              "object": { "name": "botella" },
+              "requirementObject": [
+                {"name": "botella", "failResponse": "Necesitas una botella para llenarla con el vino."}
+              ],
+              "requirementStatus": [
+                {"name": "abrir_odre_bodega", "failResponse": "Necesitas abrir el odre antes de poder llenar la botella."}
+              ],
+              "successResponse": "Esto ya es otra cosa, el viaje se hara más llevadero ahora que tenemos algo de vino guardado en la recámra."
             }
           ],
           "connectedRooms": [
@@ -481,9 +509,10 @@
             { 
               "action": "poner",
               "object": { "name": "tablon" },
-              "requirementObject": ["tablon"],
-              "successResponse": "Dejas el tablón y este hace de puente. Madre mía ademas de hidalgo eres ingeniero!!, Ahora puedes llegar a la cabaña que esta escondida dentro del bosque. Si es que alguien querria ir a esa cabaña ...",
-              "failResponse": "¿Que quieres colocar un escalón?, ¿Qué escalón?, ¡ay madre!, ahora me dirás que los molinos son gigantes..."
+              "requirementObject": [
+                {"name": "tablon", "failResponse": "¿Que quieres colocar un escalón?, ¿Qué escalón?, ¡ay madre!, ahora me dirás que los molinos son gigantes..."}
+              ],
+              "successResponse": "Dejas el tablón y este hace de puente. Madre mía ademas de hidalgo eres ingeniero!!, Ahora puedes llegar a la cabaña que esta escondida dentro del bosque. Si es que alguien querria ir a esa cabaña ..."
             },
             { 
               "action": "saltar",
@@ -501,9 +530,10 @@
           "name": "cabaña",
           "step": 6, 
           "branch": 2,
-          "requirementStatus": ["poner_tablon_acantilado"],
+          "requirementStatus": [
+            {"name": "poner_tablon_acantilado", "failResponse": "No puedes llegar a la cabaña, antes debes cruzar un acantilado que tiene pinta que no podrás cruzar de un salto"}
+          ],
           "description": "Una cabaña oscura y tenebrosa, da un poco de miedo, sobre todo por los lobos que se escuchan alrededor. Debió ser una cabaña de cazadores pero a dia de hoy esta abandonada como parece obvio. No me gustaria estar aqui fuera mas tiempo del necesario, o entramos al interior de la cabaña o volvemos al acantilado, pero no nos quedemos aqui parados por favor ...",
-          "failResponse": "No puedes llegar a la cabaña, antes debes cruzar un acantilado que tiene pinta que no podrás cruzar de un salto",
           "media": {
             "images": [
               "images/places/cabania.png",
@@ -549,9 +579,10 @@
             { 
               "action": "arreglar",
               "object": { "name": "cerradura" },
-              "requirementObject": ["alambre"],
-              "successResponse": "Gracias a tus habilidades como antiguo lazarillo, consigues arreglar la cerradura usando solo un alambre. Si no fuese por que quieres ser una valiente hidalgo para encandilar a una bella damisela, podrias ser ladrón, plantéatelo. Ahora puedes abrirla y acceder a un confortable patio",
-              "failResponse": "¿Y con qué quieres arreglarla?, ¿con una mirada seductora?, deberías buscar algo fino y alargado que quepa por la cerradura para urgar en ella y ver si se arregla."
+              "requirementObject": [
+                {"name": "alambre", "failResponse": "¿Y con qué quieres arreglarla?, ¿con una mirada seductora?, deberías buscar algo fino y alargado que quepa por la cerradura para urgar en ella y ver si se arregla."}
+              ],
+              "successResponse": "Gracias a tus habilidades como antiguo lazarillo, consigues arreglar la cerradura usando solo un alambre. Si no fuese por que quieres ser una valiente hidalgo para encandilar a una bella damisela, podrias ser ladrón, plantéatelo. Ahora puedes abrirla y acceder a un confortable patio"
             }
           ],
           "connectedRooms": [
@@ -630,9 +661,10 @@
           "origin": "venta",
           "step": 11, 
           "branch": 1,
-          "requirementStatus": ["arreglar_cerradura_venta"],
+          "requirementStatus": [
+            {"name": "arreglar_cerradura_venta", "failResponse": "Estaría bien poder visitar el patio, pero la cerradura de la cancela esta como atascada. quizas podamos arreglarla."}
+          ],
           "description": "Al traspasar la puerta del distribuidor, accedes a un sorprendentemente acogedor patio. En en centro del patio hay pozo decorado con una estatuilla de San jorge. Ya sabes, el santo de los caballeros, ¿que casualidad eh?",
-          "failResponse": "Estaría bien poder visitar el patio, pero la cerradura de la cancela esta como atascada. quizas podamos arreglarla.",
           "media": {
             "images": [
               "images/places/Patio-venta.png",
@@ -643,9 +675,15 @@
             { 
               "action": "velar",
               "object": { "name": "armas" },
-              "requirementObject": ["armadura", "espada", "escudo", "vino"],
-              "successResponse": "¡Perfecto!, ¡ahora ya sí que eres todo un caballero!, haces cosas raras de vez en cuando pero... un caballero al fin y al cabo",
-              "failResponse": "Para poder velar las armas necesitas dos cosas, por un lado todo lo que un caballero necesita para serlo, y por otro lado una ofrenda digna para san jorge."
+              "requirementObject": [
+                {"name": "armadura", "failResponse": "No puedes velar las armas sin una armadura, no es que sea un requisito indispensable para ser un caballero, pero es que no se me ocurre como vas a velar las armas sin una armadura, ¿con tu ropa de calle? no lo veo ..."}, 
+                {"name": "espada", "failResponse": "No puedes velar las armas sin una espada, valiente caballero serias sin un arma con la que impartir justicia ..."}, 
+                {"name": "escudo", "failResponse": "No puedes velar las armas sin un escudo, un caballero sin escudo es como un pez sin agua, no lo veo ..."}
+              ],
+              "requirementStatus": [
+                {"name": "llenar_botella_bodega", "failResponse": "Para que san jorge te proteja, lo mínimo que puedes hacer es ofrecerle una buena ofrenda, no seas rácano ..."}
+              ],
+              "successResponse": "¡Perfecto!, ¡ahora ya sí que eres todo un caballero!, haces cosas raras de vez en cuando pero... un caballero al fin y al cabo"
             }
           ],
           "connectedRooms": [
@@ -668,9 +706,10 @@
             { 
               "action": "atacar",
               "object": { "name": "ovejas" },
-              "requirementObject": ["espada"],
-              "successResponse": "Se apartan a tu paso, permitiendo continuar tu camino a lo que parece ser una imponente cancela",
-              "failResponse": "Por más aspavientos que hagas no servirá de nada, no impones tanto como para inquietarlas a no ser que tengas algo contundente que las asuste"
+              "requirementObject": [
+                {"name": "espada", "failResponse": "Por más aspavientos que hagas no servirá de nada, no impones tanto como para inquietarlas a no ser que tengas algo contundente que las asuste"}
+              ],
+              "successResponse": "Se apartan a tu paso, permitiendo continuar tu camino a lo que parece ser una imponente cancela"
             }
           ],
           "connectedRooms": [
@@ -693,10 +732,15 @@
             { 
               "action": "cruzar",
               "object": { "name": "cancela" },
-              "requirementObject": ["espada", "armadura"],
-              "requirementStatus": ["velar_armas_patio"],
+              "requirementObject": [
+                {"name": "espada", "failResponse": "Necesitas una espada para cruzar la cancela."},
+                {"name": "armadura", "failResponse": "Necesitas una armadura para cruzar la cancela."},
+                {"name": "escudo", "failResponse": "Necesitas un escudo para cruzar la cancela."}
+              ],
+              "requirementStatus": [
+                {"name": "velar_armas_patio", "failResponse": "No puedes cruzar la cancela sin velar las armas."}
+              ],
               "successResponse": "Cruzas la puerta y es como atravesar la entrada a otro mundo. Prados verdes hasta donde alcanza la vista, regados de pequeños bosques y riachuelos, animados por el bello cantar de las aves más distinguidas... huele a felicidad y opulencia, y como si el destino te sonriese, una bella doncella está intentando arreglar su carruaje averiado junto a sus monjes acompañantes. ¡¡Es la oportunidad ideal para demostrar tu valía ante una bella dama!!",
-              "failResponse": "El soldado te echa a empujones entre sonoras risas. No tienes todo lo necesario para ser un caballero dicen.",
               "endReason":"end"
             }
           ],

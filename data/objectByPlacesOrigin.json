@@ -267,7 +267,7 @@
     "jointToSuccess": false,
     "requirementStatus": [],
     "numOfRequirementsNeeded": 0,
-    "originDescription": "En el suelo, entre tantos desperdicios, hay una barra de metal que aunque esta algo oxidada podría ser útil para usarla como palanca.",
+    "originDescription": "En el suelo, entre tantos desperdicios, hay una palanca de metal que aunque esta algo oxidada podría ser útil para usarla como palanca.",
     "ordinaryDescription": "Hay una barra de metal que se puede usar como palanca en el suelo, hay que prestar atención, por que casi no se ve.",
     "successResponse": "Nos vendrá bien guardarlo por si queremos sacar de su sitio algo que este fuertemente pegado.",
     "failResponse": "",
