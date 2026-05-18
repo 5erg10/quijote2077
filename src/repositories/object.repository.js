@@ -9,7 +9,7 @@ function checkRequirementStatusAllowed(user, objectName) {
     return false;
   }
   const objectHasRequiredStatus = object?.requirementStatus?.map(status => normalize(status)) || [];
-  const objectHasRequirementObject = object?.requirementObject?.map(obj => normalize(obj)) || [];;
+  const objectHasRequirementObject = object?.requirementObject?.map(obj => normalize(obj)) || [];
   if (objectHasRequiredStatus?.length) {
     if(user.states) {
       let requirementStatusCont = 0;

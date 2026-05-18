@@ -5,11 +5,16 @@
 
 const { normalize } = require('../utils/stringUtils');
 
-const isSubset = (arr, target) => {
-  if (arr == undefined) return true;
-  if (arr && target == undefined) return false;
-  const normalizedTarget = target.map(normalize);
-  return arr.every(v => normalizedTarget.includes(normalize(v)));
+const isSubset = (requirementsList, userRequirements) => {
+  if (requirementsList == undefined) return true;
+  if (requirementsList && userRequirements == undefined) return false;
+  const normalizedTarget = userRequirements.map(normalize);
+  for (const reqStatus of requirementsList) {
+    if (!normalizedTarget.includes(normalize(reqStatus.name))) {
+      return reqStatus.failResponse;
+    }
+  }
+  return false;
 };
 
 /**

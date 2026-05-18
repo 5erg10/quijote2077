@@ -42,9 +42,10 @@ const execute = async (intent, userId, user) => {
     }
 
     // Comprobar requisitos de acceso
-    if (!arrayUtils.isSubset(place.requirementStatus || [], user.states || [])) {
+    const travelErrorMessage = arrayUtils.isSubset(place.requirementStatus || [], user.states || []);
+    if (travelErrorMessage) {
       await countIntents.count(userId);
-      return { action: 'viajar', success: false, message: place.failResponse || 'No puedes ir allí ahora mismo.' };
+      return { action: 'viajar', success: false, message: travelErrorMessage};
     }
 
     // Comprobar energía

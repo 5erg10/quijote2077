@@ -1,5 +1,4 @@
 const placesList = require('../../data/places.json');
-const { includesNormalized } = require('../utils/arrayUtils');
 const { normalize } = require('../utils/stringUtils');
 const stringUtils = require('../utils/stringUtils');
 

@@ -42,9 +42,9 @@ const execute = async (intent, userId, user) => {
     const userStates = user.states || [];
     const userObjects = (user.objects || []).map(o => o.name);
 
-    const statusOk = arrayUtils.isSubset(matchedAction.requirementStatus || [], userStates);
-    const objectsOk = arrayUtils.isSubset(matchedAction.requirementObject || [], userObjects);
-    const requirementsOk = statusOk && objectsOk;
+    const statusFailed = arrayUtils.isSubset(matchedAction.requirementStatus || [], userStates);
+    const objectFailed = arrayUtils.isSubset(matchedAction.requirementObject || [], userObjects);
+    const requirementsOk = !statusFailed && !objectFailed;
 
     // Si el éxito tiene endReason end (final del juego)
     if (requirementsOk && matchedAction.endReason == 'end') {
@@ -60,7 +60,7 @@ const execute = async (intent, userId, user) => {
         return resetResult;
       }
       await countIntents.count(userId);
-      return { action: canonicalVerb, success: false, message: matchedAction.failResponse };
+      return { action: canonicalVerb, success: false, message: statusFailed || objectFailed };
     }
 
     // Guardar estado
