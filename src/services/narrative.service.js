@@ -25,6 +25,7 @@ REGLAS:
 - Extrae el objeto o lugar mencionado cuando aplique (campo "object" o "place").
 - Cuando el lugar es compuesto, extrae lugar y origen (campo "place" y campo "origin")
 - Si hay varias acciones en la frase, devuelvelas todas en orden.
+- Todo lo que haya después de una preposición como "con" ignoralo, el jugador se esta refiriendo al objeto con el que realiza la accion, no a otra accion.
 - Nunca puede haber una misma accion como por ejemplo "viajar" o "coger", si detectas en el resultado que obtengas una accion repetida, elimina la menos confiable.
 - Puede haber nombres de objetos compuestos, por ejemplo "escudo de armas", en ese caso quedate con el nombre del objeto principal, que seria "escudo".
 - Puede haber nombres de lugares compuestos, como puede ser "habitacion de la posada, en esos casos el lugar es la primera parte, "habitacion", y el segundo el origen "posada"
@@ -32,6 +33,7 @@ REGLAS:
 
 Ejemplos:
 texto: "ojeo el libro", acciones: ["leer","viajar"] -> [{"action":"leer","object":"libro"}]
+texto: "abro la puerta con la llave", acciones: ["abrir","viajar"] -> [{"action":"abrir","object":"puerta"}]
 texto: "voy a la cabaña", acciones: ["leer", "viajar"] -> [{"ation": "viajar", "place": "cabaña"}]
 texto: "voy a la cocina y cojo la llave", acciones: ["viajar","coger"] -> [{"action":"viajar","place":"cocina"},{"action":"coger","object":"llave"}]
 texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","object":"alacena"}]
