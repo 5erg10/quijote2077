@@ -87,7 +87,8 @@
                 {"name": "llave", "failResponse": "La puerta está cerrada a cal y canto, seguro que en alguna parte anda la llave"}
               ],
               "travelTo": "puerta_casa",
-              "successResponse": "La puerta se abre con un estruendoso chirrido, se ve que nadie la ha usado en mucho tiempo. Más adelante ya divisas Argamasilla, ¡tu gran y amado pueblo!"
+              "successResponse": "La puerta se abre con un estruendoso chirrido, se ve que nadie la ha usado en mucho tiempo. Más adelante ya divisas Argamasilla, ¡tu gran y amado pueblo!",
+              "discardObject": "llave"
             }
           ],
           "connectedRooms": [
@@ -308,7 +309,8 @@
               "requirementObject": [
                 {"name": "pedrusco", "failResponse": "¿Que pedrusco?, no veo ningún pedrusco por aquí, ¿no crees que deberias buscar algo con lo que subir al muro antes de intentar ponerlo?"}
               ],
-              "successResponse": "Vas a usar el predrusco como escaño para alcanzar la parte superior del muro y escalarlo, ingenioso!!"
+              "successResponse": "Vas a usar el predrusco como escaño para alcanzar la parte superior del muro y escalarlo, ingenioso!!",
+              "discardObject": "pedrusco"
             },
             { 
               "action": "escalar",
@@ -511,7 +513,8 @@
               "requirementObject": [
                 {"name": "tablon", "failResponse": "¿Que quieres colocar un escalón?, ¿Qué escalón?, ¡ay madre!, ahora me dirás que los molinos son gigantes..."}
               ],
-              "successResponse": "Dejas el tablón y este hace de puente. Madre mía ademas de hidalgo eres ingeniero!!, Ahora puedes llegar a la cabaña que esta escondida dentro del bosque. Si es que alguien querria ir a esa cabaña ..."
+              "successResponse": "Dejas el tablón y este hace de puente. Madre mía ademas de hidalgo eres ingeniero!!, Ahora puedes llegar a la cabaña que esta escondida dentro del bosque. Si es que alguien querria ir a esa cabaña ...",
+              "discardObject": "tablon"
             },
             { 
               "action": "saltar",

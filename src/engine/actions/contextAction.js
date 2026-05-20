@@ -1,5 +1,6 @@
 const { addStatus } = require('../../repositories/state.repository');
 const { updateUser } = require('../../repositories/user.repository');
+const objectsDao = require('../../repositories/object.repository');
 const arrayUtils = require('../../utils/arrayUtils');
 const { normalize } = require('../../utils/stringUtils')
 const gameOperations = require('../gameOperations');
@@ -77,6 +78,11 @@ const execute = async (intent, userId, user) => {
     }
 
     // --- EJECUTAR ---
+
+    // Si la acción tiene discardObject, borramos el objeto del inventario del usuario. Para casos en los que el objeto ya no es util despues de usarlo.
+    if (matchedAction.discardObject) {
+      await objectsDao.deleteObjectByUser(userId, user, matchedAction.discardObject);
+    }
 
     // Si la acción tiene travelTo, delegamos al motor de viaje en lugar de
     // guardar un estado. Esto permite acciones narrativas como "cruzar portal"

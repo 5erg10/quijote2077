@@ -7,7 +7,7 @@ const parseIntents = async (userText, currentPlaceName, llmClientConf) => {
   const models = await llmClientConf.client.models.list();
 
   console.log('llm client: ', llmClientConf.client.baseURL);
-  console.log('models: ', models);
+  // console.log('models: ', models);
 
   const response = await llmClientConf.client.chat.completions.create({
     model: llmClientConf.model,
