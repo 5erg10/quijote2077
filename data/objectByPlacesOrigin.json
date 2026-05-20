@@ -6,11 +6,11 @@
     "weight": 5,
     "type": "util",
     "jointToSuccess": false,
-    "originDescription": "Uno de los tablones de la escalera cruje a tu paso mientras bajas, si, ese tablòn del escalón que nunca arreglaste.",
+    "originDescription": "Uno de los tablones de la escalera cruje a tu paso mientras bajas, si, ese tablòn de la escalera que nunca arreglaste.",
     "ordinaryDescription": "El tablón que tan poco esfuerzo te costó desmontar de la escalera esta en el suelo.",
     "requirementObject": ["vela"],
     "numOfRequirementsNeeded": 1,
-    "successResponse": "Es inquietante lo facilmente que se desprende el escalón, pensar que por aqui pasamos todos los dias me hace sentirme mucho más seguro.",
+    "successResponse": "Es inquietante lo facilmente que se desprende el tablón, pensar que por aquí pasamos todos los días me hace sentir mucho más seguro.",
     "failResponse": "Esta atascado en algún sitio, pero esta demasiado oscuro para poder solucionarlo, habra que vovler con un poco de luz.",
     "unFindResponse": "Que quieres coger que?",
     "objectTakenYet": "Ya tienes un tablón, ¿para que quieres otro?"
