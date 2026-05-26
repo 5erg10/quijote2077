@@ -28,6 +28,7 @@ async function callWithFallback(fn) {
       console.warn(`LLM ${llmClientConf.name} falló${isRateLimit ? ' (rate limit)' : ''}: ${message}`);
 
       if (attempt === llmClients.length - 1) {
+        error.isLlmExhausted = true;
         throw error;
       }
     }

@@ -2,7 +2,7 @@
         "biblioteca": {
           "id": "biblioteca",
           "name": "biblioteca",
-          "step": 0, 
+          "step": 0,
           "branch": 0,
           "origin": "casa",
           "description": "Estas de visita en casa de tu tia Agatha. Mientras los demas toman el tentempie y hablan sobre asuntos que no te interesan, tu aprovechas para ir a explorar la casa. Se han dicho muchas cosas sobre tu tia y esa casa, y te pica la curiosidad. <br><br> Atravesando un pasillo ves una puerta abierta y al pasar por delante puedes comprobar que se trata de la bilbioteca. Por el estado de todo lo que hay alli dentro, cualquiera diria que hace mucho que esa puerta permanecia cerrada. <br><br> Decides entrar a curioserar la estancia pero solo hay libros polvorientos en las estanterias, aunque de todos ellos hay un libro sobre la mesa que te esta llamando poderosamente la atención ... <br><br>",
@@ -12,17 +12,16 @@
               "images/places/biblioteca_noche.png"
             ]
           },
+          "actionsDescription": "El jugador puede leer el libro que hay sobre la mesa. Si ya ha leído el libro, puede cruzar o atravesar el portal mágico que ha aparecido en la habitación para pasar a la siguiente estancia.",
           "actions":[
-            {   
-              "action": "leer",
-              "object": { "name": "libro" },
+            {
+              "id": "leer_libro",
               "successResponse": "¡Vaya sorpresa que te depara el libro! Al empezar a leer en voz alta, las palabras comienzan a tomar forma de cielo azul y verdes árboles, pero de repente, una luz intensa ilumina el aire y un portal se abre ante ti como una boca desmesurada. Sin más preámbulos, el portal se muestra en toda su majestad, invitándote a cruzar hacia una habitación que parece estar en el otro lado. ¿Qué pasará si entras? Podrías ir a esa habitación si quieres..."
             },
-            {   
-              "action": "cruzar",
-              "object": { "name": "portal" },
+            {
+              "id": "cruzar_portal",
               "requirementStatus": [
-                {"name": "leer_libro_biblioteca", "failResponse": "¿Qué portal? No veo ningún portal, lo que si veo es un libro sobre la mesa que parece estar llamándote la atención, ¿no crees que deberías echarle un vistazo?"}
+                {"name": "leer_libro", "failResponse": "¿Qué portal? No veo ningún portal, lo que si veo es un libro sobre la mesa que parece estar llamándote la atención, ¿no crees que deberías echarle un vistazo?"}
               ],
               "travelTo": "habitación_casa",
               "successResponse": "Cruzas el portal y al otro lado te encuentras en una habitación austera..."
@@ -36,10 +35,10 @@
           "id": "habitación_casa",
           "name": "habitaciòn",
           "origin": "casa",
-          "step": 1, 
+          "step": 1,
           "branch": 0,
           "requirementStatus": [
-            {"name": "leer_libro_biblioteca", "failResponse": "¿Qué habitación? No veo ningúna habitación, lo que si veo es un libro sobre la mesa que parece estar llamándote la atención, ¿no crees que deberías echarle un vistazo?"}
+            {"name": "leer_libro", "failResponse": "¿Qué habitación? No veo ningúna habitación, lo que si veo es un libro sobre la mesa que parece estar llamándote la atención, ¿no crees que deberías echarle un vistazo?"}
           ],
           "description": "Al cruzar, el portal se cierra detras de ti, asi que ya no puedes volver a casa. La unica forma de volver a abrirlo es volver aquì convertido en un autentico caballero. ¿Se me habia olvidado comentate todo esto verdad?. <br><br> Bueno, no te queda mas remedio que explorar y buscar la forma de convertirte en caballero. <br><br> Ahora mismo estas en una habitación austera, como corresponde a la de un hidalgo manchego del siglo XVI. ¡Sí!, ahora eres un hidalgo caballero. <br><br> A traves de la puerta de la habitaciòn se puede ver una escalera que baja al zaguan, diria que no te queda mas remedio que bajar al zaguan e inspeccionar la casa.",
           "media": {
@@ -48,9 +47,10 @@
               "images/places/habitacion_noche.png"
             ]
           },
+          "actionsDescription": "El jugador puede descansar en la cama de la habitación para recuperar energía.",
           "actions": [
-            { 
-              "action": "descansar",
+            {
+              "id": "descansar",
               "successResponse": "Perfecto, ahora podrás seguir tu camino brioso"
             }
           ],
@@ -71,18 +71,17 @@
               "images/places/zaguan_noche.png"
             ]
           },
+          "actionsDescription": "El jugador puede examinar o inspeccionar la escalera del zaguán, pero necesita tener una vela en su inventario para iluminar el espacio. También puede intentar abrir la puerta de salida de la casa, pero para ello necesita tener la llave en su inventario.",
           "actions": [
-            {   
-              "action": "examinar",
-              "object": { "name": "escalera" },
+            {
+              "id": "examinar_escalera",
               "requirementObject": [
                 {"name": "vela", "failResponse": "El zagüán es tan amplio como lugubre, no verias aqui ni a un elefante sin un poco de luz."}
               ],
               "successResponse": "Parece que uno de los escalones esta un poco suelto, ya decia yo que crugia siempre que pasabamos por aqui. Muy agudo al haberte dado cuenta."
             },
-            { 
-              "action": "abrir",
-              "object": { "name": "puerta" },
+            {
+              "id": "abrir_puerta",
               "requirementObject": [
                 {"name": "llave", "failResponse": "La puerta está cerrada a cal y canto, seguro que en alguna parte anda la llave"}
               ],
@@ -99,7 +98,7 @@
           "id": "cocina_casa",
           "name": "cocina",
           "origin": "casa",
-          "step": 3, 
+          "step": 3,
           "branch": 0,
           "description": "La cocina esta estupendamente descuidada, pero es acogedora. A un lado puedes ver una alacena, quizas dentro podamos encontrar algo de comida, al fondo la despensa y poco más. ¿oyes eso?, oh dios mio, ¿no serán ratas?",
           "media": {
@@ -108,21 +107,20 @@
               "images/places/cocina_noche.png"
               ]
             },
+          "actionsDescription": "El jugador puede abrir la alacena de la cocina. Hay una rata dentro: si lleva puesta la armadura sobrevivirá, si no la lleva puesta morirá. Una vez abierta la alacena, puede examinarla o registrarla para ver qué hay dentro.",
           "actions": [
-            {   
-              "action": "abrir",
-              "object": { "name": "alacena" },
+            {
+              "id": "abrir_alacena",
               "requirementStatus": [
-                {"name": "poner_armadura_despensa", "failResponse": "Una rata que habia tomado la alacena como su hogar salta sobre tu hidalgo rostro perjudicando tus globos oculares, si hubieses llevado algo con lo que protegerte como <b>una armadura</b> esto no habria pasado, pero en fin ... ahora ya no estás en condiciones de continuar con tu hidalga hazaña."}
+                {"name": "poner_armadura", "failResponse": "Una rata que habia tomado la alacena como su hogar salta sobre tu hidalgo rostro perjudicando tus globos oculares, si hubieses llevado algo con lo que protegerte como <b>una armadura</b> esto no habria pasado, pero en fin ... ahora ya no estás en condiciones de continuar con tu hidalga hazaña."}
               ],
               "successResponse": "Una rata salta, te intenta morder, pero gracias a la armadura lo único que consigue es romperse los dientes. Ahora que ya no hay ratas que quieran acabar con tu vida podriamos revisar con calma la alacena por si hubiese algo interesante, en las alacenas suela haber comida.",
               "endReason":"death"
             },
-            {   
-              "action": "examinar",
-              "object": { "name": "alacena" },
+            {
+              "id": "examinar_alacena",
               "requirementStatus": [
-                {"name": "abrir_alacena_cocina", "failResponse": "¿No crees que deberias abrir la alacena antes de examinarla?"}
+                {"name": "abrir_alacena", "failResponse": "¿No crees que deberias abrir la alacena antes de examinarla?"}
               ],
               "successResponse": "Pues no hay comida, si que eres pobre!!, pero sobre una de las repisas hay una llave, yo la cogeria, las llaves siempre sirven para algo."
             }
@@ -145,18 +143,17 @@
               "images/places/despensa_noche.png"
             ]
             },
+          "actionsDescription": "El jugador puede abrir el baúl que hay en la despensa para ver qué hay dentro. Si tiene una armadura en su inventario, puede ponérsela o equipársela.",
           "actions": [
-            { 
-              "action": "abrir",
-              "object": { "name":"baúl" },
+            {
+              "id": "abrir_baul",
               "successResponse": "Como esperaba, el baul esta vacio. Solo tiene restos de comida que llevan ahi muuucho tiempo, polvo y una armadura vieja y ajada... un momento!, una armadura!!, ni tan mal ..."
             },
-            { 
-              "action": "poner",
-              "object": { "name": "armadura" },
+            {
+              "id": "poner_armadura",
               "requirementObject": [
                 {"name": "armadura", "failResponse": "¿Intentas ponerte algo que ni siquiera tienes?, me temo lo peor de tu aventura..."}
-              ], 
+              ],
               "successResponse": "Muy bien, una armadura es mucho mas útil puesta que guardada en el zurrón, y ademas te queda como un guante!!, así pareces más hidalgo caballero. Una cosa más que tachar de tu lista de cosas de caballero."
             }
           ],
@@ -168,7 +165,7 @@
           "id": "comedor_casa",
           "name": "comedor",
           "origin": "casa",
-          "step": 3, 
+          "step": 3,
           "branch": 0,
           "description": "El comedor de tu casa. Rústico, sencillo... esta claro que tu familia pasó por mejores momentos.",
           "media": {
@@ -177,6 +174,7 @@
               "images/places/comedor_noche.png"
               ]
             },
+          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
           "actions": [],
           "connectedRooms": [
             "zaguán_casa"
@@ -186,10 +184,10 @@
           "id": "puerta_casa",
           "name": "puerta",
           "origin": "casa",
-          "step": 4, 
+          "step": 4,
           "branch": 0,
           "requirementStatus": [
-            {"name": "abrir_puerta_zaguàn", "failResponse": "¿No crees que deberias abrir la puerta antes de salir?"}
+            {"name": "abrir_puerta", "failResponse": "¿No crees que deberias abrir la puerta antes de salir?"}
           ],
           "description": "Argamasilla de Alba, tu pueblo. Sus solitarias calles y piedras están mudas ante ti. Tu calle te lleva por un lado al arco del pueblo, todo un orgullo de la localidad!, por el otro te adentras en las calles... y frente a ti el muro donde se cuelgan siempre los bandos. Suelen hablar de chismes y bulos, pero admite que te encantan. ¿Que novedades traera el bando de hoy?.",
           "media": {
@@ -198,11 +196,11 @@
               "images/places/argamasilla_noche.png"
               ]
             },
+          "actionsDescription": "El jugador puede leer o descifrar el bando que hay colgado en el muro de la calle.",
           "actions": [
-            { 
-              "action": "leer",
-              "object": { "name": "bando" },
-              "successResponse": "'Si caballero te quieres armar, las armas tendrás que velar, en una posada de este lugar, desde la cual la luna verás.', bonito poema si señor." 
+            {
+              "id": "leer_bando",
+              "successResponse": "'Si caballero te quieres armar, las armas tendrás que velar, en una posada de este lugar, desde la cual la luna verás.', bonito poema si señor."
             }
           ],
           "connectedRooms": [
@@ -213,7 +211,7 @@
           "id": "arco_pueblo",
           "name": "arco",
           "origin": "pueblo",
-          "step": 5, 
+          "step": 5,
           "branch": 0,
           "description": "El arco no es gran cosa, para que lo vamos a negar. Aunque supongo que en un pueblo tan pequeño a cualquier cosa se le llama monumento. Más adelante, siguiendo por el camino, puedes llegar a la arboleda, siempre con su sombra acogedora y secreta",
           "media": {
@@ -222,6 +220,7 @@
               "images/places/arco_noche.png"
               ]
             },
+          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
           "actions": [],
           "connectedRooms": [
             "puerta_casa", "arboleda"
@@ -230,7 +229,7 @@
         "arboleda": {
           "id": "arboleda",
           "name": "arboleda",
-          "step": 6, 
+          "step": 6,
           "branch": 0,
           "description": "¿Arboleda?, ¿selva?, las mayores sorpresas pueden esperarte en estos lugares, por lo menos el suelo es mullido y fertil con plantas que parecen suculentas. Detrás de ti dejas el arco de entrada al pueblo mientras que más adelante en el camino ves emerger el manzano, conocido en todo el pueblo.",
           "media": {
@@ -239,11 +238,11 @@
               "images/places/arboleda_noche.png"
               ]
             },
+          "actionsDescription": "El jugador puede examinar, inspeccionar o mirar el suelo de la arboleda para ver qué hay en él.",
           "actions": [
-            {   
-              "action": "examinar",
-              "object": { "name": "suelo"},
-              "successResponse": "El suelo es fértil y plagado de níscalos con un aspecto suculento" 
+            {
+              "id": "examinar_suelo",
+              "successResponse": "El suelo es fértil y plagado de níscalos con un aspecto suculento"
             }
           ],
           "connectedRooms": [
@@ -253,7 +252,7 @@
         "manzano": {
           "id": "manzano",
           "name": "manzano",
-          "step": 7, 
+          "step": 7,
           "branch": 0,
           "description": "Algo insólito en estos parajes, ¡un manzano!, quizas por su rareza sea tan famoso en el pueblo. Desde aqui puedes volver hacia la arboleda de camino al pueblo o continuar hacia la posada que veo mas allá, tu mismo.",
           "media": {
@@ -262,10 +261,10 @@
               "images/places/manzano_noche.png"
             ]
             },
+          "actionsDescription": "El jugador puede golpear, sacudir o agitar el manzano para que caigan manzanas al suelo.",
           "actions": [
-            {   
-              "action": "golpear",
-              "object": { "name": "manzano" },
+            {
+              "id": "golpear_manzano",
               "successResponse": "Una manzana cae al suelo"
             }
           ],
@@ -276,7 +275,7 @@
         "posada": {
           "id": "posada",
           "name": "posada",
-          "step": 9, 
+          "step": 9,
           "branch": 0,
           "description": "Te encuentras ante la imponente puerta de una suntuosa posada... mentira, la posada luce de dudosa categoría cuanto menos y la puerta se cae a cachos, dentro estara la recapcion. <br><br>A la izquierda, cruzando un camino invadido por la maleza, se ve un muro limítrofe de la posada. Es un lugar discreto y apartado... ya me entiendes. puedes acercarte al muro a echar un vistazo, o puedes ir a la recepcion de la posada para ver que se cuece por ahi.",
           "media": {
@@ -285,6 +284,7 @@
               "images/places/posada_noche.png"
             ]
           },
+          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
           "actions": [],
           "connectedRooms": [
             "muro", "recepción_posada"
@@ -293,7 +293,7 @@
         "muro": {
           "id": "muro",
           "name": "muro",
-          "step": 9, 
+          "step": 9,
           "branch": 1,
           "description": "Estás en un camino bloqueado por un enorme muro de piedra, la unica opcion de seguir el camino es pasar el muro, podrias intentar escalarlo, pero parece bastante alto, yo buscaria algo que poder colocar en la base para poder alcanzar la parte superior del muro y escalarlo sin morir en el intento.",
           "media": {
@@ -302,21 +302,20 @@
               "images/places/muro_noche.png"
               ]
             },
+          "actionsDescription": "El jugador puede colocar o poner un pedrusco en la base del muro para usarlo como escalón; para ello necesita tener un pedrusco en su inventario. Una vez colocado el pedrusco, puede intentar escalar o trepar el muro.",
           "actions": [
-            { 
-              "action": "poner",
-              "object": { "name": "pedrusco" },
+            {
+              "id": "poner_pedrusco",
               "requirementObject": [
                 {"name": "pedrusco", "failResponse": "¿Que pedrusco?, no veo ningún pedrusco por aquí, ¿no crees que deberias buscar algo con lo que subir al muro antes de intentar ponerlo?"}
               ],
               "successResponse": "Vas a usar el predrusco como escaño para alcanzar la parte superior del muro y escalarlo, ingenioso!!",
               "discardObject": "pedrusco"
             },
-            { 
-              "action": "escalar",
-              "object": { "name": "muro" },
+            {
+              "id": "escalar_muro",
               "requirementStatus": [
-                {"name": "poner_pedrusco_muro", "failResponse": "El muro es demasiado alto, como te dije, pero tú como gallardo hidalgo que eres decidiste ignorar mis advertencias e intentaste escalarlo. Mala suerte que te resbalaste y mueres al caer desde lo alto. Para la pròxima busca algo que poder colocar en el suelo para subirte y que te sea mas fàcil escalarlo."}
+                {"name": "poner_pedrusco", "failResponse": "El muro es demasiado alto, como te dije, pero tú como gallardo hidalgo que eres decidiste ignorar mis advertencias e intentaste escalarlo. Mala suerte que te resbalaste y mueres al caer desde lo alto. Para la pròxima busca algo que poder colocar en el suelo para subirte y que te sea mas fàcil escalarlo."}
               ],
               "travelTo": "callejón",
               "successResponse": "Al subir al muro lo que ves el callejòn de la parte de atras de la posada, bastante lugubre, ¿seguro que quieres ir ahi?",
@@ -331,10 +330,10 @@
         "callejón": {
           "id": "callejón",
           "name": "callejòn",
-          "step": 10, 
+          "step": 10,
           "branch": 1,
           "requirementStatus": [
-            {"name": "escalar_muro_muro", "failResponse": "Te pones de puntillas y apenas alcanzas a ver por encima del muro que bloquea tu paso."}
+            {"name": "escalar_muro", "failResponse": "Te pones de puntillas y apenas alcanzas a ver por encima del muro que bloquea tu paso."}
           ],
           "description": "Vaya que sorpresa, esperaba algo más, al cruzar el muro nos hemos topado solo con el callejón trasero de la posada, lleno de bartulos y decepciones.",
           "media": {
@@ -343,6 +342,7 @@
               "images/places/callejon_noche.png"
               ]
             },
+          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
           "actions": [],
           "connectedRooms": [
             "muro"
@@ -352,7 +352,7 @@
           "id": "recepción_posada",
           "name": "recepciòn",
           "origin": "posada",
-          "step": 10, 
+          "step": 10,
           "branch": 0,
           "description": "Estás en la recepción de la posada. ¿Cuánta gente habrá pasado aqui la noche?, al fondo ves unas escaleras, de esas que se han arreglado tantas veces que ya ni se parecen a lo que fueron un dia, si es que hubo algún día que tubiesen buen aspecto... En fin, a la ziquiera hay una pequeña puerta que por el olor te debe llevar a una bodega.",
           "media": {
@@ -361,6 +361,7 @@
               "images/places/recepcion_noche.png"
             ]
             },
+          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
           "actions": [],
           "connectedRooms": [
             "posada", "escaleras_posada", "bodega_posada"
@@ -370,7 +371,7 @@
           "id": "escalera_posada",
           "name": "escalera",
           "origin": "posada",
-          "step": 11, 
+          "step": 11,
           "branch": 0,
           "description": "La escalera cruje que da miedo. Subiendo llegas a la habitacioón de la posada, pero sube rapido no vaya a ser que se desmorone bajo tus pies ...",
           "media": {
@@ -379,10 +380,10 @@
               "images/places/escaleras_noche.png"
             ]
             },
+          "actionsDescription": "El jugador puede examinar, mirar o inspeccionar el candelabro que hay en la pared de la escalera.",
           "actions": [
-            { 
-              "action": "examinar",
-              "object": { "name": "candelabro" },
+            {
+              "id": "examinar_candelabro",
               "successResponse": "Una de las velas parece suelta, las velas suelen estar pegadas al candelabro para que no las roben, ya sabes, pero UNA esta suelta..."
             }
           ],
@@ -394,7 +395,7 @@
           "id": "bodega_posada",
           "name": "bodega",
           "origin": "posada",
-          "step": 13, 
+          "step": 13,
           "branch": 0,
           "description": "La estancia esta llena de odres, Huele a vino rancio y a queso picado. ¿O era al revés?, en cualquier caso no me vendria mal algo de ese vino, lo llevo necesitando desde que me converti en narrador de esta historia ...",
           "media": {
@@ -403,31 +404,29 @@
               "images/places/bodega_noche.png"
               ]
             },
+          "actionsDescription": "El jugador puede abrir o destapar un odre de vino golpeándolo; para ello necesita tener un martillo en su inventario. Si el odre ya está abierto, puede beber directamente del odre para recuperar fuerzas. Si tiene una botella en el inventario y el odre está abierto, puede llenar o rellenar la botella con vino.",
           "actions": [
-            { 
-              "action": "abrir",
-              "object": { "name": "odre" },
+            {
+              "id": "abrir_odre",
               "requirementObject": [
                 {"name": "martillo", "failResponse": "Necesitas algo contundente con lo que abrirlo, por que el corcho esta muy atascado, y a poder ser que no sea tu espada, no queremos que se melle el poco filo que le queda ..."}
               ],
               "successResponse": "Le das un golpe con el martillo y el corcho salta junto con la boquilla del odre... una pena pero por lo menos ya podemos coger un poco de ese excelente vino."
             },
-            { 
-              "action": "beber",
-              "object": { "name":"vino", "type":"food", "lifePoints":20 },
+            {
+              "id": "beber_vino",
               "requirementStatus": [
-                {"name": "abrir_odre_bodega", "failResponse": "Y como piensa beber vino de unos odres cerrados oh mi hidalgo caballero?"}
+                {"name": "abrir_odre", "failResponse": "Y como piensa beber vino de unos odres cerrados oh mi hidalgo caballero?"}
               ],
               "successResponse": "Un hidalgo caballero bebiendo a morro, que vergüenza!!, en fin, por lo menos recuperas algo de fuerzas."
             },
-            { 
-              "action": "llenar",
-              "object": { "name": "botella" },
+            {
+              "id": "llenar_botella",
               "requirementObject": [
                 {"name": "botella", "failResponse": "Necesitas una botella para llenarla con el vino."}
               ],
               "requirementStatus": [
-                {"name": "abrir_odre_bodega", "failResponse": "Necesitas abrir el odre antes de poder llenar la botella."}
+                {"name": "abrir_odre", "failResponse": "Necesitas abrir el odre antes de poder llenar la botella."}
               ],
               "successResponse": "Esto ya es otra cosa, el viaje se hara más llevadero ahora que tenemos algo de vino guardado en la recámra."
             }
@@ -440,7 +439,7 @@
           "id": "habitacion_posada",
           "name": "habitaciòn",
           "origin": "posada",
-          "step": 13, 
+          "step": 13,
           "branch": 0,
           "description": "Bonito dormitorio este. Una cama que hasta parece limpia domina la habitacion.",
           "media": {
@@ -449,9 +448,10 @@
               "images/places/posada_dormitorio_noche.png"
               ]
             },
+          "actionsDescription": "El jugador puede descansar en la cama de la habitación para recuperar energía.",
           "actions": [
-            { 
-              "action": "descansar",
+            {
+              "id": "descansar",
               "successResponse": "Perfecto, ahora podrás seguir tu camino brioso"
             }
           ],
@@ -463,7 +463,7 @@
           "id": "calles_pueblo",
           "name": "calles",
           "origin": "pueblo",
-          "step": 5, 
+          "step": 5,
           "branch": 1,
           "description": "La única calle principal del pueblo, no es que sea muy grande que digamos... más alante están los maravillosos campos de castilla, protagonistas de infinidad de poemas. Detrás dejas la puerta de casa.",
           "media": {
@@ -472,6 +472,7 @@
               "images/places/calles_noche.png"
               ]
             },
+          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
           "actions": [],
           "connectedRooms": [
             "puerta_casa", "campos"
@@ -480,7 +481,7 @@
         "campos": {
           "id": "campos",
           "name": "campos",
-          "step": 6, 
+          "step": 6,
           "branch": 1,
           "description": "Ya dejaste las calles atrás y ante ti se extienden los bellos campos de la mancha. Cómo me gusta ese olor a trigo que inunda el aire. Más adelante en el camino ves la puerta destartalada de una venta, pero un camino a la izquierda llama tu atencion. Ese camino te lleva al acantilado, no es que yo lo sepa, es que lo pone en ese cartel, aunque sea dificil de leer.",
           "media": {
@@ -489,6 +490,7 @@
               "images/places/campos_noche.png"
               ]
             },
+          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
           "actions": [],
           "connectedRooms": [
             "calles_pueblo", "venta", "acantilado"
@@ -497,7 +499,7 @@
         "acantilado": {
           "id": "acantilado",
           "name": "acantilado",
-          "step": 6, 
+          "step": 6,
           "branch": 2,
           "description": "Un diminuto acantilado está frente ti y mas alla en el interior del bosque se adivina una cabaña. Quizás podrías cruzarlo de un salto, pero parece mucha distancia incluso para un valiente hidalgo. Creo que sería mejor darse media vuelta o buscar algo que usar de pruente para cruzar.",
           "media": {
@@ -506,19 +508,18 @@
               "images/places/acantilado_noche.png"
               ]
             },
+          "actionsDescription": "El jugador puede colocar o poner un tablón sobre el acantilado para usarlo como puente y poder cruzar; para ello necesita tener un tablón en su inventario. También puede intentar saltar el acantilado, aunque es extremadamente peligroso y seguramente mortal.",
           "actions": [
-            { 
-              "action": "poner",
-              "object": { "name": "tablon" },
+            {
+              "id": "poner_tablon",
               "requirementObject": [
                 {"name": "tablon", "failResponse": "¿Que quieres colocar un escalón?, ¿Qué escalón?, ¡ay madre!, ahora me dirás que los molinos son gigantes..."}
               ],
               "successResponse": "Dejas el tablón y este hace de puente. Madre mía ademas de hidalgo eres ingeniero!!, Ahora puedes llegar a la cabaña que esta escondida dentro del bosque. Si es que alguien querria ir a esa cabaña ...",
               "discardObject": "tablon"
             },
-            { 
-              "action": "saltar",
-              "object": { "name": "acantilado" },
+            {
+              "id": "saltar_acantilado",
               "successResponse": "Demasiada fe tenías en tus habilidades, ¿como pensabas que podias saltar tan lejos?. Por desgracia, no llegas al otro lado y ahora eres un hidalgo estrellado",
               "endReason":"death"
             }
@@ -530,10 +531,10 @@
         "cabaña": {
           "id": "cabaña",
           "name": "cabaña",
-          "step": 6, 
+          "step": 6,
           "branch": 2,
           "requirementStatus": [
-            {"name": "poner_tablon_acantilado", "failResponse": "No puedes llegar a la cabaña, antes debes cruzar un acantilado que tiene pinta que no podrás cruzar de un salto"}
+            {"name": "poner_tablon", "failResponse": "No puedes llegar a la cabaña, antes debes cruzar un acantilado que tiene pinta que no podrás cruzar de un salto"}
           ],
           "description": "Una cabaña oscura y tenebrosa, da un poco de miedo, sobre todo por los lobos que se escuchan alrededor. Debió ser una cabaña de cazadores pero a dia de hoy esta abandonada como parece obvio. No me gustaria estar aqui fuera mas tiempo del necesario, o entramos al interior de la cabaña o volvemos al acantilado, pero no nos quedemos aqui parados por favor ...",
           "media": {
@@ -542,6 +543,7 @@
               "images/places/cabania_noche.png"
               ]
             },
+          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
           "actions": [],
           "connectedRooms": [
             "acantilado", "interior_cabaña"
@@ -550,7 +552,7 @@
         "interior_cabaña": {
           "id": "interior_cabaña",
           "name": "interior",
-          "step": 6, 
+          "step": 6,
           "branch": 3,
           "description": "Esta todo mangas por hombro, diria que no hay absolutamente nada que este en su sitio, a pesar de eso es mucho mas tranquilizador que el exterior, por lo menos estamos protegidos de los lobos... un poco solo.",
           "failResponse": "No podemos entrar, la puerta esta atascada.",
@@ -560,15 +562,16 @@
               "images/places/cabania_interior_noche.png"
               ]
             },
+          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
           "actions": [],
           "connectedRooms": [
             "cabaña"
           ]
         },
-        "venta": { 
+        "venta": {
           "id": "venta",
           "name": "venta",
-          "step": 8, 
+          "step": 8,
           "branch": 1,
           "description": "No esta mal, necesita una buena mano de pintura pero en su dia debio de ser muy bonita. En fin, a traves de la puerta se ve el recibidor, podriamos entrar para preguntar. Si no, a un lado estan los establos y una puerta que debe de llevar al patio trasero. Si rodeamos la venta más allá se ven unos prados",
           "media": {
@@ -577,10 +580,10 @@
               "images/places/venta_noche.png"
               ]
             },
+          "actionsDescription": "El jugador puede intentar arreglar, forzar o manipular la cerradura de la puerta del patio trasero; para ello necesita tener un alambre en su inventario.",
           "actions": [
-            { 
-              "action": "arreglar",
-              "object": { "name": "cerradura" },
+            {
+              "id": "arreglar_cerradura",
               "requirementObject": [
                 {"name": "alambre", "failResponse": "¿Y con qué quieres arreglarla?, ¿con una mirada seductora?, deberías buscar algo fino y alargado que quepa por la cerradura para urgar en ella y ver si se arregla."}
               ],
@@ -595,7 +598,7 @@
           "id": "recibidor_venta",
           "name": "recibidor",
           "origin": "venta",
-          "step": 9, 
+          "step": 9,
           "branch": 1,
           "description": "Vaya, no hay nadie para atendernos. Viendo el estado de todo no me extraña que no haya nadie al cargo, arriba hay una habitacion por lo menos...",
           "media": {
@@ -604,6 +607,7 @@
               "images/places/recibidor_noche.png"
             ]
             },
+          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
           "actions": [],
           "connectedRooms": [
             "habitacion_venta"
@@ -613,7 +617,7 @@
           "id": "establo_venta",
           "name": "establo",
           "origin": "venta",
-          "step": 10, 
+          "step": 10,
           "branch": 1,
           "description": "El viejo establo, en otros tiempos era un hervidero de caballos que entraban y salian. Hace tiempo que ningun caballo disfruta de su hospitalidad, pero todas las herramientas y herrajes siguen en su sitio, o desperdigados aqui y allá. Al fondo hay un cesto de mimbre que parece que usaban para guardar cosas.",
           "media": {
@@ -622,10 +626,10 @@
               "images/places/establo_noche.png"
             ]
             },
+          "actionsDescription": "El jugador puede examinar, revisar o registrar el cesto de mimbre que hay al fondo del establo.",
           "actions": [
-            { 
-              "action": "examinar",
-              "object": { "name": "cesto" },
+            {
+              "id": "examinar_cesto",
               "successResponse": "Dentro del cesto hay muchas cosas guardadas sin sentido ni orden alguno, lo único que identifico en el martillo .... todo lo demas no lo habia visto en mi vida.",
               "failResponse": ""
             }
@@ -638,7 +642,7 @@
           "id": "habitacion_venta",
           "name": "habitaciòn",
           "origin": "venta",
-          "step": 11, 
+          "step": 11,
           "branch": 1,
           "description": "Un dormitorio sin más. Una cama, un suelo... poco más. Para descansar es suficiente supongo",
           "media": {
@@ -647,9 +651,10 @@
               "images/places/venta_dormitorio_noche.png"
             ]
             },
+          "actionsDescription": "El jugador puede descansar en la cama de la habitación para recuperar energía.",
           "actions": [
-            { 
-              "action": "descansar",
+            {
+              "id": "descansar",
               "successResponse": "Perfecto, ahora podrás seguir tu camino brioso"
             }
           ],
@@ -661,10 +666,10 @@
           "id": "patio_venta",
           "name": "patio",
           "origin": "venta",
-          "step": 11, 
+          "step": 11,
           "branch": 1,
           "requirementStatus": [
-            {"name": "arreglar_cerradura_venta", "failResponse": "Estaría bien poder visitar el patio, pero la cerradura de la cancela esta como atascada. quizas podamos arreglarla."}
+            {"name": "arreglar_cerradura", "failResponse": "Estaría bien poder visitar el patio, pero la cerradura de la cancela esta como atascada. quizas podamos arreglarla."}
           ],
           "description": "Al traspasar la puerta del distribuidor, accedes a un sorprendentemente acogedor patio. En en centro del patio hay pozo decorado con una estatuilla de San jorge. Ya sabes, el santo de los caballeros, ¿que casualidad eh?",
           "media": {
@@ -673,17 +678,17 @@
               "images/places/Patio-venta_noche.png"
             ]
             },
+          "actionsDescription": "El jugador puede velar sus armas ante la estatuilla de San Jorge, o rezar ante ella, o hacer una ofrenda. Para hacerlo necesita tener armadura, espada y escudo en su inventario, y además debe haber llenado previamente una botella de vino como ofrenda.",
           "actions": [
-            { 
-              "action": "velar",
-              "object": { "name": "armas" },
+            {
+              "id": "velar_armas",
               "requirementObject": [
-                {"name": "armadura", "failResponse": "No puedes velar las armas sin una armadura, no es que sea un requisito indispensable para ser un caballero, pero es que no se me ocurre como vas a velar las armas sin una armadura, ¿con tu ropa de calle? no lo veo ..."}, 
-                {"name": "espada", "failResponse": "No puedes velar las armas sin una espada, valiente caballero serias sin un arma con la que impartir justicia ..."}, 
+                {"name": "armadura", "failResponse": "No puedes velar las armas sin una armadura, no es que sea un requisito indispensable para ser un caballero, pero es que no se me ocurre como vas a velar las armas sin una armadura, ¿con tu ropa de calle? no lo veo ..."},
+                {"name": "espada", "failResponse": "No puedes velar las armas sin una espada, valiente caballero serias sin un arma con la que impartir justicia ..."},
                 {"name": "escudo", "failResponse": "No puedes velar las armas sin un escudo, un caballero sin escudo es como un pez sin agua, no lo veo ..."}
               ],
               "requirementStatus": [
-                {"name": "llenar_botella_bodega", "failResponse": "Para que san jorge te proteja, lo mínimo que puedes hacer es ofrecerle una buena ofrenda, no seas rácano ..."}
+                {"name": "llenar_botella", "failResponse": "Para que san jorge te proteja, lo mínimo que puedes hacer es ofrecerle una buena ofrenda, no seas rácano ..."}
               ],
               "successResponse": "¡Perfecto!, ¡ahora ya sí que eres todo un caballero!, haces cosas raras de vez en cuando pero... un caballero al fin y al cabo"
             }
@@ -695,7 +700,7 @@
         "prados": {
           "id": "prados",
           "name": "prados",
-          "step": 6, 
+          "step": 6,
           "branch": 2,
           "description": "Unos extensos prados, que solo destacan por un nutrido rebaño de ovejas, que pastan apacibles pero bloquean el maldito paso hacia la cancela que da acceso a los dominios de la reina.",
           "media": {
@@ -704,10 +709,10 @@
               "images/places/prados_noche.png"
             ]
             },
+          "actionsDescription": "El jugador puede atacar, espantar, asustar o ahuyentar a las ovejas que bloquean el paso; para ello necesita tener una espada en su inventario.",
           "actions": [
-            { 
-              "action": "atacar",
-              "object": { "name": "ovejas" },
+            {
+              "id": "atacar_ovejas",
               "requirementObject": [
                 {"name": "espada", "failResponse": "Por más aspavientos que hagas no servirá de nada, no impones tanto como para inquietarlas a no ser que tengas algo contundente que las asuste"}
               ],
@@ -721,7 +726,7 @@
         "cancela": {
           "id": "cancela",
           "name": "cancela",
-          "step": 7, 
+          "step": 7,
           "branch": 2,
           "description": "Una gran cancela custodiada por un soldado. Más allá se extienden los dominios del gran reino de castilla, donde valientes hidalgos ponen a prueba su destreza y conocen a sus amadas doncellas. Yo intentaría cruzarla",
           "media": {
@@ -730,17 +735,17 @@
               "images/places/cancela_noche.png"
             ]
             },
+          "actionsDescription": "El jugador puede cruzar, atravesar o pasar la cancela para acceder a los dominios del reino. Para hacerlo necesita tener espada, armadura y escudo en su inventario, y además debe haber velado sus armas ante San Jorge previamente.",
           "actions": [
-            { 
-              "action": "cruzar",
-              "object": { "name": "cancela" },
+            {
+              "id": "cruzar_cancela",
               "requirementObject": [
                 {"name": "espada", "failResponse": "Solo los caballeros de verdad pueden cruzar la cancela, y para ser un caballero de verdad necesitas tener una espada, eso como minimo ..."},
                 {"name": "armadura", "failResponse": "Solo los caballeros de verdad pueden cruzar la cancela, y para ser un caballero de verdad necesitas tener una armadura, eso como minimo ..."},
                 {"name": "escudo", "failResponse": "Solo los caballeros de verdad pueden cruzar la cancela, y para ser un caballero de verdad necesitas tener un escudo, eso como minimo ..."}
               ],
               "requirementStatus": [
-                {"name": "velar_armas_patio", "failResponse": "Aunque tengas todo lo necesario para ser un caballero, necesitaras siempre la bendicion de san jorge para serlo de verdad, velar las armas ante el santo patron de los caballeros es una condicion indispensable para ser uno."}
+                {"name": "velar_armas", "failResponse": "Aunque tengas todo lo necesario para ser un caballero, necesitaras siempre la bendicion de san jorge para serlo de verdad, velar las armas ante el santo patron de los caballeros es una condicion indispensable para ser uno."}
               ],
               "successResponse": "Cruzas la puerta y es como atravesar la entrada a otro mundo. Prados verdes hasta donde alcanza la vista, regados de pequeños bosques y riachuelos, animados por el bello cantar de las aves más distinguidas... huele a felicidad y opulencia, y como si el destino te sonriese, una bella doncella está intentando arreglar su carruaje averiado junto a sus monjes acompañantes. ¡¡Es la oportunidad ideal para demostrar tu valía ante una bella dama!!, Lamentablemente, cuando estabas apunto de alcanzar la gloria te desvaneces y apareces de vuelta en casa de tu tia Agatha, una lastima, ya te estaba empezando a gustar eso de ser un hidalgo caballero verdad?.",
               "endReason":"end"

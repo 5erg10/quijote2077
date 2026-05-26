@@ -16,8 +16,11 @@ const processGameAction = async (req, res) => {
 
   } catch (error) {
     console.error('game.controller error:', error);
+    const text = error.isLlmExhausted
+      ? 'ya estoy cansado de trabajar, por hoy ya fue suficiente, continuamos mañana ...'
+      : 'Ha ocurrido un error inesperado en la aventura.';
     return res.status(500).json({
-      messages: [{ text: 'Ha ocurrido un error inesperado en la aventura.', intent: 'error' }]
+      messages: [{ text, intent: 'error' }]
     });
   }
 }
