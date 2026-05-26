@@ -36,7 +36,7 @@ async function handleGameplay(id, text, user) {
 
   const currentPlaceName = user.currentRoom.id;
 
-  const intents = await callWithFallback(client => parseIntents(text, currentPlaceName, client));
+  const intents = await callWithFallback(client => parseIntents(text, currentPlaceName, user.objects || [], user.states || [], client));
   
   console.log('Intents:', JSON.stringify(intents));
 

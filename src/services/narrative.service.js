@@ -1,50 +1,60 @@
-const { getValidActionsForPlace, resolveCanonicalVerb } = require('../utils/actionContext');
+const placesData = require('../../data/places.json');
 
-const parseIntents = async (userText, currentPlaceName, llmClientConf) => {
-
-  const availableActions = getValidActionsForPlace(currentPlaceName);
-
-  const models = await llmClientConf.client.models.list();
+const parseIntents = async (userText, currentPlaceName, userObjects, userStates, llmClientConf) => {
+  const placeData = placesData[currentPlaceName];
+  const actionsDescription = placeData?.actionsDescription || 'No hay acciones especiales disponibles en este lugar.';
+  const actionIds = (placeData?.actions || []).map(a => a.id).filter(Boolean);
+  const inventoryText = (userObjects || []).length > 0
+    ? (userObjects || []).map(o => o.name).join(', ')
+    : 'mochila vacía';
+  const statesText = (userStates || []).length > 0
+    ? (userStates || []).join(', ')
+    : 'ninguno';
 
   console.log('llm client: ', llmClientConf.client.baseURL);
-  // console.log('models: ', models);
+
+  const systemPrompt = `Eres un analizador de intenciones para una aventura de texto en español.
+
+ACCIONES DE LUGAR disponibles aquí:
+${actionsDescription}
+${actionIds.length > 0 ? `IDs exactos de las acciones de lugar: ${actionIds.join(', ')}` : ''}
+
+ACCIONES DE SISTEMA (siempre disponibles):
+- viajar: ir a otro lugar. Devuelve {"action":"viajar","place":"nombre"} o {"action":"viajar","place":"nombre","origin":"origen"} si el lugar tiene nombre compuesto como "habitacion de la posada"
+- coger: recoger un objeto del lugar. Devuelve {"action":"coger","object":"nombre"}
+- tirar: soltar un objeto del inventario. Devuelve {"action":"tirar","object":"nombre"}
+- comer: comer un objeto. Devuelve {"action":"comer","object":"nombre"}
+- inventario: ver los objetos que lleva el jugador
+- ayuda: pedir ayuda o una pista
+- afirmar: responder que sí (sí, claro, vale, de acuerdo...)
+- negar: responder que no (no, nunca, para nada...)
+
+El jugador lleva en su mochila: ${inventoryText}
+Acciones que el jugador ya ha realizado: ${statesText}
+
+REGLAS:
+- Responde SOLO con un array JSON válido, sin texto extra ni markdown.
+- Si el jugador quiere hacer una acción de lugar, devuelve exactamente su ID: [{"action":"id_exacto"}]
+- Si hay varias intenciones en la frase, devuélvelas todas en orden.
+- Nunca repitas la misma acción dos veces; si detectas duplicados elimina el menos fiable.
+- Para lugares compuestos como "habitacion de la posada": place="habitacion", origin="posada".
+- Para objetos compuestos como "escudo de armas": quédate con el nombre principal "escudo".
+- Ignora lo que haya tras preposiciones como "con" cuando indican el instrumento usado.
+- Si no reconoces ninguna acción válida, devuelve [{"action":"fallback"}].
+
+Ejemplos:
+"utilizo el alambre en la cerradura" -> [{"action":"arreglar_cerradura"}]
+"voy a la posada" -> [{"action":"viajar","place":"posada"}]
+"me dirijo a la habitacion de la posada" -> [{"action":"viajar","place":"habitacion","origin":"posada"}]
+"cojo la manzana y me voy al arco del pueblo" -> [{"action":"coger","object":"manzana"},{"action":"viajar","place":"arco","origin":"pueblo"}]
+"qué llevo encima" -> [{"action":"inventario"}]
+"trepo el muro" -> [{"action":"escalar_muro"}]`;
 
   const response = await llmClientConf.client.chat.completions.create({
     model: llmClientConf.model,
     messages: [
-      {
-        role: 'system',
-        content: `Eres un analizador de intenciones para una aventura de texto en español.
-Dada una lista de acciones disponibles y el texto del jugador, identifica que acciones quiere realizar.
-Las acciones disponibles son verbos en español. El jugador puede usar el verbo exacto o cualquier sinonimo.
-
-REGLAS:
-- Responde SOLO con un array JSON, sin texto extra ni markdown.
-- Usa SIEMPRE el verbo canonico exacto de la lista de acciones disponibles.
-- Si el jugador usa un sinonimo de un verbo, mapea al verbo canonico.
-- Extrae el objeto o lugar mencionado cuando aplique (campo "object" o "place").
-- Cuando el lugar es compuesto, extrae lugar y origen (campo "place" y campo "origin")
-- Si hay varias acciones en la frase, devuelvelas todas en orden.
-- Todo lo que haya después de una preposición como "con" ignoralo, el jugador se esta refiriendo al objeto con el que realiza la accion, no a otra accion.
-- Nunca puede haber una misma accion como por ejemplo "viajar" o "coger", si detectas en el resultado que obtengas una accion repetida, elimina la menos confiable.
-- Puede haber nombres de objetos compuestos, por ejemplo "escudo de armas", en ese caso quedate con el nombre del objeto principal, que seria "escudo".
-- Puede haber nombres de lugares compuestos, como puede ser "habitacion de la posada, en esos casos el lugar es la primera parte, "habitacion", y el segundo el origen "posada"
-- Si no reconoces ninguna accion de la lista, devuelve [{"action":"fallback"}].
-
-Ejemplos:
-texto: "ojeo el libro", acciones: ["leer","viajar"] -> [{"action":"leer","object":"libro"}]
-texto: "abro la puerta con la llave", acciones: ["abrir","viajar"] -> [{"action":"abrir","object":"puerta"}]
-texto: "voy a la cabaña", acciones: ["leer", "viajar"] -> [{"ation": "viajar", "place": "cabaña"}]
-texto: "voy a la cocina y cojo la llave", acciones: ["viajar","coger"] -> [{"action":"viajar","place":"cocina"},{"action":"coger","object":"llave"}]
-texto: "abro la alacena", acciones: ["abrir","viajar"] -> [{"action":"abrir","object":"alacena"}]
-texto: "cojo el currusco de pan", acciones: ["coger", "viajar"] -> [{"action": "coger", "object": "currusco"}]
-texto: "Voy a la habitacion de la posada", acciones: ["viajar", "coger", "comer"] -> [{"action": "viajar", "place": "habitacion", "origin": "posada"}]
-texto: "analizo el escudo de armas y me voy a la bodega de la venta", acciones: ["viajar", "coger", "comer", "revisar"] -> [{"action": "revisar", "object": "escudo"},{"action": "viajar", "place": "bodega", "origin": "venta"}]`
-      },
-      {
-        role: 'user',
-        content: JSON.stringify({ texto: userText, availableActions })
-      }
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userText }
     ],
     max_tokens: 200,
     temperature: 0.1,
@@ -56,8 +66,8 @@ texto: "analizo el escudo de armas y me voy a la bodega de la venta", acciones: 
   try {
     const parsed = JSON.parse(raw);
     const actionsArr = Array.isArray(parsed) ? parsed : (parsed.intents || parsed.actions || parsed.acciones || parsed.items || [parsed]);
-    console.log('actions arr: ', actionsArr)
-    return resolveCanonicalVerb(actionsArr, availableActions);
+    console.log('actions arr: ', actionsArr);
+    return actionsArr;
   } catch (e) {
     console.error('Error parseando intents:', raw, e);
     return [{ action: 'fallback' }];
