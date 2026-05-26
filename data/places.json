@@ -543,7 +543,7 @@
               "images/places/cabania_noche.png"
               ]
             },
-          "actionsDescription": "No hay acciones especiales disponibles en este lugar.",
+          "actionsDescription": "No hay acciones especiales de lugar. IMPORTANTE: si el jugador escribe frases como 'entro en la cabaña', 'entro', 'voy dentro', 'accedo al interior' o similares, debe interpretarse como viajar con place='interior' y origin='cabaña'.",
           "actions": [],
           "connectedRooms": [
             "acantilado", "interior_cabaña"
